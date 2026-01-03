@@ -30,6 +30,14 @@ func (t *Turn) GetAllData() map[string]any {
 	return t.data
 }
 
+func (t Turn) StartSide() turning.SideTurn {
+	return GetData[turning.SideTurn](&t, "startSide")
+}
+
+func (t Turn) CurrentSide() turning.SideTurn {
+	return GetData[turning.SideTurn](&t, "currentSide")
+}
+
 func (t *Turn) AddBeforeChangeEvent(event turning.OnChange) {
 	t.onBeforeChangeEvent = append(t.onBeforeChangeEvent, event)
 }
