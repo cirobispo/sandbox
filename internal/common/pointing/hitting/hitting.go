@@ -1,43 +1,45 @@
 package hitting
 
+import "fmt"
+
 type HitType int
-type HitUpdate int
-type HitPointDestination int
-
-type VerifyEvent func(hits *[]Hitting) HitPointDestination
-
-type Hitting interface {
-	GetType() HitType
-	UpdateScore() HitUpdate
-	PointDestination(hits *[]Hitting) HitPointDestination
-}
+type HitSide int
 
 const (
 	HTFootFault HitType = 1
-	HTAce       HitType = 2
+	HTServeNet  HitType = 2
 	HTServeLet  HitType = 3
-	HTServeOut  HitType = 4
-	HTServeNet  HitType = 5
-	HTServeIn   HitType = 6
+	HTServeIn   HitType = 4
+	HTAce       HitType = 5
+	HTServeOut  HitType = 6
 	HTReturnOut HitType = 7
 	HTReturnNet HitType = 8
 	HTReturnIn  HitType = 9
-	HTNet       HitType = 10
-	HTIn        HitType = 11
-	HTOut       HitType = 12
-	HTWinner    HitType = 13
-	HTToast     HitType = 14
-	HTOther     HitType = 15
+	HTMiss      HitType = 10
+	HTNet       HitType = 11
+	HTIn        HitType = 12
+	HTOut       HitType = 13
+	HTWinner    HitType = 14
+	HTToast     HitType = 15
+	HTOther     HitType = 16
 )
 
 const (
-	HTUNo          HitUpdate = 0
-	HTUYes         HitUpdate = 1
-	HTUCondicional HitUpdate = 2
+	HTDNone        HitSide = 0
+	HTDSameSide    HitSide = 1
+	HTDOpositeSide HitSide = 2
+	HTDConditional HitSide = 3
 )
 
-const (
-	HTDSameSide    HitPointDestination = 0
-	HTDOpositeSide HitPointDestination = 1
-	HTDNone        HitPointDestination = 2
-)
+func (h HitType) String() string {
+	return fmt.Sprintf("%c", h)
+}
+
+func (h HitSide) String() string {
+	return fmt.Sprintf("%d", h)
+}
+
+type Hitting interface {
+	Type() HitType
+	Side() HitSide
+}

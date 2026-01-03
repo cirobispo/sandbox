@@ -2,6 +2,7 @@ package point
 
 import (
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
+	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
@@ -10,18 +11,48 @@ type Point struct {
 	hits []hitting.Hitting
 }
 
+func checkDoubleFault(hits *[]hitting.Hitting) hitting.HitSide {
+	count := 0
+	result := hitting.HTDNone
+	for i := range *hits {
+		hit := (*hits)[i]
+		if tp := hit.Type(); tp == hitting.HTServeOut || tp == hitting.HTServeNet || tp == hitting.HTFootFault {
+			count++
+			if count > 1 {
+				result = hitting.HTDOpositeSide
+				break
+			}
+		}
+	}
+	return result
+}
+
+func checkPointSide(startSide, currentSide turning.SideTurn) hitting.HitSide {
+	result := hitting.HTDSameSide
+	if startSide != currentSide {
+		result = hitting.HTDOpositeSide
+	}
+	return result
+}
+
 func New(t turn.Turn) Point {
 	return Point{side: t,
 		hits: make([]hitting.Hitting, 0, 3),
 	}
 }
 
-func (p *Point) AddHit(h hitting.Hitting) hitting.HitPointDestination {
+func (p *Point) AddHit(h hitting.Hitting) hitting.HitSide {
 	p.hits = append(p.hits, h)
 
-	result := h.PointDestination(&p.hits)
-	if result != hitting.HTDNone {
-		p.side.Execute()
+	result := h.Side()
+	if result == hitting.HTDConditional {
+		if t := h.Type(); t == hitting.HTFootFault || t == hitting.HTServeNet || t == hitting.HTServeOut {
+			result = checkDoubleFault(&p.hits)
+		}
+	}
+
+	if result == hitting.HTDOpositeSide || result == hitting.HTDSameSide {
+		result = checkPointSide(p.side.StartSide(), p.side.CurrentSide())
 	}
 
 	return result
