@@ -14,7 +14,8 @@ func newFromTurn(t *turn.Turn) *turn.Turn {
 	result := t
 
 	result.AddAfterChangeEvent(func(st turning.SideTurn) {
-		value := turn.GetData[int](result, "count") + 1
+		value, _ := turn.GetData[int](result, "count")
+		value++
 		turn.AddData[int](result, "count", value)
 	})
 
@@ -31,5 +32,7 @@ func NewFromTurn(t *turn.Turn) *turn.Turn {
 }
 
 func GetCount(t *turn.Turn) int {
-	return turn.GetData[int](t, "count")
+	result, _ := turn.GetData[int](t, "count")
+	return result
+
 }

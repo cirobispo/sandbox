@@ -1,6 +1,8 @@
 package turn
 
 import (
+	"fmt"
+
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
@@ -14,7 +16,7 @@ type Turn struct {
 func (t *Turn) Execute() {
 	t.executeOnChange(t.onBeforeChangeEvent)
 
-	currentSide := GetData[turning.SideTurn](t, "currentSide")
+	currentSide, _ := GetData[turning.SideTurn](t, "currentSide")
 
 	if currentSide > turning.STA {
 		currentSide = -1
@@ -31,11 +33,13 @@ func (t *Turn) GetAllData() map[string]any {
 }
 
 func (t Turn) StartSide() turning.SideTurn {
-	return GetData[turning.SideTurn](&t, "startSide")
+	result, _ := GetData[turning.SideTurn](&t, "startSide")
+	return result
 }
 
 func (t Turn) CurrentSide() turning.SideTurn {
-	return GetData[turning.SideTurn](&t, "currentSide")
+	result, _ := GetData[turning.SideTurn](&t, "currentSide")
+	return result
 }
 
 func (t *Turn) AddBeforeChangeEvent(event turning.OnChange) {
@@ -47,7 +51,7 @@ func (t *Turn) AddAfterChangeEvent(event turning.OnChange) {
 }
 
 func (t *Turn) executeOnChange(list []turning.OnChange) {
-	currentSide := GetData[turning.SideTurn](t, "currentSide")
+	currentSide, _ := GetData[turning.SideTurn](t, "currentSide")
 	for i := range list {
 		event := list[i]
 		event(currentSide)
@@ -67,11 +71,27 @@ func New(start turning.SideTurn) *Turn {
 	return result
 }
 
-func AddData[V any](t *Turn, id string, data V) {
-	t.GetAllData()[id] = data
+func AddData[V any](t *Turn, id string, data V) (bool, error) {
+	_, f := t.data[id]
+	if !f {
+		t.GetAllData()[id] = data
+		return true, nil
+	}
+
+	return false, fmt.Errorf("%s exists.", id)
 }
 
-func GetData[V any](t *Turn, id string) V {
+func UpdateData[V any](t *Turn, id string, data V) (bool, error) {
+	_, f := t.data[id]
+	if f {
+		t.GetAllData()[id] = data
+		return true, nil
+	}
+
+	return false, fmt.Errorf("%s not found.", id)
+}
+
+func GetData[V any](t *Turn, id string) (V, bool) {
 	data, found := t.GetAllData()[id]
 
 	var result V
@@ -79,5 +99,5 @@ func GetData[V any](t *Turn, id string) V {
 		result = data.(V)
 	}
 
-	return result
+	return result, found
 }

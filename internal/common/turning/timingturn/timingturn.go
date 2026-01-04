@@ -17,7 +17,7 @@ func newFromTurn(t *turn.Turn) *turn.Turn {
 	result := t
 
 	result.AddAfterChangeEvent(func(st turning.SideTurn) {
-		start := turn.GetData[time.Time](t, "start")
+		start, _ := turn.GetData[time.Time](t, "start")
 		duration := time.Since(start)
 
 		turn.AddData[time.Duration](t, "duration", duration)
@@ -36,6 +36,6 @@ func NewFromTurn(t *turn.Turn) *turn.Turn {
 }
 
 func Duration(t *turn.Turn) time.Duration {
-	duration := turn.GetData[time.Duration](t, "duration")
+	duration, _ := turn.GetData[time.Duration](t, "duration")
 	return duration
 }
