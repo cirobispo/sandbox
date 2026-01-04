@@ -55,5 +55,9 @@ func (p *Point) AddHit(h hitting.Hitting) hitting.HitSide {
 		result = checkPointSide(p.side.StartSide(), p.side.CurrentSide())
 	}
 
+	if result != hitting.HTDChangeSide {
+		p.side.Execute()
+	}
+
 	return result
 }

@@ -41,7 +41,7 @@ func NewServeOut() Hit {
 func NewServeIn() Hit {
 	return Hit{
 		pointType: hitting.HTServeIn,
-		pointSide: hitting.HTDNone,
+		pointSide: hitting.HTDChangeSide,
 	}
 }
 
@@ -69,7 +69,7 @@ func NewReturnNet() Hit {
 func NewReturnIn() Hit {
 	return Hit{
 		pointType: hitting.HTReturnIn,
-		pointSide: hitting.HTDNone,
+		pointSide: hitting.HTDChangeSide,
 	}
 }
 
@@ -90,7 +90,7 @@ func NewNet() Hit {
 func NewIn() Hit {
 	return Hit{
 		pointType: hitting.HTIn,
-		pointSide: hitting.HTDNone,
+		pointSide: hitting.HTDChangeSide,
 	}
 }
 

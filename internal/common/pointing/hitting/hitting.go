@@ -26,9 +26,10 @@ const (
 
 const (
 	HTDNone        HitSide = 0
-	HTDSameSide    HitSide = 1
-	HTDOpositeSide HitSide = 2
-	HTDConditional HitSide = 3
+	HTDChangeSide  HitSide = 1
+	HTDSameSide    HitSide = 2
+	HTDOpositeSide HitSide = 3
+	HTDConditional HitSide = 4
 )
 
 func (h HitType) String() string {
