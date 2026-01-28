@@ -1,7 +1,5 @@
 package hitting
 
-import "fmt"
-
 type HitType int
 type HitSide int
 
@@ -21,26 +19,74 @@ const (
 	HTOut       HitType = 13
 	HTWinner    HitType = 14
 	HTToast     HitType = 15
-	HTOther     HitType = 16
+	HTNetTouch  HitType = 16
 )
 
 const (
-	HTDNone        HitSide = 0
-	HTDChangeSide  HitSide = 1
-	HTDSameSide    HitSide = 2
-	HTDOpositeSide HitSide = 3
-	HTDConditional HitSide = 4
+	HTDNone         HitSide = 0
+	HTDChangeSide   HitSide = 1
+	HTDSameSide     HitSide = 2
+	HTDOppositeSide HitSide = 3
+	HTDConditional  HitSide = 4
 )
-
-func (h HitType) String() string {
-	return fmt.Sprintf("%c", h)
-}
-
-func (h HitSide) String() string {
-	return fmt.Sprintf("%d", h)
-}
 
 type Hitting interface {
 	Type() HitType
 	Side() HitSide
+}
+
+func (h HitType) String() string {
+	switch h {
+	case HTFootFault:
+		return "Foot fault"
+	case HTServeNet:
+		return "Serve on net"
+	case HTServeLet:
+		return "Let"
+	case HTServeIn:
+		return "Serve in"
+	case HTAce:
+		return "Ace!"
+	case HTServeOut:
+		return "Serve out"
+	case HTReturnOut:
+		return "Return out"
+	case HTReturnNet:
+		return "Return net"
+	case HTReturnIn:
+		return "Return in"
+	case HTMiss:
+		return "Miss"
+	case HTNet:
+		return "Hit net"
+	case HTIn:
+		return "Hit in"
+	case HTOut:
+		return "Hit out"
+	case HTWinner:
+		return "Winner!"
+	case HTToast:
+		return "Toast!"
+	case HTNetTouch:
+		return "Touch net"
+	default:
+		return "Other"
+	}
+}
+
+func (h HitSide) String() string {
+	switch h {
+	case HTDNone:
+		return "None"
+	case HTDChangeSide:
+		return "Change Side"
+	case HTDSameSide:
+		return "Same side"
+	case HTDOppositeSide:
+		return "Opposite side"
+	case HTDConditional:
+		return "Conditional"
+	default:
+		return "other"
+	}
 }

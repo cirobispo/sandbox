@@ -7,12 +7,18 @@ type OnPointScore func(hit hitting.HitType, side hitting.HitSide)
 type PointSide int
 
 const (
-	PSA    PointSide = 0
-	PSB    PointSide = 1
-	PSNone PointSide = 2
+	PSStartingSide PointSide = 0
+	PSOppositeSide PointSide = 1
+	PSNone         PointSide = 2
 )
 
-type Pointing interface {
+func (s PointSide) String() string {
+	switch s {
+	case PSStartingSide:
+		return "Starting side"
+	case PSOppositeSide:
+		return "Opposite side"
+	default:
+		return "None"
+	}
 }
-
-type OnOcours func()

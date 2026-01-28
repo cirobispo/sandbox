@@ -6,7 +6,7 @@ import (
 
 type Hit struct {
 	pointType hitting.HitType
-	pointSide hitting.HitSide
+	side      hitting.HitSide
 }
 
 func (h Hit) Type() hitting.HitType {
@@ -14,103 +14,117 @@ func (h Hit) Type() hitting.HitType {
 }
 
 func (h Hit) Side() hitting.HitSide {
-	return h.pointSide
+	return h.side
 }
 
 func NewFootFault() Hit {
 	return Hit{
 		pointType: hitting.HTFootFault,
-		pointSide: hitting.HTDConditional,
+		side:      hitting.HTDConditional,
 	}
 }
 
 func NewAce() Hit {
 	return Hit{
 		pointType: hitting.HTAce,
-		pointSide: hitting.HTDSameSide,
+		side:      hitting.HTDSameSide,
 	}
 }
 
 func NewServeOut() Hit {
 	return Hit{
 		pointType: hitting.HTServeOut,
-		pointSide: hitting.HTDConditional,
+		side:      hitting.HTDConditional,
 	}
 }
 
 func NewServeIn() Hit {
 	return Hit{
 		pointType: hitting.HTServeIn,
-		pointSide: hitting.HTDChangeSide,
+		side:      hitting.HTDChangeSide,
 	}
 }
 
 func NewServeLet() Hit {
 	return Hit{
 		pointType: hitting.HTServeLet,
-		pointSide: hitting.HTDNone,
+		side:      hitting.HTDNone,
 	}
 }
 
 func NewServeNet() Hit {
 	return Hit{
 		pointType: hitting.HTServeNet,
-		pointSide: hitting.HTDConditional,
+		side:      hitting.HTDConditional,
 	}
 }
 
 func NewReturnNet() Hit {
 	return Hit{
 		pointType: hitting.HTReturnNet,
-		pointSide: hitting.HTDOpositeSide,
+		side:      hitting.HTDOppositeSide,
 	}
 }
 
 func NewReturnIn() Hit {
 	return Hit{
 		pointType: hitting.HTReturnIn,
-		pointSide: hitting.HTDChangeSide,
+		side:      hitting.HTDChangeSide,
 	}
 }
 
 func NewReturnOut() Hit {
 	return Hit{
 		pointType: hitting.HTReturnOut,
-		pointSide: hitting.HTDOpositeSide,
+		side:      hitting.HTDOppositeSide,
 	}
 }
 
 func NewNet() Hit {
 	return Hit{
 		pointType: hitting.HTNet,
-		pointSide: hitting.HTDOpositeSide,
+		side:      hitting.HTDOppositeSide,
 	}
 }
 
 func NewIn() Hit {
 	return Hit{
 		pointType: hitting.HTIn,
-		pointSide: hitting.HTDChangeSide,
+		side:      hitting.HTDChangeSide,
 	}
 }
 
 func NewWinner() Hit {
 	return Hit{
 		pointType: hitting.HTWinner,
-		pointSide: hitting.HTDSameSide,
+		side:      hitting.HTDSameSide,
 	}
 }
 
 func NewOut() Hit {
 	return Hit{
 		pointType: hitting.HTOut,
-		pointSide: hitting.HTDOpositeSide,
+		side:      hitting.HTDOppositeSide,
 	}
 }
 
 func NewMiss() Hit {
 	return Hit{
 		pointType: hitting.HTOut,
-		pointSide: hitting.HTDOpositeSide,
+		side:      hitting.HTDOppositeSide,
+	}
+}
+
+func NewToast() Hit {
+	return Hit{
+		pointType: hitting.HTToast,
+		side:      hitting.HTDSameSide,
+	}
+}
+
+func NewNetTouch() Hit {
+	return Hit{
+		pointType: hitting.HTNetTouch,
+		side:      hitting.HTDOppositeSide,
 	}
 }
