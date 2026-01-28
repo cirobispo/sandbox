@@ -23,9 +23,26 @@ func (t *Turn) Execute() {
 	}
 
 	currentSide++
-	AddData(t, "currentSide", currentSide)
+	UpdateData(t, "currentSide", currentSide)
 
 	t.executeOnChange(t.onAfterChangeEvent)
+}
+
+func (t *Turn) Clone(start turning.SideTurn) *Turn {
+	result := New(start)
+	dataCount, dataAdded := len(t.data)-2, 0
+
+	for k, v := range t.data {
+		if f, _ := AddData(result, k, v); f {
+			dataAdded++
+		}
+	}
+
+	if dataAdded != dataCount {
+		panic(fmt.Errorf("data added to clone turn does not match."))
+	}
+
+	return result
 }
 
 func (t *Turn) GetAllData() map[string]any {
@@ -37,17 +54,17 @@ func (t Turn) StartSide() turning.SideTurn {
 	return result
 }
 
-func (t Turn) CurrentSide() turning.SideTurn {
+func (t Turn) LastSide() turning.SideTurn {
 	result, _ := GetData[turning.SideTurn](&t, "currentSide")
 	return result
 }
 
-func (t *Turn) AddBeforeChangeEvent(event turning.OnChange) {
-	t.onBeforeChangeEvent = append(t.onBeforeChangeEvent, event)
+func (t *Turn) AddOnBeforeChange(callback turning.OnChange) {
+	t.onBeforeChangeEvent = append(t.onBeforeChangeEvent, callback)
 }
 
-func (t *Turn) AddAfterChangeEvent(event turning.OnChange) {
-	t.onAfterChangeEvent = append(t.onAfterChangeEvent, event)
+func (t *Turn) AddOnAfterChange(callback turning.OnChange) {
+	t.onAfterChangeEvent = append(t.onAfterChangeEvent, callback)
 }
 
 func (t *Turn) executeOnChange(list []turning.OnChange) {

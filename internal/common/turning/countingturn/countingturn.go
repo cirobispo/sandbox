@@ -13,7 +13,7 @@ type CountedTurning interface {
 func newFromTurn(t *turn.Turn) *turn.Turn {
 	result := t
 
-	result.AddAfterChangeEvent(func(st turning.SideTurn) {
+	result.AddOnAfterChange(func(st turning.SideTurn) {
 		value, _ := turn.GetData[int](result, "count")
 		value++
 		turn.AddData[int](result, "count", value)

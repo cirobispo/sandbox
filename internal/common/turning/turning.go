@@ -15,6 +15,15 @@ type Turning interface {
 
 type OnChange func(SideTurn)
 
+func (s SideTurn) String() string {
+	result := "Side A"
+	if s == STB {
+		result = "Side B"
+	}
+
+	return result
+}
+
 // type TurnEventing interface {
 // 	AddBeforeChangeEvent(event OnChange)
 // 	AddAfterChangeEvent(event OnChange)
