@@ -1,160 +1,97 @@
 package game_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
-	"github.com/cirobispo/sandbox/internal/common/pointing"
-	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
-type testItem struct {
-	value hit.Hit
-}
+func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
+	g := game.New(turn.New(turning.STA), true)
+	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
+		if done {
+			t.Logf("Game FINAL status: ( %d x %d )\n", scoreA, scoreB)
+		}
+	})
 
-type testBlock struct {
-	items []testItem
-	point point.Point
-}
+	for i := range blocks {
+		block := blocks[i]
+		p := point.New(turn.New(turning.STA))
+		a, b := g.Score().Result()
+		t.Logf("Game status: ( %d x %d )\n", a, b)
 
-var hitServInReturnIn = []testItem{
-	testItem{hit.NewServeIn()},
-	testItem{hit.NewReturnIn()},
-}
+		for j := range block.Items {
+			item := block.Items[j]
+			t.Logf("side %s hits %s, ", p.BallLastSide(), item.Value.Type())
+			p.AddHit(item.Value)
+		}
+		t.Log()
 
-var __winnerSameSide = []testItem{
-	testItem{hit.NewWinner()},
-}
-
-var __winnerOppositeSide = []testItem{
-	testItem{hit.NewIn()},
-	testItem{hit.NewWinner()},
-}
-
-var hitAce = []testItem{
-	testItem{hit.NewServeIn()},
-}
-
-var longRallie = []testItem{
-	testItem{hit.NewServeIn()},
-	testItem{hit.NewReturnIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewNet()},
-}
-
-var hit__NetSameSide = []testItem{
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewNet()},
-}
-
-var hit__OutSameSide = []testItem{
-	testItem{hit.NewIn()},
-	testItem{hit.NewIn()},
-	testItem{hit.NewOut()},
-}
-
-var _game = game.New(turn.New(turning.STA), false)
-
-func addToTest(items *[]testItem) testBlock {
-	tb := testBlock{items: *items}
-	p := point.New(_game.NewTurn())
-	for i := range tb.items {
-		item := tb.items[i]
-		p.AddHit(item.value)
-	}
-	tb.point = p
-	_game.AddPoint(p)
-	return tb
-}
-
-func winnerSSPoint() testBlock {
-	data := hitServInReturnIn
-	data = append(data, __winnerSameSide...)
-	return addToTest(&data)
-}
-
-func acePoint() testBlock {
-	return addToTest(&hitAce)
-}
-
-func longRallieOSPoint() testBlock {
-	return addToTest(&longRallie)
-}
-
-func netSameSide() testBlock {
-	data := hitServInReturnIn
-	data = append(data, hit__NetSameSide...)
-	return addToTest(&data)
-}
-
-func outSameSide() testBlock {
-	data := hitServInReturnIn
-	data = append(data, hit__OutSameSide...)
-	return addToTest(&data)
-}
-
-func testPoint(tt *testing.T, block testBlock, name string) {
-	tt.Logf("Start of test for point %s\n", name)
-	pointResult := block.point.PointSide()
-	if pointResult == pointing.PSNone {
-		tt.Errorf("%s is not correct on result point: %v", name, block.point)
+		g.AddPoint(p)
 	}
 
-	a, b := _game.Result()
-	tt.Logf("Game result score A: %d score B : %d\n", a, b)
-}
-
-func testGame(tt *testing.T, blocks *[]testBlock, name string) {
-	tt.Logf("Start of test for game %s\n", name)
-	for i := range *blocks {
-		block := (*blocks)[i]
-		testPoint(tt, block, fmt.Sprintf("%d", i+1))
+	a, b := g.Score().Result()
+	if a != SideA || b != SideB {
+		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
 	}
 }
 
-func TestWinner(tt *testing.T) {
-	testPoint(tt, winnerSSPoint(), "Winner")
-}
+/**
+	func TestGameToServer_Game30(t *testing.T) {
+		blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(),
+			point.WinnerOSPoint(), point.WinnerOSPoint(), point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		}
 
-func TestAce(tt *testing.T) {
-	testPoint(tt, acePoint(), "Ace")
-}
-
-func TestLongRallie(tt *testing.T) {
-	testPoint(tt, longRallieOSPoint(), "Long rallie")
-}
-
-func TestNetSameSide(tt *testing.T) {
-	testPoint(tt, netSameSide(), "Net same side")
-}
-
-func TestOutSameSide(tt *testing.T) {
-	testPoint(tt, outSameSide(), "Out same side")
-}
-
-func TestGame(tt *testing.T) {
-	var blocks []testBlock = []testBlock{
-		acePoint(),
-		winnerSSPoint(),
-		longRallieOSPoint(),
-		winnerSSPoint(),
-		netSameSide(),
-		winnerSSPoint(),
-		outSameSide(),
-		winnerSSPoint(),
+		runTest(blocks, 4, 2, t)
 	}
-	testGame(tt, &blocks, "6x2")
+
+	func TestGameToServer_Game15(t *testing.T) {
+		blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(),
+			point.WinnerOSPoint(), point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		}
+
+		runTest(blocks, 4, 1, t)
+	}
+
+	func TestGameToServer_Game00(t *testing.T) {
+		blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(),
+			point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		}
+
+		runTest(blocks, 4, 0, t)
+	}
+
+/**/
+
+func TestGameToBrake_4040(t *testing.T) {
+	blocks := []point.TestBlock{point.DoubleFault(), point.DoubleFault(), point.WinnerSSPoint(),
+		point.LongRallieOSPoint(point.NetOppositeSide(true)), point.WinnerOSPoint(), point.WinnerSSPoint(),
+	}
+	runTest(blocks, 3, 3, t)
 }
+
+/**
+func TestGameToBrake_30Game(t *testing.T) {
+	blocks := []point.TestBlock{point.DoubleFault(), point.DoubleFault(), point.WinnerSSPoint(),
+		point.LongRallieOSPoint(point.NetOppositeSide(true)), point.WinnerOSPoint(), point.WinnerOSPoint(),
+	}
+	runTest(blocks, 2, 4, t)
+}
+
+func TestGameToBrake_15Game(t *testing.T) {
+	blocks := []point.TestBlock{point.DoubleFault(), point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		point.WinnerOSPoint(), point.DoubleFault(), point.WinnerOSPoint(),
+	}
+	runTest(blocks, 1, 4, t)
+}
+
+func TestGameToBrake_00Game(t *testing.T) {
+	blocks := []point.TestBlock{point.DoubleFault(), //point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		point.WinnerOSPoint(), point.DoubleFault(), point.WinnerOSPoint(),
+	}
+	runTest(blocks, 0, 4, t)
+}
+/**/
