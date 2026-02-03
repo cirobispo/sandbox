@@ -17,6 +17,13 @@ func (h Hit) Side() hitting.HitSide {
 	return h.side
 }
 
+func New(t hitting.HitType, s hitting.HitSide) Hit {
+	return Hit{
+		pointType: t,
+		side:      s,
+	}
+}
+
 func NewFootFault() Hit {
 	return Hit{
 		pointType: hitting.HTFootFault,
@@ -76,6 +83,13 @@ func NewReturnIn() Hit {
 func NewReturnOut() Hit {
 	return Hit{
 		pointType: hitting.HTReturnOut,
+		side:      hitting.HTDOppositeSide,
+	}
+}
+
+func NewDoubleFault() Hit {
+	return Hit{
+		pointType: hitting.HTDoubleFault,
 		side:      hitting.HTDOppositeSide,
 	}
 }

@@ -4,22 +4,23 @@ type HitType int
 type HitSide int
 
 const (
-	HTFootFault HitType = 1
-	HTServeNet  HitType = 2
-	HTServeLet  HitType = 3
-	HTServeIn   HitType = 4
-	HTAce       HitType = 5
-	HTServeOut  HitType = 6
-	HTReturnOut HitType = 7
-	HTReturnNet HitType = 8
-	HTReturnIn  HitType = 9
-	HTMiss      HitType = 10
-	HTNet       HitType = 11
-	HTIn        HitType = 12
-	HTOut       HitType = 13
-	HTWinner    HitType = 14
-	HTToast     HitType = 15
-	HTNetTouch  HitType = 16
+	HTFootFault   HitType = 1
+	HTServeNet    HitType = 2
+	HTServeLet    HitType = 3
+	HTServeIn     HitType = 4
+	HTAce         HitType = 5
+	HTServeOut    HitType = 6
+	HTReturnOut   HitType = 7
+	HTReturnNet   HitType = 8
+	HTReturnIn    HitType = 9
+	HTDoubleFault HitType = 10
+	HTNet         HitType = 11
+	HTIn          HitType = 12
+	HTOut         HitType = 13
+	HTWinner      HitType = 14
+	HTToast       HitType = 15
+	HTNetTouch    HitType = 16
+	HTMiss        HitType = 17
 )
 
 const (
@@ -33,6 +34,17 @@ const (
 type Hitting interface {
 	Type() HitType
 	Side() HitSide
+}
+
+func (h HitSide) Inverse() HitSide {
+	switch h {
+	case HTDSameSide:
+		return HTDOppositeSide
+	case HTDOppositeSide:
+		return HTDSameSide
+	default:
+		return h
+	}
 }
 
 func (h HitType) String() string {
@@ -55,8 +67,8 @@ func (h HitType) String() string {
 		return "Return net"
 	case HTReturnIn:
 		return "Return in"
-	case HTMiss:
-		return "Miss"
+	case HTDoubleFault:
+		return "Double fault"
 	case HTNet:
 		return "Hit net"
 	case HTIn:
@@ -69,6 +81,8 @@ func (h HitType) String() string {
 		return "Toast!"
 	case HTNetTouch:
 		return "Touch net"
+	case HTMiss:
+		return "Miss"
 	default:
 		return "Other"
 	}
