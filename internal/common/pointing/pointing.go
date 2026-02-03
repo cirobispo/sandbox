@@ -22,3 +22,14 @@ func (s PointSide) String() string {
 		return "None"
 	}
 }
+
+func (s PointSide) Inverse() PointSide {
+	switch s {
+	case PSStartingSide:
+		return PSOppositeSide
+	case PSOppositeSide:
+		return PSStartingSide
+	default:
+		return s
+	}
+}
