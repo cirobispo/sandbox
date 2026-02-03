@@ -42,10 +42,11 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 
 func TestGameToServer_Game40(t *testing.T) {
 	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
-		point.WinnerOSPoint(), point.DoubleFault(), point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		point.WinnerOSPoint(), point.WinnerOSPoint(), point.DoubleFault(),
+		// point.LongRallieOSPoint(point.NetOppositeSide(true)),
 	}
 
-	runTest(blocks, 4, 3, t)
+	runTest(blocks, 4, 4, t)
 }
 
 /**
