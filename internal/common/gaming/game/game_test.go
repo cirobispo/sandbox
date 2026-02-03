@@ -10,18 +10,19 @@ import (
 )
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	g := game.New(turn.New(turning.STA), true)
+	g := game.New(turn.New(turning.STA), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Game FINAL status: ( %d x %d )\n", scoreA, scoreB)
+			return
 		}
+
+		t.Logf("Game status: ( %d x %d )\n", scoreA, scoreB)
 	})
 
 	for i := range blocks {
 		block := blocks[i]
 		p := point.New(turn.New(turning.STA))
-		a, b := g.Score().Result()
-		t.Logf("Game status: ( %d x %d )\n", a, b)
 
 		for j := range block.Items {
 			item := block.Items[j]
@@ -37,6 +38,14 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	if a != SideA || b != SideB {
 		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
 	}
+}
+
+func TestGameToServer_Game40(t *testing.T) {
+	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
+		point.WinnerOSPoint(), point.DoubleFault(), point.LongRallieOSPoint(point.NetOppositeSide(true)),
+	}
+
+	runTest(blocks, 4, 3, t)
 }
 
 /**
@@ -63,8 +72,6 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 
 		runTest(blocks, 4, 0, t)
 	}
-
-/**/
 
 func TestGameToBrake_4040(t *testing.T) {
 	blocks := []point.TestBlock{point.DoubleFault(), point.DoubleFault(), point.WinnerSSPoint(),
