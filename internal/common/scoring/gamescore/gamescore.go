@@ -37,13 +37,20 @@ func (gs *GameScore) getScores() (*int, *int) {
 	return sA, sB
 }
 
+func (gs *GameScore) inverseScore(side *int) *int {
+	sA, sB := gs.getScores()
+	if side == sA {
+		return sB
+	}
+	return sA
+}
+
 func (gs *GameScore) AddOnAfterScoreEvent(event OnGameScore) {
 	gs.onAfterScoreEvent = append(gs.onAfterScoreEvent, event)
 }
 
 func (gs GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	closeEnding := (scoreA >= 3 || scoreB >= 3) && scoreA != scoreB
-	done := (scoreA >= 3 || scoreB >= 3) && closeEnding
+	done := gs.Done()
 	for i := range gs.onAfterScoreEvent {
 		event := gs.onAfterScoreEvent[i]
 		event(scoreA, scoreB, done)
@@ -51,15 +58,24 @@ func (gs GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 }
 
 func (gs *GameScore) AddPoint(p point.Point) {
-	if who := p.PointSide(); who != pointing.PSNone {
-		sA, sB := gs.getScores()
-		(*sA)++
-		if who == pointing.PSOppositeSide {
-			(*sB)++
-			(*sA)--
-		}
+	if !gs.Done() { // verify only it still acepting more points.
+		if who := p.PointSide(); who != pointing.PSNone {
+			incr := 1
+			sA, sB := gs.getScores()
+			sideToAdd := sA
+			if who == pointing.PSOppositeSide {
+				sideToAdd = sB
+			}
 
-		gs.executeOnAfterScoreEvent(gs.scoreA, gs.scoreB)
+			if (!gs.decidingPoint) && (*sA > 3 || *sB > 3) {
+				if *sideToAdd == 3 {
+					incr = -1
+					sideToAdd = gs.inverseScore(sideToAdd)
+				}
+			}
+			*sideToAdd += incr
+			gs.executeOnAfterScoreEvent(gs.scoreA, gs.scoreB)
+		}
 	}
 }
 
