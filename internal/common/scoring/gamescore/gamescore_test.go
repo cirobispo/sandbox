@@ -1,16 +1,15 @@
-package gamescore_test
+package gamescore
 
 import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/scoring/gamescore"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	score := gamescore.New(turning.STA, false)
+	score := New(turning.STA, false)
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Game FINAL status: ( %d x %d )\n", scoreA, scoreB)
@@ -40,7 +39,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 func TestToSideA(t *testing.T) {
 	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
 		point.WinnerOSPoint(), point.WinnerOSPoint(), point.DoubleFault(), point.AcePoint(), point.AcePoint(), point.AcePoint(),
-		// point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		point.LongRallieOSPoint(3, point.NetOppositeSide(true)),
 	}
 
 	runTest(blocks, 5, 3, t)
@@ -49,7 +48,7 @@ func TestToSideA(t *testing.T) {
 func TestToSideB(t *testing.T) {
 	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
 		point.WinnerOSPoint(), point.WinnerOSPoint(), point.DoubleFault(), point.AcePoint(), point.DoubleFault(), point.DoubleFault(),
-		// point.LongRallieOSPoint(point.NetOppositeSide(true)),
+		point.LongRallieOSPoint(3, point.NetOppositeSide(true)),
 	}
 
 	runTest(blocks, 3, 5, t)

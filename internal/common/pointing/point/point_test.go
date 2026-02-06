@@ -1,4 +1,4 @@
-package point_test
+package point
 
 import (
 	"testing"
@@ -6,17 +6,16 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/countingturn"
 	"github.com/cirobispo/sandbox/internal/common/turning/timingturn"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
-func newPoint(side turning.SideTurn) point.Point {
+func newPoint(side turning.SideTurn) Point {
 	ctt := timingturn.NewFromTurn(countingturn.NewFromTurn(turn.New(side)))
 
-	return point.New(ctt)
+	return New(ctt)
 }
 
 func TestEverySinglePoint(tt *testing.T) {
@@ -27,7 +26,7 @@ func TestEverySinglePoint(tt *testing.T) {
 	}
 
 	p := newPoint(turning.STB)
-	points := make([]point.Point, 0, len(everyHit))
+	points := make([]Point, 0, len(everyHit))
 	points = append(points, p)
 
 	for i := range everyHit {
@@ -56,7 +55,7 @@ func TestEverySinglePoint(tt *testing.T) {
 	showPoints(tt, points)
 }
 
-func showPoints(tt *testing.T, points []point.Point) {
+func showPoints(tt *testing.T, points []Point) {
 	ss, os := 0, 0
 
 	for j := range points {

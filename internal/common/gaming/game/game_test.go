@@ -1,16 +1,15 @@
-package game_test
+package game
 
 import (
 	"testing"
 
-	"github.com/cirobispo/sandbox/internal/common/gaming/game"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	g := game.New(turn.New(turning.STA), false)
+	g := New(turn.New(turning.STA), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Game FINAL status: ( %d x %d )\n", scoreA, scoreB)

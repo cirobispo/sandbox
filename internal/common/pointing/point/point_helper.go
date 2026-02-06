@@ -35,12 +35,6 @@ var hitAce = []TestItem{
 var __longRallie = []TestItem{
 	TestItem{hit.NewIn()},
 	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
 }
 
 var hit__NetSameSide = []TestItem{
@@ -112,9 +106,12 @@ func AcePoint() TestBlock {
 	return TestBlock{Items: data}
 }
 
-func LongRallieOSPoint(subBlock TestBlock) TestBlock {
+func LongRallieOSPoint(hits int, subBlock TestBlock) TestBlock {
 	data := hitServInReturnIn
-	data = append(data, __longRallie...)
+	for hits > 0 {
+		data = append(data, __longRallie...)
+		hits--
+	}
 	data = append(data, subBlock.Items...)
 
 	return TestBlock{Items: data, Point: subBlock.Point}
