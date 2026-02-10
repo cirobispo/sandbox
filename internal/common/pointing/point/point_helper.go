@@ -24,7 +24,7 @@ var __winnerSameSide = []TestItem{
 }
 
 var __winnerOppositeSide = []TestItem{
-	TestItem{hit.NewIn()},
+	TestItem{hit.NewHitBackIn()},
 	TestItem{hit.NewWinner()},
 }
 
@@ -33,30 +33,30 @@ var hitAce = []TestItem{
 }
 
 var __longRallie = []TestItem{
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitBackIn()},
 }
 
 var hit__NetSameSide = []TestItem{
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewNet()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitNet()},
 }
 
 var hit__OutSameSide = []TestItem{
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewOut()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitOut()},
 }
 
 var hit__NetOppositeSide = []TestItem{
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewNet()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitNet()},
 }
 
 var hit__OutOppositeSide = []TestItem{
-	TestItem{hit.NewIn()},
-	TestItem{hit.NewOut()},
+	TestItem{hit.NewHitBackIn()},
+	TestItem{hit.NewHitOut()},
 }
 
 var doubleFault = []TestItem{

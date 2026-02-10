@@ -20,7 +20,7 @@ func newPoint(side turning.SideTurn) Point {
 
 func TestEverySinglePoint(tt *testing.T) {
 	everyHit := []hit.Hit{hit.NewAce(), hit.NewFootFault(), hit.NewServeOut(),
-		hit.NewIn(), hit.NewMiss(), hit.NewNet(), hit.NewOut(), hit.NewReturnIn(),
+		hit.NewHitBackIn(), hit.NewMiss(), hit.NewHitNet(), hit.NewHitOut(), hit.NewReturnIn(),
 		hit.NewReturnNet(), hit.NewReturnOut(), hit.NewServeNet(), hit.NewServeIn(),
 		hit.NewServeLet(), hit.NewWinner(), hit.NewToast(), hit.NewNetTouch(),
 	}
@@ -43,7 +43,7 @@ func TestEverySinglePoint(tt *testing.T) {
 			isSameSide := (pointSide == pointing.PSStartingSide && hitSide == hitting.HTDSameSide)
 			isOppositeSide := (pointSide == pointing.PSOppositeSide && hitSide == hitting.HTDOppositeSide)
 			if isSameSide || isOppositeSide {
-				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.HitCount(), p.BallLastSide(), hit.Type(), hit.Side(), p.PointSide())
+				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Count(), p.Turn().LastSide(), hit.Type(), hit.Side(), p.PointSide())
 			}
 		} else {
 			if hitSide == hitting.HTDConditional {
@@ -67,7 +67,7 @@ func showPoints(tt *testing.T, points []Point) {
 				os++
 			}
 
-			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.HitCount(), p.BallLastSide(), p.PointSide(), ss, os)
+			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Count(), p.Turn().LastSide(), p.PointSide(), ss, os)
 		}
 	}
 }

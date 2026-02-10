@@ -21,11 +21,12 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 
 	for i := range blocks {
 		block := blocks[i]
-		p := point.New(turn.New(turning.STA))
+		tn := turn.New(turning.STA)
+		p := point.New(tn)
 
 		for j := range block.Items {
 			item := block.Items[j]
-			t.Logf("side %s hits %s, ", p.BallLastSide(), item.Value.Type())
+			t.Logf("side %s hits %s, ", tn.LastSide().String(), item.Value.Type())
 			p.AddHit(item.Value)
 		}
 		t.Log()

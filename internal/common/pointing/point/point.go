@@ -6,13 +6,13 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
-	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 type Point struct {
 	ballSide          *turn.Turn
 	hits              *[]hitting.Hitting
+	done              bool
 	onAfterScoreEvent *[]pointing.OnPointScore
 }
 
@@ -22,6 +22,7 @@ func New(sideControl *turn.Turn) Point {
 	return Point{
 		ballSide:          sideControl,
 		hits:              &hit,
+		done:              false,
 		onAfterScoreEvent: &events,
 	}
 }
@@ -48,7 +49,7 @@ func hasDoubleFault(hits *[]hitting.Hitting) bool {
 	return result
 }
 
-func (p *Point) AddOnBeforeScore(callback pointing.OnPointScore) {
+func (p *Point) AddOnAfterScore(callback pointing.OnPointScore) {
 	*p.onAfterScoreEvent = append(*p.onAfterScoreEvent, callback)
 }
 
@@ -59,57 +60,53 @@ func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide) {
 	}
 }
 
-func (p *Point) AddHit(h hitting.Hitting) hit.Hit {
-	//prevent adding new hit after pointing has been met
-	if p.PointSide() != pointing.PSNone {
-		lastHit := (*p.hits)[len(*p.hits)-1]
-		return hit.New(lastHit.Type(), lastHit.Side())
+func (p Point) Turn() turn.Turn {
+	return *p.ballSide
+}
+
+func (p *Point) AddHit(h hitting.Hitting) {
+	if p.done {
+		return
 	}
 
 	*p.hits = append(*p.hits, h)
 
-	result := hit.New(h.Type(), h.Side())
-	ballInPlay := (result.Side() == hitting.HTDNone || result.Side() == hitting.HTDChangeSide)
-	if !ballInPlay {
-		if result.Side() == hitting.HTDConditional {
-			if !hasDoubleFault(p.hits) {
-				return hit.New(h.Type(), h.Side())
-			}
-			result = hit.NewDoubleFault()
-		}
-
-		p.executeOnScore(result.Type(), result.Side())
-	} else {
+	ballInPlay := (h.Side() == hitting.HTDNone || h.Side() == hitting.HTDChangeSide)
+	if ballInPlay {
 		p.ballSide.Execute()
+		return
+	}
+
+	if h.Side() == hitting.HTDConditional && !hasDoubleFault(p.hits) {
+		return
+	}
+
+	p.done = true
+	p.executeOnScore(h.Type(), h.Side())
+}
+
+func (p Point) Hits() []hit.Hit {
+	result := make([]hit.Hit, 0, len(*p.hits))
+	for j := range *p.hits {
+		item := (*p.hits)[j]
+		result = append(result, hit.New(item.Type(), item.Side()))
 	}
 
 	return result
 }
 
-func (p Point) HitCount() int {
+func (p Point) Count() int {
 	result := len(*p.hits)
 	return result
 }
 
 func (p Point) LastHit() (hitting.HitType, error) {
-	hitCount := p.HitCount()
+	hitCount := p.Count()
 	if hitCount == 0 {
 		return hitting.HTDoubleFault, fmt.Errorf("no hit found.")
 	}
 
 	return (*p.hits)[hitCount-1].Type(), nil
-}
-
-func HitSide2PointSide(s hitting.HitSide) pointing.PointSide {
-	switch s {
-	case hitting.HTDSameSide:
-		return pointing.PSStartingSide
-	case hitting.HTDOppositeSide:
-		return pointing.PSOppositeSide
-	default:
-		return pointing.PSNone
-	}
-
 }
 
 func (p Point) PointSide() pointing.PointSide {
@@ -136,10 +133,25 @@ func (p Point) PointSide() pointing.PointSide {
 	}
 }
 
-func (p Point) BallStartingSide() turning.SideTurn {
-	return p.ballSide.StartSide()
+func (p Point) Finished() bool {
+	return p.done
 }
 
-func (p Point) BallLastSide() turning.SideTurn {
-	return p.ballSide.LastSide()
+func HitSide2PointSide(s hitting.HitSide) pointing.PointSide {
+	switch s {
+	case hitting.HTDSameSide:
+		return pointing.PSStartingSide
+	case hitting.HTDOppositeSide:
+		return pointing.PSOppositeSide
+	default:
+		return pointing.PSNone
+	}
 }
+
+// func (p Point) BallStartingSide() turning.SideTurn {
+// 	return p.ballSide.StartSide()
+// }
+
+// func (p Point) BallLastSide() turning.SideTurn {
+// 	return p.ballSide.LastSide()
+// }
