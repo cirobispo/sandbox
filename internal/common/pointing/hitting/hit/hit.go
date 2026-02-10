@@ -94,14 +94,14 @@ func NewDoubleFault() Hit {
 	}
 }
 
-func NewNet() Hit {
+func NewHitNet() Hit {
 	return Hit{
 		pointType: hitting.HTNet,
 		side:      hitting.HTDOppositeSide,
 	}
 }
 
-func NewIn() Hit {
+func NewHitBackIn() Hit {
 	return Hit{
 		pointType: hitting.HTIn,
 		side:      hitting.HTDChangeSide,
@@ -115,7 +115,7 @@ func NewWinner() Hit {
 	}
 }
 
-func NewOut() Hit {
+func NewHitOut() Hit {
 	return Hit{
 		pointType: hitting.HTOut,
 		side:      hitting.HTDOppositeSide,
