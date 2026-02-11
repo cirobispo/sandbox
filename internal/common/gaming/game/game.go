@@ -29,13 +29,6 @@ func (g *Game) AddOnAddingPointEvent(event gaming.OnAfterAddingPoint) {
 	g.onAddingPointEvent = append(g.onAddingPointEvent, event)
 }
 
-func (g *Game) executeOnAfterAddingPoint(scoreA, scoreB int, done bool) {
-	for j := range g.onAddingPointEvent {
-		event := g.onAddingPointEvent[j]
-		event(scoreA, scoreB, done)
-	}
-}
-
 func (g *Game) AddPoint(p point.Point) {
 	g.points = append(g.points, p)
 	g.score.AddPoint(p)
@@ -53,4 +46,11 @@ func (g Game) Score() gamescore.GameScore {
 
 func (g Game) NewTurn() *turn.Turn {
 	return g.turn.Clone(g.turn.LastSide())
+}
+
+func (g Game) executeOnAfterAddingPoint(scoreA, scoreB int, done bool) {
+	for j := range g.onAddingPointEvent {
+		event := g.onAddingPointEvent[j]
+		event(scoreA, scoreB, done)
+	}
 }
