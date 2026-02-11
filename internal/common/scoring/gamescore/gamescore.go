@@ -59,7 +59,7 @@ func (gs GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 
 func (gs *GameScore) AddPoint(p point.Point) {
 	if !gs.Done() { // verify only it still acepting more points.
-		if who := p.PointSide(); who != pointing.PSNone {
+		if who := p.Side(); who != pointing.PSNone {
 			incr := 1
 			sA, sB := gs.getScores()
 			sideToAdd := sA

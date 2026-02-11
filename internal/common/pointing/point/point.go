@@ -20,9 +20,9 @@ func New(sideControl *turn.Turn) Point {
 	hit := make([]hitting.Hitting, 0, 3)
 	events := make([]pointing.OnPointScore, 0)
 	return Point{
+		done:              false,
 		ballSide:          sideControl,
 		hits:              &hit,
-		done:              false,
 		onAfterScoreEvent: &events,
 	}
 }
@@ -49,19 +49,15 @@ func hasDoubleFault(hits *[]hitting.Hitting) bool {
 	return result
 }
 
-func (p *Point) AddOnAfterScore(callback pointing.OnPointScore) {
-	*p.onAfterScoreEvent = append(*p.onAfterScoreEvent, callback)
-}
-
-func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide) {
+func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide, done bool) {
 	for i := range *p.onAfterScoreEvent {
 		event := (*p.onAfterScoreEvent)[i]
-		event(hitType, side)
+		event(hitType, side, done)
 	}
 }
 
-func (p Point) Turn() turn.Turn {
-	return *p.ballSide
+func (p *Point) AddOnAfterScore(callback pointing.OnPointScore) {
+	*p.onAfterScoreEvent = append(*p.onAfterScoreEvent, callback)
 }
 
 func (p *Point) AddHit(h hitting.Hitting) {
@@ -82,7 +78,7 @@ func (p *Point) AddHit(h hitting.Hitting) {
 	}
 
 	p.done = true
-	p.executeOnScore(h.Type(), h.Side())
+	p.executeOnScore(h.Type(), h.Side(), p.done)
 }
 
 func (p Point) Hits() []hit.Hit {
@@ -95,13 +91,13 @@ func (p Point) Hits() []hit.Hit {
 	return result
 }
 
-func (p Point) Count() int {
+func (p Point) Length() int {
 	result := len(*p.hits)
 	return result
 }
 
 func (p Point) LastHit() (hitting.HitType, error) {
-	hitCount := p.Count()
+	hitCount := p.Length()
 	if hitCount == 0 {
 		return hitting.HTDoubleFault, fmt.Errorf("no hit found.")
 	}
@@ -109,13 +105,16 @@ func (p Point) LastHit() (hitting.HitType, error) {
 	return (*p.hits)[hitCount-1].Type(), nil
 }
 
-func (p Point) PointSide() pointing.PointSide {
-	hitCount := len(*p.hits)
-	if hitCount < 1 {
+func (p Point) Turn() turn.Turn {
+	return *p.ballSide
+}
+
+func (p Point) Side() pointing.PointSide {
+	if !p.Finished() {
 		return pointing.PSNone
 	}
 
-	lastHit := (*p.hits)[hitCount-1]
+	lastHit := (*p.hits)[len(*p.hits)-1]
 	isDoubleFault := (lastHit.Side() == hitting.HTDConditional && hasDoubleFault(p.hits))
 	isOrdinaryPoint := (lastHit.Side() == hitting.HTDSameSide || lastHit.Side() == hitting.HTDOppositeSide)
 	if !isOrdinaryPoint && !isDoubleFault {
@@ -147,11 +146,3 @@ func HitSide2PointSide(s hitting.HitSide) pointing.PointSide {
 		return pointing.PSNone
 	}
 }
-
-// func (p Point) BallStartingSide() turning.SideTurn {
-// 	return p.ballSide.StartSide()
-// }
-
-// func (p Point) BallLastSide() turning.SideTurn {
-// 	return p.ballSide.LastSide()
-// }

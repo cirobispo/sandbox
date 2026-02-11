@@ -30,24 +30,24 @@ func TestEverySinglePoint(tt *testing.T) {
 	points = append(points, p)
 
 	for i := range everyHit {
-		if p.PointSide() != pointing.PSNone {
+		if p.Side() != pointing.PSNone {
 			p = newPoint(turning.STB)
 			points = append(points, p)
 		}
 
 		hit := everyHit[i]
 		p.AddHit(hit)
-		pointSide := p.PointSide()
+		pointSide := p.Side()
 		hitSide := hit.Side()
 		if hitSide == hitting.HTDSameSide || hitSide == hitting.HTDOppositeSide {
 			isSameSide := (pointSide == pointing.PSStartingSide && hitSide == hitting.HTDSameSide)
 			isOppositeSide := (pointSide == pointing.PSOppositeSide && hitSide == hitting.HTDOppositeSide)
 			if isSameSide || isOppositeSide {
-				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Count(), p.Turn().LastSide(), hit.Type(), hit.Side(), p.PointSide())
+				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Length(), p.Turn().LastSide(), hit.Type(), hit.Side(), p.Side())
 			}
 		} else {
 			if hitSide == hitting.HTDConditional {
-				tt.Logf("point type is %s (%s), point side is %s\n", hit.Type(), hit.Side(), p.PointSide())
+				tt.Logf("point type is %s (%s), point side is %s\n", hit.Type(), hit.Side(), p.Side())
 			}
 		}
 	}
@@ -60,14 +60,14 @@ func showPoints(tt *testing.T, points []Point) {
 
 	for j := range points {
 		p := (points)[j]
-		if side := p.PointSide(); side != pointing.PSNone {
+		if side := p.Side(); side != pointing.PSNone {
 			ss++
 			if side == pointing.PSOppositeSide {
 				ss--
 				os++
 			}
 
-			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Count(), p.Turn().LastSide(), p.PointSide(), ss, os)
+			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Length(), p.Turn().LastSide(), p.Side(), ss, os)
 		}
 	}
 }

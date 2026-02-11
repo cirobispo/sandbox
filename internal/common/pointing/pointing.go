@@ -2,14 +2,14 @@ package pointing
 
 import "github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 
-type OnPointScore func(hit hitting.HitType, side hitting.HitSide)
+type OnPointScore func(hit hitting.HitType, side hitting.HitSide, done bool)
 
 type PointSide int
 
 const (
-	PSStartingSide PointSide = 0
-	PSOppositeSide PointSide = 1
-	PSNone         PointSide = 2
+	PSStartingSide PointSide = 1
+	PSOppositeSide PointSide = 2
+	PSNone         PointSide = 0
 )
 
 func (s PointSide) String() string {
