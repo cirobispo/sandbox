@@ -1,7 +1,7 @@
 package point
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
@@ -49,13 +49,6 @@ func hasDoubleFault(hits *[]hitting.Hitting) bool {
 	return result
 }
 
-func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide, done bool) {
-	for i := range *p.onAfterScoreEvent {
-		event := (*p.onAfterScoreEvent)[i]
-		event(hitType, side, done)
-	}
-}
-
 func (p *Point) AddOnAfterScore(callback pointing.OnPointScore) {
 	*p.onAfterScoreEvent = append(*p.onAfterScoreEvent, callback)
 }
@@ -99,13 +92,13 @@ func (p Point) Length() int {
 func (p Point) LastHit() (hitting.HitType, error) {
 	hitCount := p.Length()
 	if hitCount == 0 {
-		return hitting.HTDoubleFault, fmt.Errorf("no hit found.")
+		return hitting.HTDoubleFault, errors.New("no hit found.")
 	}
 
 	return (*p.hits)[hitCount-1].Type(), nil
 }
 
-func (p Point) Turn() turn.Turn {
+func (p Point) Ball() turn.Turn {
 	return *p.ballSide
 }
 
@@ -134,6 +127,13 @@ func (p Point) Side() pointing.PointSide {
 
 func (p Point) Finished() bool {
 	return p.done
+}
+
+func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide, done bool) {
+	for i := range *p.onAfterScoreEvent {
+		event := (*p.onAfterScoreEvent)[i]
+		event(hitType, side, done)
+	}
 }
 
 func HitSide2PointSide(s hitting.HitSide) pointing.PointSide {
