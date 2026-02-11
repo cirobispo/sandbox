@@ -13,6 +13,14 @@ type Turn struct {
 	onAfterChangeEvent  []turning.OnChange
 }
 
+func (t *Turn) AddOnBeforeChange(callback turning.OnChange) {
+	t.onBeforeChangeEvent = append(t.onBeforeChangeEvent, callback)
+}
+
+func (t *Turn) AddOnAfterChange(callback turning.OnChange) {
+	t.onAfterChangeEvent = append(t.onAfterChangeEvent, callback)
+}
+
 func (t *Turn) Execute() {
 	t.executeOnChange(t.onBeforeChangeEvent)
 
@@ -28,7 +36,17 @@ func (t *Turn) Execute() {
 	t.executeOnChange(t.onAfterChangeEvent)
 }
 
-func (t *Turn) Clone(start turning.SideTurn) *Turn {
+func (t Turn) StartSide() turning.SideTurn {
+	result, _ := GetData[turning.SideTurn](&t, "startSide")
+	return result
+}
+
+func (t Turn) LastSide() turning.SideTurn {
+	result, _ := GetData[turning.SideTurn](&t, "currentSide")
+	return result
+}
+
+func (t Turn) Clone(start turning.SideTurn) *Turn {
 	result := New(start)
 	dataCount, dataAdded := len(t.data)-2, 0
 
@@ -45,30 +63,8 @@ func (t *Turn) Clone(start turning.SideTurn) *Turn {
 	return result
 }
 
-func (t *Turn) GetAllData() map[string]any {
-	return t.data
-}
-
-func (t Turn) StartSide() turning.SideTurn {
-	result, _ := GetData[turning.SideTurn](&t, "startSide")
-	return result
-}
-
-func (t Turn) LastSide() turning.SideTurn {
-	result, _ := GetData[turning.SideTurn](&t, "currentSide")
-	return result
-}
-
-func (t *Turn) AddOnBeforeChange(callback turning.OnChange) {
-	t.onBeforeChangeEvent = append(t.onBeforeChangeEvent, callback)
-}
-
-func (t *Turn) AddOnAfterChange(callback turning.OnChange) {
-	t.onAfterChangeEvent = append(t.onAfterChangeEvent, callback)
-}
-
-func (t *Turn) executeOnChange(list []turning.OnChange) {
-	currentSide, _ := GetData[turning.SideTurn](t, "currentSide")
+func (t Turn) executeOnChange(list []turning.OnChange) {
+	currentSide, _ := GetData[turning.SideTurn](&t, "currentSide")
 	for i := range list {
 		event := list[i]
 		event(currentSide)
@@ -91,7 +87,7 @@ func New(start turning.SideTurn) *Turn {
 func AddData[V any](t *Turn, id string, data V) (bool, error) {
 	_, f := t.data[id]
 	if !f {
-		t.GetAllData()[id] = data
+		t.data[id] = data
 		return true, nil
 	}
 
@@ -101,7 +97,7 @@ func AddData[V any](t *Turn, id string, data V) (bool, error) {
 func UpdateData[V any](t *Turn, id string, data V) (bool, error) {
 	_, f := t.data[id]
 	if f {
-		t.GetAllData()[id] = data
+		t.data[id] = data
 		return true, nil
 	}
 
@@ -109,7 +105,7 @@ func UpdateData[V any](t *Turn, id string, data V) (bool, error) {
 }
 
 func GetData[V any](t *Turn, id string) (V, bool) {
-	data, found := t.GetAllData()[id]
+	data, found := t.data[id]
 
 	var result V
 	if found {
