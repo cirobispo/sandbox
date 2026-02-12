@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
@@ -11,12 +12,13 @@ import (
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	score := New(turning.STA, false)
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
+		a, b := scoring.Score2GameText(scoreA, scoreB)
 		if done {
-			t.Logf("Game FINAL status: ( %d x %d )\n", scoreA, scoreB)
+			t.Logf("Game FINAL status: ( %s x %s )\n", a, b)
 			return
 		}
 
-		t.Logf("Game status: ( %d x %d )\n", scoreA, scoreB)
+		t.Logf("Game status: ( %s x %s )\n", a, b)
 	})
 
 	t.Log("Game status: ( 0 x 0 )")
