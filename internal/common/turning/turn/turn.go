@@ -1,13 +1,22 @@
 package turn
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
+type mapData struct {
+	value any
+	reset func() any
+}
+
+func NewMapData[V any](value V, callBack func() any) mapData {
+	return mapData{value: value, reset: callBack}
+}
+
 type Turn struct {
-	data map[string]any
+	data map[string]mapData
 
 	onBeforeChangeEvent []turning.OnChange
 	onAfterChangeEvent  []turning.OnChange
@@ -52,12 +61,13 @@ func (t Turn) Clone(start turning.SideTurn) *Turn {
 
 	for k, v := range t.data {
 		if f, _ := AddData(result, k, v); f {
+			UpdateData(result, k, v.reset())
 			dataAdded++
 		}
 	}
 
 	if dataAdded != dataCount {
-		panic(fmt.Errorf("data added to clone turn does not match."))
+		panic(errors.New("data added to clone turn does not match."))
 	}
 
 	return result
@@ -73,35 +83,37 @@ func (t Turn) executeOnChange(list []turning.OnChange) {
 
 func New(start turning.SideTurn) *Turn {
 	result := &Turn{
-		data:                make(map[string]any),
+		data:                make(map[string]mapData),
 		onBeforeChangeEvent: make([]turning.OnChange, 0),
 		onAfterChangeEvent:  make([]turning.OnChange, 0),
 	}
 
-	AddData(result, "startSide", start)
-	AddData(result, "currentSide", start)
+	startSide := NewMapData(start, func() any { return start })
+	currentSide := NewMapData(start, func() any { return start })
+	AddData(result, "startSide", startSide)
+	AddData(result, "currentSide", currentSide)
 
 	return result
 }
 
-func AddData[V any](t *Turn, id string, data V) (bool, error) {
+func AddData(t *Turn, id string, data mapData) (bool, error) {
 	_, f := t.data[id]
 	if !f {
 		t.data[id] = data
 		return true, nil
 	}
 
-	return false, fmt.Errorf("%s exists.", id)
+	return false, errors.New("id not found.")
 }
 
 func UpdateData[V any](t *Turn, id string, data V) (bool, error) {
-	_, f := t.data[id]
+	d, f := t.data[id]
 	if f {
-		t.data[id] = data
+		t.data[id] = NewMapData[V](data, d.reset)
 		return true, nil
 	}
 
-	return false, fmt.Errorf("%s not found.", id)
+	return false, errors.New("id not found.")
 }
 
 func GetData[V any](t *Turn, id string) (V, bool) {
@@ -109,7 +121,7 @@ func GetData[V any](t *Turn, id string) (V, bool) {
 
 	var result V
 	if found {
-		result = data.(V)
+		result = data.value.(V)
 	}
 
 	return result, found

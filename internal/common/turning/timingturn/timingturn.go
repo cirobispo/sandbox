@@ -13,14 +13,15 @@ type TimedTurning interface {
 }
 
 func newFromTurn(t *turn.Turn) *turn.Turn {
-	turn.AddData[time.Time](t, "start", time.Now())
+	turn.AddData(t, "startTiming", turn.NewMapData(time.Now(), func() any { return time.Now() }))
+	turn.AddData(t, "duration", turn.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
 	result := t
 
 	result.AddOnAfterChange(func(st turning.SideTurn) {
-		start, _ := turn.GetData[time.Time](t, "start")
+		start, _ := turn.GetData[time.Time](t, "startTiming")
 		duration := time.Since(start)
 
-		turn.AddData[time.Duration](t, "duration", duration)
+		turn.UpdateData(t, "duration", duration)
 	})
 
 	return result
