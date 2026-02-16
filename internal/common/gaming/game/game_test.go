@@ -4,19 +4,29 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
+	"github.com/cirobispo/sandbox/internal/common/turning/countingturn"
+	"github.com/cirobispo/sandbox/internal/common/turning/timingturn"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	g := New(turn.New(turning.STA), false)
+	g := New(countingturn.NewFromTurn(timingturn.NewFromTurn(turn.New(turning.STA))), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
+		tA, tB := scoring.Score2GameText(scoreA, scoreB)
 		if done {
-			t.Logf("Game FINAL status: ( %d x %d )\n", scoreA, scoreB)
+			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
+			t.Logf("Duration: %v\n", timingturn.Duration(g.turn))
+			t.Logf("Hits    : %v\n", countingturn.GetCount(g.turn))
+			t.Log()
 			return
 		}
 
-		t.Logf("Game status: ( %d x %d )\n", scoreA, scoreB)
+		t.Logf("Game status: ( %v x %v )\n", tA, tB)
+		t.Logf("Duration: %v\n", timingturn.Duration(g.turn))
+		t.Logf("Hits    : %v\n", countingturn.GetCount(g.turn))
+		t.Log()
 	})
 
 	for i := range blocks {
@@ -26,10 +36,9 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 
 		for j := range block.Items {
 			item := block.Items[j]
-			t.Logf("side %s hits %s, ", tn.LastSide().String(), item.Value.Type())
+			t.Logf("%s hits %s, ", tn.LastSide().String(), item.Value.Type())
 			p.AddHit(item.Value)
 		}
-		t.Log()
 
 		g.AddPoint(p)
 	}
@@ -41,12 +50,15 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 }
 
 func TestGameToServer_Game40(t *testing.T) {
-	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
-		point.WinnerOSPoint(), point.WinnerOSPoint(), point.DoubleFault(),
-		// point.LongRallieOSPoint(point.NetOppositeSide(true)),
+	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(),
+		point.WinnerOSPoint(), point.WinnerOSPoint(), point.WinnerOSPoint(), point.WinnerOSPoint(),
+		// point.DoubleFault(),
+		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
+		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
+		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
 	}
 
-	runTest(blocks, 4, 4, t)
+	runTest(blocks, 4, 3, t)
 }
 
 /**
