@@ -5,6 +5,7 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
@@ -81,14 +82,18 @@ func (gs *GameScore) AddPoint(p point.Point) {
 	}
 }
 
-func (gs GameScore) Result() (int, int) {
-	a, b := gs.getScores()
-	return *a, *b
-}
-
 func (gs GameScore) Done() bool {
 	sA, sB := gs.Result()
 	result := (gs.decidingPoint && (sA > 3 || sB > 3)) ||
 		(!gs.decidingPoint && (sA > 3 || sB > 3) && (math.Abs(float64(sA-sB)) > 1))
 	return result
+}
+
+func (gs GameScore) Result() (int, int) {
+	a, b := gs.getScores()
+	return *a, *b
+}
+
+func (gs GameScore) Side() scoring.ScoringSide {
+	return scoring.Side(gs)
 }

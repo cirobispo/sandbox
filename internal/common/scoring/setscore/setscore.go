@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
+	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
@@ -38,14 +39,6 @@ func (ss *SetScore) getScores() (*int, *int) {
 	return sA, sB
 }
 
-func (ss *SetScore) inverseScore(side *int) *int {
-	sA, sB := ss.getScores()
-	if side == sA {
-		return sB
-	}
-	return sA
-}
-
 func (ss *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
 	ss.onAfterScoreEvent = append(ss.onAfterScoreEvent, event)
 }
@@ -58,19 +51,20 @@ func (ss SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	}
 }
 
+// func (ss SetScore)
+
 func (ss *SetScore) AddGame(g *game.Game) {
-	if ss.Done() { // am I acepting more points?
+	if ss.Done() || !g.Score().Done() { // am I acepting more points?
 		return
 	}
 
 	sA, sB := ss.getScores()
 	sideToAdd := sA
 
-	if (!ss.decidingSet) && (*sA > ss.setSize || *sB > ss.setSize) {
-		if *sideToAdd == 5 {
-			sideToAdd = ss.inverseScore(sideToAdd)
-		}
+	if g.Score().Side() == scoring.SSB {
+		sideToAdd = sB
 	}
+
 	*sideToAdd += 1
 	ss.executeOnAfterScoreEvent(ss.scoreA, ss.scoreB)
 }
@@ -92,4 +86,8 @@ func (ss SetScore) isTieBreak() bool {
 	result := (sA == ss.setSize && sB == ss.setSize)
 
 	return result
+}
+
+func (ss SetScore) Side() scoring.ScoringSide {
+	return scoring.Side(ss)
 }

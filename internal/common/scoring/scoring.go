@@ -1,5 +1,31 @@
 package scoring
 
+type ScoringSide int
+
+const (
+	SSNone ScoringSide = 0
+	SSA    ScoringSide = 1
+	SSB    ScoringSide = 2
+)
+
+type Scoring interface {
+	Done() bool
+	Result() (int, int)
+	Side() ScoringSide
+}
+
+func Side(ss Scoring) ScoringSide {
+	if !ss.Done() {
+		return SSNone
+	}
+
+	if a, b := ss.Result(); b > a {
+		return SSB
+	}
+
+	return SSA
+}
+
 func Score2GameText(scoreA, scoreB int) (string, string) {
 	getText := func(score int) string {
 		switch score {
