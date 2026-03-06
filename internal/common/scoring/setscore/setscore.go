@@ -1,38 +1,66 @@
 package setscore
 
 import (
-	"math"
-
-	"github.com/cirobispo/sandbox/internal/common/gaming/game"
 	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
 type OnSetScore func(scoreA, scoreB int, isTieBreak, done bool)
+type ParamOption func(score *SetScore)
 
 type SetScore struct {
-	startSide      turning.SideTurn
-	setSize        int
-	decidingSet    bool
-	scoreA, scoreB int
+	sideToBegin      turning.SideTurn
+	maxEven          int
+	confirmationSize int
+	scoreA, scoreB   int
 
 	onAfterScoreEvent []OnSetScore
 }
 
-func New(startSide turning.SideTurn, decidingSet bool) SetScore {
-	return SetScore{
-		startSide:         startSide,
-		setSize:           6,
-		decidingSet:       decidingSet,
+func WithDefaultSet(sideToBegin turning.SideTurn) ParamOption {
+	return func(score *SetScore) {
+		score.sideToBegin = sideToBegin
+		score.maxEven = 6
+		score.confirmationSize = 2
+	}
+}
+
+func WithSideSizeAndTieBreak(sideToBegin turning.SideTurn, size int, decidingGame, tieBreakForLastEven bool) ParamOption {
+	return func(score *SetScore) {
+		score.sideToBegin = sideToBegin
+		score.maxEven = size
+		score.confirmationSize = 2
+		if decidingGame {
+			score.confirmationSize--
+		}
+	}
+}
+
+func New(param ParamOption) SetScore {
+	result := SetScore{
 		scoreA:            0,
 		scoreB:            0,
 		onAfterScoreEvent: make([]OnSetScore, 0),
+	}
+
+	if param != nil {
+		param(&result)
+	}
+
+	return result
+}
+
+func (ss SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
+	done, isTieBreak := ss.Done(), ss.IsTieBreak()
+	for i := range ss.onAfterScoreEvent {
+		event := ss.onAfterScoreEvent[i]
+		event(scoreA, scoreB, isTieBreak, done)
 	}
 }
 
 func (ss *SetScore) getScores() (*int, *int) {
 	sA, sB := &ss.scoreA, &ss.scoreB
-	if ss.startSide == turning.STB {
+	if ss.sideToBegin == turning.STB {
 		sA, sB = &ss.scoreB, &ss.scoreA
 	}
 
@@ -43,25 +71,15 @@ func (ss *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
 	ss.onAfterScoreEvent = append(ss.onAfterScoreEvent, event)
 }
 
-func (ss SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	done, isTieBreak := ss.Done(), ss.isTieBreak()
-	for i := range ss.onAfterScoreEvent {
-		event := ss.onAfterScoreEvent[i]
-		event(scoreA, scoreB, isTieBreak, done)
-	}
-}
-
-// func (ss SetScore)
-
-func (ss *SetScore) AddGame(g *game.Game) {
-	if ss.Done() || !g.Score().Done() { // am I acepting more points?
+func (ss *SetScore) AddGameScore(score scoring.Scoring) {
+	if ss.Done() || !score.Done() { // am I acepting more points?
 		return
 	}
 
 	sA, sB := ss.getScores()
 	sideToAdd := sA
 
-	if g.Score().Side() == scoring.SSB {
+	if score.Side() == scoring.SSB {
 		sideToAdd = sB
 	}
 
@@ -76,14 +94,18 @@ func (ss SetScore) Result() (int, int) {
 
 func (ss SetScore) Done() bool {
 	sA, sB := ss.Result()
-	result := (ss.decidingSet && (sA >= ss.setSize || sB >= ss.setSize)) ||
-		(!ss.decidingSet && (sA >= ss.setSize || sB >= ss.setSize) && (math.Abs(float64(sA-sB)) > 1))
+
+	sideAWins := (sA >= ss.maxEven && sA-sB >= ss.confirmationSize)
+	sideBWins := (sB >= ss.maxEven && sB-sA >= ss.confirmationSize)
+	result := sideAWins || sideBWins
+
 	return result
 }
 
-func (ss SetScore) isTieBreak() bool {
+func (ss SetScore) IsTieBreak() bool {
 	sA, sB := ss.Result()
-	result := (sA == ss.setSize && sB == ss.setSize)
+
+	result := (sA >= ss.maxEven && sB >= ss.maxEven)
 
 	return result
 }
