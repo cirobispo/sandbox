@@ -95,8 +95,13 @@ func (ss SetScore) Result() (int, int) {
 func (ss SetScore) Done() bool {
 	sA, sB := ss.Result()
 
-	sideAWins := (sA >= ss.maxEven && sA-sB >= ss.confirmationSize)
-	sideBWins := (sB >= ss.maxEven && sB-sA >= ss.confirmationSize)
+	diff := ss.confirmationSize
+	if sA > ss.maxEven || sB > ss.maxEven {
+		diff = 1
+	}
+
+	sideAWins := (sA >= ss.maxEven && sA-sB >= diff)
+	sideBWins := (sB >= ss.maxEven && sB-sA >= diff)
 	result := sideAWins || sideBWins
 
 	return result
@@ -104,8 +109,11 @@ func (ss SetScore) Done() bool {
 
 func (ss SetScore) IsTieBreak() bool {
 	sA, sB := ss.Result()
-
-	result := (sA >= ss.maxEven && sB >= ss.maxEven)
+	tie := ss.maxEven
+	if ss.confirmationSize == 1 {
+		tie = ss.maxEven - 1
+	}
+	result := (sA >= tie && sB >= tie)
 
 	return result
 }

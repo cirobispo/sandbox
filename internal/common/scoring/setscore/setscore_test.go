@@ -38,7 +38,13 @@ func runTest(custom bool, results []scoring.Scoring, SideA, SideB int, t *testin
 	}
 
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, isTieBreak, done bool) {
-		if isTieBreak || done {
+		if isTieBreak && !done {
+			t.Logf("TieBreak (%d x %d)\n", scoreA, scoreB)
+		}
+	})
+
+	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, isTieBreak, done bool) {
+		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
 		}
 	})
@@ -113,6 +119,26 @@ func Test_Set_0x6(t *testing.T) {
 	}
 
 	runTest(false, scores, 0, 6, t)
+}
+
+func Test_Set_7x6(t *testing.T) {
+	scores := []scoring.Scoring{
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 0, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, // score{scoreA: 1, scoreB: 4},
+	}
+
+	runTest(false, scores, 7, 6, t)
 }
 
 func Test_Set_7x5(t *testing.T) {
