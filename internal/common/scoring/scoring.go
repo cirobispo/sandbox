@@ -8,10 +8,19 @@ const (
 	SSB    ScoringSide = 2
 )
 
+type ScoringType int
+
+const (
+	STGame  ScoringType = 0
+	STSet   ScoringType = 1
+	STMatch ScoringType = 2
+)
+
 type Scoring interface {
 	Done() bool
 	Result() (int, int)
 	Side() ScoringSide
+	Type() ScoringType
 }
 
 func Side(ss Scoring) ScoringSide {

@@ -27,6 +27,10 @@ func (s score) Side() scoring.ScoringSide {
 	return scoring.SSA
 }
 
+func (s score) Type() scoring.ScoringType {
+	return scoring.STSet
+}
+
 func runTest(custom bool, results []scoring.Scoring, SideA, SideB int, t *testing.T) {
 	score := New(WithDefaultSet(turning.STA))
 	if custom {
@@ -52,7 +56,7 @@ func runTest(custom bool, results []scoring.Scoring, SideA, SideB int, t *testin
 	t.Logf("Testing a result for a Set with %d games. Expected result (%d x %d)\n", len(results), SideA, SideB)
 	for j := range results {
 		item := results[j]
-		score.AddGameScore(item)
+		score.AddScore(item)
 	}
 
 	sA, sB := score.Result()
@@ -139,6 +143,27 @@ func Test_Set_7x6(t *testing.T) {
 	}
 
 	runTest(false, scores, 7, 6, t)
+}
+
+func Test_Set_6x7(t *testing.T) {
+	scores := []scoring.Scoring{
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 0, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
+
+		// score{scoreA: 4, scoreB: 0},
+		score{scoreA: 1, scoreB: 4},
+	}
+
+	runTest(false, scores, 6, 7, t)
 }
 
 func Test_Set_7x5(t *testing.T) {

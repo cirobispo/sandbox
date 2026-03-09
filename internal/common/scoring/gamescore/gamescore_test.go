@@ -11,6 +11,7 @@ import (
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	score := New(turning.STA, false)
+
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		a, b := scoring.Score2GameText(scoreA, scoreB)
 		if done {
@@ -19,6 +20,12 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 		}
 
 		t.Logf("Game status: ( %s x %s )\n", a, b)
+	})
+
+	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
+		if !done && (scoreB >= 3 && scoreA < scoreB) {
+			t.Logf("Break point: ( %v )\n", scoreB-scoreA)
+		}
 	})
 
 	t.Log("Game status: ( 0 x 0 )")

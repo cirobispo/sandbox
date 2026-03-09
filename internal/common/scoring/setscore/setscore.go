@@ -1,6 +1,8 @@
 package setscore
 
 import (
+	"errors"
+
 	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
@@ -71,9 +73,12 @@ func (ss *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
 	ss.onAfterScoreEvent = append(ss.onAfterScoreEvent, event)
 }
 
-func (ss *SetScore) AddGameScore(score scoring.Scoring) {
+func (ss *SetScore) AddScore(score scoring.Scoring) error {
+	if score.Type() != scoring.STSet {
+		return errors.New("This is not a score for set.")
+	}
 	if ss.Done() || !score.Done() { // am I acepting more points?
-		return
+		return errors.New("Score completed already.")
 	}
 
 	sA, sB := ss.getScores()
@@ -85,6 +90,7 @@ func (ss *SetScore) AddGameScore(score scoring.Scoring) {
 
 	*sideToAdd += 1
 	ss.executeOnAfterScoreEvent(ss.scoreA, ss.scoreB)
+	return nil
 }
 
 func (ss SetScore) Result() (int, int) {
@@ -120,4 +126,8 @@ func (ss SetScore) IsTieBreak() bool {
 
 func (ss SetScore) Side() scoring.ScoringSide {
 	return scoring.Side(ss)
+}
+
+func (s SetScore) Type() scoring.ScoringType {
+	return scoring.STSet
 }
