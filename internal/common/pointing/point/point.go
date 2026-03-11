@@ -129,6 +129,15 @@ func (p Point) Done() bool {
 	return p.done
 }
 
+func (p Point) Clone() Point {
+	result := New(p.ballSide.Clone(p.ballSide.StartSide()))
+	copy(*result.hits, *p.hits)
+	copy(*result.onAfterScoreEvent, *p.onAfterScoreEvent)
+	result.done = p.done
+
+	return result
+}
+
 func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide, done bool) {
 	for i := range *p.onAfterScoreEvent {
 		event := (*p.onAfterScoreEvent)[i]

@@ -1,8 +1,8 @@
 package gamescore
 
 import (
-	"github.com/cirobispo/sandbox/internal/common/pointing"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"errors"
+
 	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
@@ -56,28 +56,24 @@ func (g GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	}
 }
 
-func (g *GameScore) AddScore(p point.Point) {
-	if g.Done() { // verify only it still acepting more points.
-		return
+func (g *GameScore) AddScore(score scoring.Scoring) error {
+	if score.Type() != scoring.STPoint {
+		return errors.New("This is not a score for a point.")
+	}
+	if g.Done() || !score.Done() { // am I acepting more points?
+		return errors.New("Game completed already.")
 	}
 
-	if who := p.Side(); who != pointing.PSNone {
-		incr := 1
-		sA, sB := g.getScores()
-		sideToAdd := sA
-		if who == pointing.PSOppositeSide {
-			sideToAdd = sB
-		}
-
-		if (!g.decidingPoint) && (*sA > 3 || *sB > 3) {
-			if *sideToAdd == 3 {
-				incr = -1
-				sideToAdd = g.inverseScore(sideToAdd)
-			}
-		}
-		*sideToAdd += incr
-		g.executeOnAfterScoreEvent(g.scoreA, g.scoreB)
+	sA, sB := g.getScores()
+	sideToAdd := sA
+	if score.Side() == scoring.SSB {
+		sideToAdd = sB
 	}
+
+	*sideToAdd += 1
+
+	g.executeOnAfterScoreEvent(g.scoreA, g.scoreB)
+	return nil
 }
 
 func (g GameScore) Done() bool {
@@ -89,12 +85,9 @@ func (g GameScore) Done() bool {
 
 	AWins := sA >= 4 && (sA-sB) >= diff
 	BWins := sB >= 4 && (sB-sA) >= diff
-	// result := (g.decidingPoint && (sA > 3 || sB > 3)) ||
-	// 	(!g.decidingPoint && (sA > 3 || sB > 3) && (math.Abs(float64(sA-sB)) > 1))
-	//
+
 	result := AWins || BWins
 
-	//	fmt.Printf("AWins: %v, BWins: %v, ->Done: %v\n", AWins, BWins, result)
 	return result
 }
 

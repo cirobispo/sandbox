@@ -74,7 +74,7 @@ func (ss *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
 }
 
 func (ss *SetScore) AddScore(score scoring.Scoring) error {
-	if score.Type() != scoring.STSet {
+	if score.Type() != scoring.STGame {
 		return errors.New("This is not a score for set.")
 	}
 	if ss.Done() || !score.Done() { // am I acepting more points?

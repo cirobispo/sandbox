@@ -30,8 +30,8 @@ func (g *Game) AddOnAddingPointEvent(event gaming.OnAfterAddingPoint) {
 }
 
 func (g *Game) AddPoint(p point.Point) {
-	g.points = append(g.points, p)
-	g.score.AddScore(p)
+	g.points = append(g.points, p.Clone())
+	g.score.AddScore(gamescore.PointToScore(&p, g.decidingPoint))
 	g.turn.Execute()
 
 	scoreA, scoreB := g.score.Result()
