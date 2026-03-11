@@ -37,8 +37,7 @@ func (g *Game) AddPoint(p point.Point) error {
 	}
 
 	g.points = append(g.points, p.Clone())
-	scoreA, scoreB := g.score.Result()
-	scoreToAdd, error := gamescore.PointToScore(&p, scoreA, scoreB, g.decidingPoint)
+	scoreToAdd, error := gamescore.PointToScore(&p)
 
 	if error != nil {
 		return errors.New("point is still in play.")
@@ -47,7 +46,7 @@ func (g *Game) AddPoint(p point.Point) error {
 	g.score.AddScore(scoreToAdd)
 	g.turn.Execute()
 
-	scoreA, scoreB = g.score.Result()
+	scoreA, scoreB := g.score.Result()
 	done := g.score.Done()
 	g.executeOnAfterAddingPoint(scoreA, scoreB, done)
 	return nil

@@ -9,7 +9,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/scoring/pointscore"
 )
 
-func PointToScore(p *point.Point, scoreA, scoreB int, decidingPoint bool) (scoring.Scoring, error) {
+func PointToScore(p *point.Point) (scoring.Scoring, error) {
 	if !p.Done() {
 		return nil, errors.New("point is still in play.")
 	}
