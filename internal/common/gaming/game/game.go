@@ -1,6 +1,8 @@
 package game
 
 import (
+	"errors"
+
 	"github.com/cirobispo/sandbox/internal/common/gaming"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/scoring/gamescore"
@@ -29,15 +31,26 @@ func (g *Game) AddOnAddingPointEvent(event gaming.OnAfterAddingPoint) {
 	g.onAddingPointEvent = append(g.onAddingPointEvent, event)
 }
 
-func (g *Game) AddPoint(p point.Point) {
+func (g *Game) AddPoint(p point.Point) error {
+	if !p.Done() {
+		return errors.New("point is still in play.")
+	}
+
 	g.points = append(g.points, p.Clone())
 	scoreA, scoreB := g.score.Result()
-	g.score.AddScore(gamescore.PointToScore(&p, scoreA, scoreB, g.decidingPoint))
+	scoreToAdd, error := gamescore.PointToScore(&p, scoreA, scoreB, g.decidingPoint)
+
+	if error != nil {
+		return errors.New("point is still in play.")
+	}
+
+	g.score.AddScore(scoreToAdd)
 	g.turn.Execute()
 
 	scoreA, scoreB = g.score.Result()
 	done := g.score.Done()
 	g.executeOnAfterAddingPoint(scoreA, scoreB, done)
+	return nil
 }
 
 func (g Game) Score() gamescore.GameScore {

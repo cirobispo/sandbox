@@ -20,10 +20,10 @@ func (s score) Result() (int, int) {
 
 func (s score) Side() scoring.ScoringSide {
 	if s.scoreB > s.scoreA {
-		return scoring.SSB
+		return scoring.SSOpposite
 	}
 
-	return scoring.SSA
+	return scoring.SSServing
 }
 
 func (s score) Type() scoring.ScoringType {

@@ -148,9 +148,9 @@ func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide, don
 func HitSide2PointSide(s hitting.HitSide) pointing.PointSide {
 	switch s {
 	case hitting.HTDSameSide:
-		return pointing.PSStartingSide
+		return pointing.PSServing
 	case hitting.HTDOppositeSide:
-		return pointing.PSOppositeSide
+		return pointing.PSOpposite
 	default:
 		return pointing.PSNone
 	}

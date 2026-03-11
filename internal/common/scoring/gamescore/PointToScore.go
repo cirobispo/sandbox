@@ -1,31 +1,24 @@
 package gamescore
 
 import (
+	"errors"
+
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/scoring/pointscore"
 )
 
-func PointToScore(p *point.Point, scoreA, scoreB int, decidingPoint bool) scoring.Scoring {
-	result := pointscore.New()
-
-	if who := p.Side(); who != pointing.PSNone {
-		// incr := 1
-		// sideToAdd := scoreA
-		// if who == pointing.PSOppositeSide {
-		// 	sideToAdd = scoreB
-		// }
-
-		// sA, sB := result.Result()
-		// if (!decidingPoint) && (sA > 3 || sB > 3) {
-		// 	if sideToAdd == 3 {
-		// 		incr = -1
-		// 		sideToAdd = result.InverseScore(sideToAdd)
-		// 	}
-		// }
-		// *sideToAdd += incr
+func PointToScore(p *point.Point, scoreA, scoreB int, decidingPoint bool) (scoring.Scoring, error) {
+	if !p.Done() {
+		return nil, errors.New("point is still in play.")
 	}
 
-	return result
+	result := pointscore.New()
+	result.SetA()
+	if p.Side() == pointing.PSOpposite {
+		result.SetB()
+	}
+
+	return result, nil
 }

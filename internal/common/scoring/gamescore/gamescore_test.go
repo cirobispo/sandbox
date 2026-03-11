@@ -37,7 +37,11 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 			point.AddHit(hit)
 		}
 		a, b := score.Result()
-		score.AddScore(PointToScore(&point, a, b, false))
+		scoreToAdd, error := PointToScore(&point, a, b, false)
+		if error != nil {
+
+		}
+		score.AddScore(scoreToAdd)
 	}
 
 	a, b := score.Result()

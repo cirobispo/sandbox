@@ -16,10 +16,10 @@ func (p PointScore) Result() (int, int) {
 
 func (p PointScore) Side() scoring.ScoringSide {
 	if p.scoreB > p.scoreA {
-		return scoring.SSB
+		return scoring.SSOpposite
 	}
 
-	return scoring.SSA
+	return scoring.SSServing
 }
 
 func (p *PointScore) SetA() {
@@ -30,23 +30,21 @@ func (p *PointScore) SetB() {
 	p.scoreB, p.scoreA = 1, 0
 }
 
-func (p *PointScore) UnsetA() {
-	p.scoreA = 0
-}
-
-func (p *PointScore) UnsetB() {
-	p.scoreB = 0
+func (p *PointScore) Unset() {
+	p.scoreA, p.scoreB = 0, 0
 }
 
 func (p PointScore) Type() scoring.ScoringType {
 	return scoring.STPoint
 }
 
-func (p PointScore) InverseScore(callback func()) func() {
-	// if callback == p.UnsetA {
-	// 	return p.UnsetB
-	// }
-	return p.SetA
+func (p *PointScore) InverseScore() {
+	A, B := p.Result()
+	p.Unset()
+	if B > A {
+		p.SetA()
+	}
+	p.SetB()
 }
 
 func New() PointScore {

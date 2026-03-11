@@ -40,8 +40,8 @@ func TestEverySinglePoint(tt *testing.T) {
 		pointSide := p.Side()
 		hitSide := hit.Side()
 		if hitSide == hitting.HTDSameSide || hitSide == hitting.HTDOppositeSide {
-			isSameSide := (pointSide == pointing.PSStartingSide && hitSide == hitting.HTDSameSide)
-			isOppositeSide := (pointSide == pointing.PSOppositeSide && hitSide == hitting.HTDOppositeSide)
+			isSameSide := (pointSide == pointing.PSServing && hitSide == hitting.HTDSameSide)
+			isOppositeSide := (pointSide == pointing.PSOpposite && hitSide == hitting.HTDOppositeSide)
 			if isSameSide || isOppositeSide {
 				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Length(), p.Ball().LastSide(), hit.Type(), hit.Side(), p.Side())
 			}
@@ -62,7 +62,7 @@ func showPoints(tt *testing.T, points []Point) {
 		p := (points)[j]
 		if side := p.Side(); side != pointing.PSNone {
 			ss++
-			if side == pointing.PSOppositeSide {
+			if side == pointing.PSOpposite {
 				ss--
 				os++
 			}

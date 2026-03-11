@@ -84,7 +84,7 @@ func (ss *SetScore) AddScore(score scoring.Scoring) error {
 	sA, sB := ss.getScores()
 	sideToAdd := sA
 
-	if score.Side() == scoring.SSB {
+	if score.Side() == scoring.SSOpposite {
 		sideToAdd = sB
 	}
 

@@ -79,7 +79,7 @@ func (m *MatchScore) AddScore(score scoring.Scoring) error {
 	sA, sB := m.getScores()
 	sideToAdd := sA
 
-	if score.Side() == scoring.SSB {
+	if score.Side() == scoring.SSOpposite {
 		sideToAdd = sB
 	}
 

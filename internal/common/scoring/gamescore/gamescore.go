@@ -64,15 +64,23 @@ func (g *GameScore) AddScore(score scoring.Scoring) error {
 		return errors.New("Game completed already.")
 	}
 
+	incr := 1
 	sA, sB := g.getScores()
 	sideToAdd := sA
-	if score.Side() == scoring.SSB {
+	if who := score.Side(); who == scoring.SSOpposite {
 		sideToAdd = sB
 	}
 
-	*sideToAdd += 1
+	if (!g.decidingPoint) && (*sA > 3 || *sB > 3) {
+		if *sideToAdd == 3 {
+			incr = -1
+			sideToAdd = g.inverseScore(sideToAdd)
+		}
+	}
 
+	*sideToAdd += incr
 	g.executeOnAfterScoreEvent(g.scoreA, g.scoreB)
+
 	return nil
 }
 

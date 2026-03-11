@@ -3,9 +3,9 @@ package scoring
 type ScoringSide int
 
 const (
-	SSNone ScoringSide = 0
-	SSA    ScoringSide = 1
-	SSB    ScoringSide = 2
+	SSNone     ScoringSide = 0
+	SSServing  ScoringSide = 1
+	SSOpposite ScoringSide = 2
 )
 
 type ScoringType int
@@ -38,10 +38,10 @@ func Side(ss ScoringResulting) ScoringSide {
 	}
 
 	if a, b := ss.Result(); b > a {
-		return SSB
+		return SSOpposite
 	}
 
-	return SSA
+	return SSServing
 }
 
 func Score2GameText(scoreA, scoreB int) (string, string) {
