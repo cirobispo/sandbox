@@ -28,7 +28,7 @@ func (s score) Side() scoring.ScoringSide {
 }
 
 func (s score) Type() scoring.ScoringType {
-	return scoring.STSet
+	return scoring.STGame
 }
 
 func runTest(custom bool, results []scoring.ScoringResulting, SideA, SideB int, t *testing.T) {
@@ -69,7 +69,7 @@ func runTest(custom bool, results []scoring.ScoringResulting, SideA, SideB int, 
 	}
 }
 
-func Test_Set_6x4(t *testing.T) {
+func Test_6x4(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -85,7 +85,7 @@ func Test_Set_6x4(t *testing.T) {
 	runTest(false, scores, 6, 4, t)
 }
 
-func Test_Set_4x6(t *testing.T) {
+func Test_4x6(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -101,7 +101,7 @@ func Test_Set_4x6(t *testing.T) {
 	runTest(false, scores, 4, 6, t)
 }
 
-func Test_Set_6x0(t *testing.T) {
+func Test_6x0(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 4, scoreB: 1},
 
@@ -113,7 +113,7 @@ func Test_Set_6x0(t *testing.T) {
 	runTest(false, scores, 6, 0, t)
 }
 
-func Test_Set_0x6(t *testing.T) {
+func Test_0x6(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreB: 4, scoreA: 0}, score{scoreB: 4, scoreA: 1},
 
@@ -125,7 +125,7 @@ func Test_Set_0x6(t *testing.T) {
 	runTest(false, scores, 0, 6, t)
 }
 
-func Test_Set_7x6(t *testing.T) {
+func Test_7x6(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -145,7 +145,7 @@ func Test_Set_7x6(t *testing.T) {
 	runTest(false, scores, 7, 6, t)
 }
 
-func Test_Set_6x7(t *testing.T) {
+func Test_6x7(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -166,7 +166,7 @@ func Test_Set_6x7(t *testing.T) {
 	runTest(false, scores, 6, 7, t)
 }
 
-func Test_Set_7x5(t *testing.T) {
+func Test_7x5(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -186,7 +186,7 @@ func Test_Set_7x5(t *testing.T) {
 	runTest(false, scores, 7, 5, t)
 }
 
-func Test_Set_4x3(t *testing.T) {
+func Test_4x3(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -200,7 +200,7 @@ func Test_Set_4x3(t *testing.T) {
 	runTest(true, scores, 4, 3, t)
 }
 
-func Test_Set_3x4(t *testing.T) {
+func Test_3x4(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
@@ -215,7 +215,7 @@ func Test_Set_3x4(t *testing.T) {
 	runTest(true, scores, 3, 4, t)
 }
 
-func Test_Set_6x4_TooManyGames(t *testing.T) {
+func Test_TooManyGames(t *testing.T) {
 	scores := []scoring.ScoringResulting{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 

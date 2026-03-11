@@ -10,10 +10,6 @@ func (p PointScore) Done() bool {
 	return p.scoreA != p.scoreB
 }
 
-func (p PointScore) Result() (int, int) {
-	return p.scoreA, p.scoreB
-}
-
 func (p PointScore) Side() scoring.ScoringSide {
 	if p.scoreB > p.scoreA {
 		return scoring.SSOpposite
@@ -39,7 +35,7 @@ func (p PointScore) Type() scoring.ScoringType {
 }
 
 func (p *PointScore) InverseScore() {
-	A, B := p.Result()
+	A, B := p.scoreA, p.scoreB
 	p.Unset()
 	if B > A {
 		p.SetA()

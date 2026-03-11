@@ -27,7 +27,7 @@ func (s score) Side() scoring.ScoringSide {
 }
 
 func (s score) Type() scoring.ScoringType {
-	return scoring.STMatch
+	return scoring.STSet
 }
 
 func runTest(score *MatchScore, results []scoring.ScoringResulting, SideA, SideB int, t *testing.T) {

@@ -11,20 +11,22 @@ import (
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	score := New(turning.STA, false)
+	breakPoint := 0
 
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		a, b := scoring.Score2GameText(scoreA, scoreB)
 		if done {
-			t.Logf("Game FINAL status: ( %s x %s ) done: %v \n", a, b, done)
+			t.Logf("Game FINAL status: ( %s x %s )\n", a, b)
 			return
 		}
 
-		t.Logf("Game status: ( %s x %s ) done: %v \n", a, b, done)
+		t.Logf("Game status: ( %s x %s )\n", a, b)
 	})
 
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		if !done && (scoreB >= 3 && scoreA < scoreB) {
-			t.Logf("Break point: ( %v )\n", scoreB-scoreA)
+			breakPoint++
+			t.Logf("Break point: ( #%v )\n", breakPoint)
 		}
 	})
 

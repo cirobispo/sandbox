@@ -56,9 +56,10 @@ func TestGameToServer_Game40(t *testing.T) {
 		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
 		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
+		point.AcePoint(),
 	}
 
-	runTest(blocks, 4, 3, t)
+	runTest(blocks, 5, 3, t)
 }
 
 /**
