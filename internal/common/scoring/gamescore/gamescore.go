@@ -1,8 +1,6 @@
 package gamescore
 
 import (
-	"math"
-
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/scoring"
@@ -58,7 +56,7 @@ func (g GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	}
 }
 
-func (g *GameScore) AddPoint(p point.Point) {
+func (g *GameScore) AddScore(p point.Point) {
 	if g.Done() { // verify only it still acepting more points.
 		return
 	}
@@ -84,8 +82,19 @@ func (g *GameScore) AddPoint(p point.Point) {
 
 func (g GameScore) Done() bool {
 	sA, sB := g.Result()
-	result := (g.decidingPoint && (sA > 3 || sB > 3)) ||
-		(!g.decidingPoint && (sA > 3 || sB > 3) && (math.Abs(float64(sA-sB)) > 1))
+	diff := 2
+	if g.decidingPoint {
+		diff--
+	}
+
+	AWins := sA >= 4 && (sA-sB) >= diff
+	BWins := sB >= 4 && (sB-sA) >= diff
+	// result := (g.decidingPoint && (sA > 3 || sB > 3)) ||
+	// 	(!g.decidingPoint && (sA > 3 || sB > 3) && (math.Abs(float64(sA-sB)) > 1))
+	//
+	result := AWins || BWins
+
+	//	fmt.Printf("AWins: %v, BWins: %v, ->Done: %v\n", AWins, BWins, result)
 	return result
 }
 

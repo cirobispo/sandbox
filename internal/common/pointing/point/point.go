@@ -103,7 +103,7 @@ func (p Point) Ball() turn.Turn {
 }
 
 func (p Point) Side() pointing.PointSide {
-	if !p.Finished() {
+	if !p.Done() {
 		return pointing.PSNone
 	}
 
@@ -125,7 +125,7 @@ func (p Point) Side() pointing.PointSide {
 	}
 }
 
-func (p Point) Finished() bool {
+func (p Point) Done() bool {
 	return p.done
 }
 

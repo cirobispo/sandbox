@@ -69,7 +69,7 @@ func (m *MatchScore) AddOnAfterScoreEvent(event OnMatchScore) {
 }
 
 func (m *MatchScore) AddScore(score scoring.Scoring) error {
-	if score.Type() != scoring.STMatch {
+	if score.Type() != scoring.STSet {
 		return errors.New("This is not a score for a match.")
 	}
 	if m.Done() || !score.Done() { // am I acepting more points?

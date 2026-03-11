@@ -30,7 +30,7 @@ func (s score) Type() scoring.ScoringType {
 	return scoring.STMatch
 }
 
-func runTest(score *MatchScore, results []scoring.Scoring, SideA, SideB int, t *testing.T) {
+func runTest(score *MatchScore, results []scoring.ScoringResulting, SideA, SideB int, t *testing.T) {
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
@@ -54,7 +54,7 @@ func runTest(score *MatchScore, results []scoring.Scoring, SideA, SideB int, t *
 }
 
 func Test_Set_2x1(t *testing.T) {
-	scores := []scoring.Scoring{
+	scores := []scoring.ScoringResulting{
 		score{scoreA: 6, scoreB: 4}, score{scoreA: 4, scoreB: 6},
 		score{scoreA: 7, scoreB: 5}, score{scoreA: 6, scoreB: 4},
 	}
@@ -64,7 +64,7 @@ func Test_Set_2x1(t *testing.T) {
 }
 
 func Test_Set_1x2(t *testing.T) {
-	scores := []scoring.Scoring{
+	scores := []scoring.ScoringResulting{
 		score{scoreA: 6, scoreB: 4}, score{scoreA: 3, scoreB: 6},
 		score{scoreA: 5, scoreB: 7}, score{scoreA: 6, scoreB: 4},
 	}

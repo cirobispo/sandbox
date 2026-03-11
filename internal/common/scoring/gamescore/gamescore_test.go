@@ -15,11 +15,11 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		a, b := scoring.Score2GameText(scoreA, scoreB)
 		if done {
-			t.Logf("Game FINAL status: ( %s x %s )\n", a, b)
+			t.Logf("Game FINAL status: ( %s x %s ) done: %v \n", a, b, done)
 			return
 		}
 
-		t.Logf("Game status: ( %s x %s )\n", a, b)
+		t.Logf("Game status: ( %s x %s ) done: %v \n", a, b, done)
 	})
 
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
@@ -36,7 +36,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 			hit := block.Items[j].Value
 			point.AddHit(hit)
 		}
-		score.AddPoint(point)
+		score.AddScore(point)
 	}
 
 	a, b := score.Result()

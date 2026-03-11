@@ -11,19 +11,28 @@ const (
 type ScoringType int
 
 const (
-	STGame  ScoringType = 0
-	STSet   ScoringType = 1
-	STMatch ScoringType = 2
+	STPoint ScoringType = 0
+	STGame  ScoringType = 1
+	STSet   ScoringType = 2
+	STMatch ScoringType = 3
 )
 
 type Scoring interface {
 	Done() bool
-	Result() (int, int)
 	Side() ScoringSide
 	Type() ScoringType
 }
 
-func Side(ss Scoring) ScoringSide {
+type Resulting interface {
+	Result() (int, int)
+}
+
+type ScoringResulting interface {
+	Scoring
+	Resulting
+}
+
+func Side(ss ScoringResulting) ScoringSide {
 	if !ss.Done() {
 		return SSNone
 	}
