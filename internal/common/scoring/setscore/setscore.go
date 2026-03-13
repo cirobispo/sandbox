@@ -74,11 +74,16 @@ func (ss *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
 }
 
 func (ss *SetScore) AddScore(score scoring.Scoring) error {
-	if score.Type() != scoring.STGame {
-		return errors.New("This is not a score for set.")
-	}
-	if ss.Done() || !score.Done() { // am I acepting more points?
+	if ss.Done() { // am I acepting more points?
 		return errors.New("Score completed already.")
+	}
+
+	if score.Type() != scoring.STGame {
+		return errors.New("This is not a Game Score.")
+	}
+
+	if !score.Done() { // am I acepting more points?
+		return errors.New("Game is not completed.")
 	}
 
 	sA, sB := ss.getScores()
@@ -94,8 +99,7 @@ func (ss *SetScore) AddScore(score scoring.Scoring) error {
 }
 
 func (ss SetScore) Result() (int, int) {
-	a, b := ss.getScores()
-	return *a, *b
+	return ss.scoreA, ss.scoreB
 }
 
 func (ss SetScore) Done() bool {

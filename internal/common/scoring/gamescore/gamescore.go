@@ -57,11 +57,16 @@ func (g GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 }
 
 func (g *GameScore) AddScore(score scoring.Scoring) error {
+	if g.Done() { // am I acepting more points?
+		return errors.New("Game completed already.")
+	}
+
 	if score.Type() != scoring.STPoint {
 		return errors.New("This is not a score for a point.")
 	}
-	if g.Done() || !score.Done() { // am I acepting more points?
-		return errors.New("Game completed already.")
+
+	if !score.Done() {
+		return errors.New("Point is not completed.")
 	}
 
 	incr := 1
@@ -100,8 +105,7 @@ func (g GameScore) Done() bool {
 }
 
 func (g GameScore) Result() (int, int) {
-	a, b := g.getScores()
-	return *a, *b
+	return g.scoreA, g.scoreB
 }
 
 func (g GameScore) Side() scoring.ScoringSide {

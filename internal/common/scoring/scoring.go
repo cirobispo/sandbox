@@ -1,5 +1,7 @@
 package scoring
 
+import "fmt"
+
 type ScoringSide int
 
 const (
@@ -47,12 +49,8 @@ func Side(ss ScoringResulting) ScoringSide {
 func Score2GameText(scoreA, scoreB int) (string, string) {
 	getText := func(score, b int) string {
 		switch score {
-		case 1:
-			return "15"
-		case 2:
-			return "30"
-		case 3:
-			return "40"
+		case 1, 2, 3:
+			return fmt.Sprintf("%d", 15*score-((score/3)*5)) // works on int type
 		case 4, 5:
 			if (score == 4 && b < 3) || (score == 5) {
 				return "game"

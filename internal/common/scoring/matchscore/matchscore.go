@@ -69,11 +69,16 @@ func (m *MatchScore) AddOnAfterScoreEvent(event OnMatchScore) {
 }
 
 func (m *MatchScore) AddScore(score scoring.Scoring) error {
-	if score.Type() != scoring.STSet {
-		return errors.New("This is not a score for a match.")
+	if m.Done() { // am I acepting more points?
+		return errors.New("Match completed already.")
 	}
-	if m.Done() || !score.Done() { // am I acepting more points?
-		return errors.New("Score completed already.")
+
+	if score.Type() != scoring.STSet {
+		return errors.New("This is not Set Score.")
+	}
+
+	if !score.Done() {
+		return errors.New("Set is not completed.")
 	}
 
 	sA, sB := m.getScores()
@@ -89,8 +94,7 @@ func (m *MatchScore) AddScore(score scoring.Scoring) error {
 }
 
 func (m MatchScore) Result() (int, int) {
-	a, b := m.getScores()
-	return *a, *b
+	return m.scoreA, m.scoreB
 }
 
 func (m MatchScore) Done() bool {
