@@ -10,14 +10,14 @@ import (
 type OnGameScore func(scoreA, scoreB int, done bool)
 
 type GameScore struct {
-	startSide      turning.SideTurn
+	startSide      turning.TurningSide
 	decidingPoint  bool
 	scoreA, scoreB int
 
 	onAfterScoreEvent []OnGameScore
 }
 
-func New(startSide turning.SideTurn, decidingPoint bool) GameScore {
+func New(startSide turning.TurningSide, decidingPoint bool) GameScore {
 	return GameScore{
 		startSide:         startSide,
 		decidingPoint:     decidingPoint,

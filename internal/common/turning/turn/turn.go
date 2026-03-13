@@ -33,7 +33,7 @@ func (t *Turn) AddOnAfterChange(callback turning.OnChange) {
 func (t *Turn) Execute() {
 	t.executeOnChange(t.onBeforeChangeEvent)
 
-	currentSide, _ := GetData[turning.SideTurn](t, "currentSide")
+	currentSide, _ := GetData[turning.TurningSide](t, "currentSide")
 
 	if currentSide > turning.STA {
 		currentSide = -1
@@ -45,17 +45,17 @@ func (t *Turn) Execute() {
 	t.executeOnChange(t.onAfterChangeEvent)
 }
 
-func (t Turn) StartSide() turning.SideTurn {
-	result, _ := GetData[turning.SideTurn](&t, "startSide")
+func (t Turn) StartSide() turning.TurningSide {
+	result, _ := GetData[turning.TurningSide](&t, "startSide")
 	return result
 }
 
-func (t Turn) LastSide() turning.SideTurn {
-	result, _ := GetData[turning.SideTurn](&t, "currentSide")
+func (t Turn) LastSide() turning.TurningSide {
+	result, _ := GetData[turning.TurningSide](&t, "currentSide")
 	return result
 }
 
-func (t Turn) Clone(start turning.SideTurn) *Turn {
+func (t Turn) Clone(start turning.TurningSide) *Turn {
 	result := New(start)
 	dataCount, dataAdded := len(t.data)-2, 0
 
@@ -74,14 +74,14 @@ func (t Turn) Clone(start turning.SideTurn) *Turn {
 }
 
 func (t Turn) executeOnChange(list []turning.OnChange) {
-	currentSide, _ := GetData[turning.SideTurn](&t, "currentSide")
+	currentSide, _ := GetData[turning.TurningSide](&t, "currentSide")
 	for i := range list {
 		event := list[i]
 		event(currentSide)
 	}
 }
 
-func New(start turning.SideTurn) *Turn {
+func New(start turning.TurningSide) *Turn {
 	result := &Turn{
 		data:                make(map[string]mapData),
 		onBeforeChangeEvent: make([]turning.OnChange, 0),

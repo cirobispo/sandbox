@@ -12,7 +12,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
-func newPoint(side turning.SideTurn) Point {
+func newPoint(side turning.TurningSide) Point {
 	ctt := timingturn.NewFromTurn(countingturn.NewFromTurn(turn.New(side)))
 
 	return New(ctt)

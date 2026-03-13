@@ -1,21 +1,21 @@
 package turning
 
-type SideTurn int
+type TurningSide int
 
 const (
-	STA SideTurn = 0
-	STB SideTurn = 1
+	STA TurningSide = 0
+	STB TurningSide = 1
 )
 
 type Turning interface {
 	Execute()
-	GetStartSide() SideTurn
-	GetCurrentSide() SideTurn
+	GetStartSide() TurningSide
+	GetCurrentSide() TurningSide
 }
 
-type OnChange func(SideTurn)
+type OnChange func(TurningSide)
 
-func (s SideTurn) String() string {
+func (s TurningSide) String() string {
 	result := "Side A"
 	if s == STB {
 		result = "Side B"

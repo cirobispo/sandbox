@@ -9,7 +9,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
-func runTest(personToServe turning.SideTurn, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
+func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	g := New(turn.New(personToServe), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		tA, tB := scoring.Score2GameText(scoreA, scoreB)

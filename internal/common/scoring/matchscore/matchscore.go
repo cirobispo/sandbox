@@ -11,7 +11,7 @@ type OnMatchScore func(scoreA, scoreB int, done bool)
 type ParamOption func(score *MatchScore)
 
 type MatchScore struct {
-	sideToBegin    turning.SideTurn
+	sideToBegin    turning.TurningSide
 	bestOf         int
 	scoreA, scoreB int
 
@@ -26,7 +26,7 @@ func WithGrandSlam() ParamOption {
 	return WithSideAndSize(turning.STA, 5)
 }
 
-func WithSideAndSize(sideToBegin turning.SideTurn, bestOf int) ParamOption {
+func WithSideAndSize(sideToBegin turning.TurningSide, bestOf int) ParamOption {
 	return func(score *MatchScore) {
 		score.sideToBegin = sideToBegin
 		score.bestOf = bestOf

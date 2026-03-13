@@ -17,7 +17,7 @@ func newFromTurn(t *turn.Turn) *turn.Turn {
 	turn.AddData(t, "duration", turn.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
 	result := t
 
-	result.AddOnAfterChange(func(st turning.SideTurn) {
+	result.AddOnAfterChange(func(st turning.TurningSide) {
 		start, _ := turn.GetData[time.Time](t, "startTiming")
 		duration := time.Since(start)
 
@@ -27,7 +27,7 @@ func newFromTurn(t *turn.Turn) *turn.Turn {
 	return result
 }
 
-func New(start turning.SideTurn) *turn.Turn {
+func New(start turning.TurningSide) *turn.Turn {
 	t := turn.New(start)
 	return NewFromTurn(t)
 }

@@ -11,7 +11,7 @@ type OnSetScore func(scoreA, scoreB int, isTieBreak, done bool)
 type ParamOption func(score *SetScore)
 
 type SetScore struct {
-	sideToBegin      turning.SideTurn
+	sideToBegin      turning.TurningSide
 	maxEven          int
 	confirmationSize int
 	scoreA, scoreB   int
@@ -19,7 +19,7 @@ type SetScore struct {
 	onAfterScoreEvent []OnSetScore
 }
 
-func WithDefaultSet(sideToBegin turning.SideTurn) ParamOption {
+func WithDefaultSet(sideToBegin turning.TurningSide) ParamOption {
 	return func(score *SetScore) {
 		score.sideToBegin = sideToBegin
 		score.maxEven = 6
@@ -27,7 +27,7 @@ func WithDefaultSet(sideToBegin turning.SideTurn) ParamOption {
 	}
 }
 
-func WithSideSizeAndTieBreak(sideToBegin turning.SideTurn, size int, decidingGame, tieBreakForLastEven bool) ParamOption {
+func WithSideSizeAndTieBreak(sideToBegin turning.TurningSide, size int, decidingGame, tieBreakForLastEven bool) ParamOption {
 	return func(score *SetScore) {
 		score.sideToBegin = sideToBegin
 		score.maxEven = size
