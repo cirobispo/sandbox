@@ -102,6 +102,14 @@ func (ss SetScore) Result() (int, int) {
 	return ss.scoreA, ss.scoreB
 }
 
+func (ss SetScore) Side() scoring.ScoringSide {
+	return scoring.Side(ss)
+}
+
+func (s SetScore) Type() scoring.ScoringType {
+	return scoring.STSet
+}
+
 func (ss SetScore) Done() bool {
 	sA, sB := ss.Result()
 
@@ -126,12 +134,4 @@ func (ss SetScore) IsTieBreak() bool {
 	result := (sA >= tie && sB >= tie)
 
 	return result
-}
-
-func (ss SetScore) Side() scoring.ScoringSide {
-	return scoring.Side(ss)
-}
-
-func (s SetScore) Type() scoring.ScoringType {
-	return scoring.STSet
 }
