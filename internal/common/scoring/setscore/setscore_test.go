@@ -32,12 +32,12 @@ func (s score) Type() scoring.ScoringType {
 }
 
 func runTest(custom bool, results []scoring.ScoringResulting, SideA, SideB int, t *testing.T) {
-	score := New(WithDefaultSet(turning.STA))
+	score := New(WithDefaultSet(turning.TSA))
 	if custom {
 		if SideB > SideA {
-			score = New(WithSideSizeAndTieBreak(turning.STA, SideB, true, true))
+			score = New(WithSideSizeAndTieBreak(turning.TSA, SideB, true, true))
 		} else {
-			score = New(WithSideSizeAndTieBreak(turning.STA, SideA, true, true))
+			score = New(WithSideSizeAndTieBreak(turning.TSA, SideA, true, true))
 		}
 	}
 

@@ -25,7 +25,7 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 
 	for i := range blocks {
 		block := blocks[i]
-		tn := turn.New(turning.STA)
+		tn := turn.New(turning.TSA)
 		p := point.New(tn)
 
 		for j := range block.Items {
@@ -54,7 +54,7 @@ func TestTurnA_Game40(t *testing.T) {
 		point.AcePoint(),
 	}
 
-	runTest(turning.STA, blocks, 5, 3, t)
+	runTest(turning.TSA, blocks, 5, 3, t)
 }
 
 func TestTurnB_40Game(t *testing.T) {
@@ -67,5 +67,5 @@ func TestTurnB_40Game(t *testing.T) {
 		point.AcePoint(),
 	}
 
-	runTest(turning.STB, blocks, 3, 5, t)
+	runTest(turning.TSB, blocks, 3, 5, t)
 }

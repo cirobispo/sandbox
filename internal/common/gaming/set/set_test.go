@@ -13,6 +13,6 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 }
 
 func Test_6x4(t *testing.T) {
-	New(WithDefaultSet(turn.New(turning.STA)))
+	New(WithDefaultSet(turn.New(turning.TSA)))
 	// set.AddGame()
 }

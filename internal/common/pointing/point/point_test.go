@@ -25,13 +25,13 @@ func TestEverySinglePoint(tt *testing.T) {
 		hit.NewServeLet(), hit.NewWinner(), hit.NewToast(), hit.NewNetTouch(),
 	}
 
-	p := newPoint(turning.STB)
+	p := newPoint(turning.TSB)
 	points := make([]Point, 0, len(everyHit))
 	points = append(points, p)
 
 	for i := range everyHit {
 		if p.Side() != pointing.PSNone {
-			p = newPoint(turning.STB)
+			p = newPoint(turning.TSB)
 			points = append(points, p)
 		}
 

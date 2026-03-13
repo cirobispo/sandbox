@@ -19,11 +19,11 @@ type MatchScore struct {
 }
 
 func WithDefault() ParamOption {
-	return WithSideAndSize(turning.STA, 3)
+	return WithSideAndSize(turning.TSA, 3)
 }
 
 func WithGrandSlam() ParamOption {
-	return WithSideAndSize(turning.STA, 5)
+	return WithSideAndSize(turning.TSA, 5)
 }
 
 func WithSideAndSize(sideToBegin turning.TurningSide, bestOf int) ParamOption {
@@ -57,7 +57,7 @@ func (m MatchScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 
 func (m *MatchScore) getScores() (*int, *int) {
 	sA, sB := &m.scoreA, &m.scoreB
-	if m.sideToBegin == turning.STB {
+	if m.sideToBegin == turning.TSB {
 		sA, sB = &m.scoreB, &m.scoreA
 	}
 

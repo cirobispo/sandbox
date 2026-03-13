@@ -35,7 +35,7 @@ func (t *Turn) Execute() {
 
 	currentSide, _ := GetData[turning.TurningSide](t, "currentSide")
 
-	if currentSide > turning.STA {
+	if currentSide > turning.TSA {
 		currentSide = -1
 	}
 

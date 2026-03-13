@@ -29,7 +29,7 @@ func New(startSide turning.TurningSide, decidingPoint bool) GameScore {
 
 func (g *GameScore) getScores() (*int, *int) {
 	sA, sB := &g.scoreA, &g.scoreB
-	if g.startSide == turning.STB {
+	if g.startSide == turning.TSB {
 		sA, sB = &g.scoreB, &g.scoreA
 	}
 

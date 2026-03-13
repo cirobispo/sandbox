@@ -54,7 +54,7 @@ func New(param ParamOption) Set {
 	if param != nil {
 		custom := param(&result)
 
-		callback := setscore.WithDefaultSet(turning.STA)
+		callback := setscore.WithDefaultSet(turning.TSA)
 		if custom {
 			callback = setscore.WithSideSizeAndTieBreak(result.whoServ.StartSide(), result.setSize, result.decidingPoint, result.tieBreak)
 		}

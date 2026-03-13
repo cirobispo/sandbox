@@ -62,7 +62,7 @@ func (ss SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 
 func (ss *SetScore) getScores() (*int, *int) {
 	sA, sB := &ss.scoreA, &ss.scoreB
-	if ss.sideToBegin == turning.STB {
+	if ss.sideToBegin == turning.TSB {
 		sA, sB = &ss.scoreB, &ss.scoreA
 	}
 
