@@ -33,25 +33,25 @@ func (t *Turn) AddOnAfterChange(callback turning.OnChange) {
 func (t *Turn) Execute() {
 	t.executeOnChange(t.onBeforeChangeEvent)
 
-	currentSide, _ := GetData[turning.TurningSide](t, "currentSide")
+	currentSide, _ := GetData[turning.TurningSide](t, "Turn_currentSide")
 
 	if currentSide > turning.TSA {
 		currentSide = -1
 	}
 
 	currentSide++
-	UpdateData(t, "currentSide", currentSide)
+	UpdateData(t, "Turn_currentSide", currentSide)
 
 	t.executeOnChange(t.onAfterChangeEvent)
 }
 
 func (t Turn) StartSide() turning.TurningSide {
-	result, _ := GetData[turning.TurningSide](&t, "startSide")
+	result, _ := GetData[turning.TurningSide](&t, "Turn_startSide")
 	return result
 }
 
-func (t Turn) LastSide() turning.TurningSide {
-	result, _ := GetData[turning.TurningSide](&t, "currentSide")
+func (t Turn) CurrentSide() turning.TurningSide {
+	result, _ := GetData[turning.TurningSide](&t, "Turn_currentSide")
 	return result
 }
 
@@ -74,7 +74,7 @@ func (t Turn) Clone(start turning.TurningSide) *Turn {
 }
 
 func (t Turn) executeOnChange(list []turning.OnChange) {
-	currentSide, _ := GetData[turning.TurningSide](&t, "currentSide")
+	currentSide, _ := GetData[turning.TurningSide](&t, "Turn_currentSide")
 	for i := range list {
 		event := list[i]
 		event(currentSide)
@@ -90,8 +90,8 @@ func New(start turning.TurningSide) *Turn {
 
 	startSide := NewMapData(start, func() any { return start })
 	currentSide := NewMapData(start, func() any { return start })
-	AddData(result, "startSide", startSide)
-	AddData(result, "currentSide", currentSide)
+	AddData(result, "Turn_startSide", startSide)
+	AddData(result, "Turn_currentSide", currentSide)
 
 	return result
 }

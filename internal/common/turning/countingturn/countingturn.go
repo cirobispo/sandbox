@@ -5,19 +5,19 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
-type CountedTurning interface {
+type CountingTurn interface {
 	turning.Turning
-	Counter(t turn.Turn) int
+	Count(t *turn.Turn) int
 }
 
 func newFromTurn(t *turn.Turn) *turn.Turn {
 	result := t
-	turn.AddData(result, "count", turn.NewMapData(0, func() any { return 0 }))
+	turn.AddData(result, "CountedTurning_count", turn.NewMapData(0, func() any { return 0 }))
 
 	result.AddOnAfterChange(func(st turning.TurningSide) {
-		value, _ := turn.GetData[int](result, "count")
+		value, _ := turn.GetData[int](result, "CountedTurning_count")
 		value++
-		turn.UpdateData(result, "count", value)
+		turn.UpdateData(result, "CountedTurning_count", value)
 	})
 
 	return result
@@ -32,8 +32,8 @@ func NewFromTurn(t *turn.Turn) *turn.Turn {
 	return newFromTurn(t)
 }
 
-func GetCount(t *turn.Turn) int {
-	result, _ := turn.GetData[int](t, "count")
+func Count(t *turn.Turn) int {
+	result, _ := turn.GetData[int](t, "CountedTurning_count")
 	return result
 
 }

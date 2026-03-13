@@ -30,7 +30,7 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 
 		for j := range block.Items {
 			item := block.Items[j]
-			t.Logf("%s hits %s, ", tn.LastSide().String(), item.Value.Type())
+			t.Logf("%s hits %s, ", tn.CurrentSide().String(), item.Value.Type())
 			p.AddHit(item.Value)
 		}
 

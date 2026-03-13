@@ -118,7 +118,7 @@ func (p Point) Side() pointing.PointSide {
 		lastHit = hit.NewDoubleFault()
 	}
 
-	if p.ballSide.LastSide() == p.ballSide.StartSide() {
+	if p.ballSide.CurrentSide() == p.ballSide.StartSide() {
 		return HitSide2PointSide(lastHit.Side())
 	} else {
 		return HitSide2PointSide(lastHit.Side()).Inverse()

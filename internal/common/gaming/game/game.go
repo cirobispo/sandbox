@@ -61,7 +61,7 @@ func (g Game) Score() scoring.ScoringResulting {
 }
 
 func (g Game) NewTurn() *turn.Turn {
-	return g.turn.Clone(g.turn.LastSide())
+	return g.turn.Clone(g.turn.CurrentSide())
 }
 
 func (g Game) executeOnAfterAddingPoint(scoreA, scoreB int, done bool) {

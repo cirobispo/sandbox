@@ -9,19 +9,19 @@ import (
 
 type TimedTurning interface {
 	turning.Turning
-	Duration(t turn.Turn) int
+	Duration(t *turn.Turn) int
 }
 
 func newFromTurn(t *turn.Turn) *turn.Turn {
-	turn.AddData(t, "startTiming", turn.NewMapData(time.Now(), func() any { return time.Now() }))
-	turn.AddData(t, "duration", turn.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
+	turn.AddData(t, "timedTurning_start", turn.NewMapData(time.Now(), func() any { return time.Now() }))
+	turn.AddData(t, "timedTurning_duration", turn.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
 	result := t
 
 	result.AddOnAfterChange(func(st turning.TurningSide) {
-		start, _ := turn.GetData[time.Time](t, "startTiming")
+		start, _ := turn.GetData[time.Time](t, "timedTurning_start")
 		duration := time.Since(start)
 
-		turn.UpdateData(t, "duration", duration)
+		turn.UpdateData(t, "timedTurning_duration", duration)
 	})
 
 	return result
@@ -37,6 +37,6 @@ func NewFromTurn(t *turn.Turn) *turn.Turn {
 }
 
 func Duration(t *turn.Turn) time.Duration {
-	duration, _ := turn.GetData[time.Duration](t, "duration")
+	duration, _ := turn.GetData[time.Duration](t, "timedTurning_duration")
 	return duration
 }
