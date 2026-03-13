@@ -15,6 +15,8 @@ func NewMapData[V any](value V, callBack func() any) mapData {
 	return mapData{value: value, reset: callBack}
 }
 
+type ParamOption func(t *Turn)
+
 type Turn struct {
 	data map[string]mapData
 
@@ -56,7 +58,7 @@ func (t Turn) CurrentSide() turning.TurningSide {
 }
 
 func (t Turn) Clone(start turning.TurningSide) *Turn {
-	result := New(start)
+	result := New(WithTurningSide(start))
 	dataCount, dataAdded := len(t.data)-2, 0
 
 	for k, v := range t.data {
@@ -81,18 +83,25 @@ func (t Turn) executeOnChange(list []turning.OnChange) {
 	}
 }
 
-func New(start turning.TurningSide) *Turn {
+func WithTurningSide(start turning.TurningSide) func(t *Turn) {
+	return func(t *Turn) {
+		startSide := NewMapData(start, func() any { return start })
+		currentSide := NewMapData(start, func() any { return start })
+		AddData(t, "Turn_startSide", startSide)
+		AddData(t, "Turn_currentSide", currentSide)
+	}
+}
+
+func New(param func(t *Turn)) *Turn {
 	result := &Turn{
 		data:                make(map[string]mapData),
 		onBeforeChangeEvent: make([]turning.OnChange, 0),
 		onAfterChangeEvent:  make([]turning.OnChange, 0),
 	}
 
-	startSide := NewMapData(start, func() any { return start })
-	currentSide := NewMapData(start, func() any { return start })
-	AddData(result, "Turn_startSide", startSide)
-	AddData(result, "Turn_currentSide", currentSide)
-
+	if param != nil {
+		param(result)
+	}
 	return result
 }
 
