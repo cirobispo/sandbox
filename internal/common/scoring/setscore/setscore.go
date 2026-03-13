@@ -52,29 +52,29 @@ func New(param ParamOption) SetScore {
 	return result
 }
 
-func (ss SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	done, isTieBreak := ss.Done(), ss.IsTieBreak()
-	for i := range ss.onAfterScoreEvent {
-		event := ss.onAfterScoreEvent[i]
+func (s SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
+	done, isTieBreak := s.Done(), s.IsTieBreak()
+	for i := range s.onAfterScoreEvent {
+		event := s.onAfterScoreEvent[i]
 		event(scoreA, scoreB, isTieBreak, done)
 	}
 }
 
-func (ss *SetScore) getScores() (*int, *int) {
-	sA, sB := &ss.scoreA, &ss.scoreB
-	if ss.sideToBegin == turning.TSB {
-		sA, sB = &ss.scoreB, &ss.scoreA
+func (s *SetScore) getScores() (*int, *int) {
+	sA, sB := &s.scoreA, &s.scoreB
+	if s.sideToBegin == turning.TSB {
+		sA, sB = &s.scoreB, &s.scoreA
 	}
 
 	return sA, sB
 }
 
-func (ss *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
-	ss.onAfterScoreEvent = append(ss.onAfterScoreEvent, event)
+func (s *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
+	s.onAfterScoreEvent = append(s.onAfterScoreEvent, event)
 }
 
-func (ss *SetScore) AddScore(score scoring.Scoring) error {
-	if ss.Done() { // am I acepting more points?
+func (s *SetScore) AddScore(score scoring.Scoring) error {
+	if s.Done() { // am I acepting more points?
 		return errors.New("Score completed already.")
 	}
 
@@ -86,7 +86,7 @@ func (ss *SetScore) AddScore(score scoring.Scoring) error {
 		return errors.New("Game is not completed.")
 	}
 
-	sA, sB := ss.getScores()
+	sA, sB := s.getScores()
 	sideToAdd := sA
 
 	if score.Side() == scoring.SSOpposite {
@@ -94,42 +94,42 @@ func (ss *SetScore) AddScore(score scoring.Scoring) error {
 	}
 
 	*sideToAdd += 1
-	ss.executeOnAfterScoreEvent(ss.scoreA, ss.scoreB)
+	s.executeOnAfterScoreEvent(s.scoreA, s.scoreB)
 	return nil
 }
 
-func (ss SetScore) Result() (int, int) {
-	return ss.scoreA, ss.scoreB
+func (s SetScore) Result() (int, int) {
+	return s.scoreA, s.scoreB
 }
 
-func (ss SetScore) Side() scoring.ScoringSide {
-	return scoring.Side(ss)
+func (s SetScore) Side() scoring.ScoringSide {
+	return scoring.Side(s)
 }
 
 func (s SetScore) Type() scoring.ScoringType {
 	return scoring.STSet
 }
 
-func (ss SetScore) Done() bool {
-	sA, sB := ss.Result()
+func (s SetScore) Done() bool {
+	sA, sB := s.Result()
 
-	diff := ss.confirmationSize
-	if sA > ss.maxEven || sB > ss.maxEven {
+	diff := s.confirmationSize
+	if sA > s.maxEven || sB > s.maxEven {
 		diff = 1
 	}
 
-	sideAWins := (sA >= ss.maxEven && sA-sB >= diff)
-	sideBWins := (sB >= ss.maxEven && sB-sA >= diff)
+	sideAWins := (sA >= s.maxEven && sA-sB >= diff)
+	sideBWins := (sB >= s.maxEven && sB-sA >= diff)
 	result := sideAWins || sideBWins
 
 	return result
 }
 
-func (ss SetScore) IsTieBreak() bool {
-	sA, sB := ss.Result()
-	tie := ss.maxEven
-	if ss.confirmationSize == 1 {
-		tie = ss.maxEven - 1
+func (s SetScore) IsTieBreak() bool {
+	sA, sB := s.Result()
+	tie := s.maxEven
+	if s.confirmationSize == 1 {
+		tie = s.maxEven - 1
 	}
 	result := (sA >= tie && sB >= tie)
 

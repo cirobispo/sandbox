@@ -46,19 +46,19 @@ func WithTurnSizeAndTieBreak(turnForServing *turn.Turn, size int, decidingPoint,
 	}
 }
 
-func New(param ParamOption) Set {
-	result := Set{
+func New(param ParamOption) *Set {
+	result := &Set{
 		games:                   make([]game.Gaming, 0, 13),
 		onAddingGameEvent:       make([]gaming.OnAfterAddingGame, 0),
 		onPlayerChangeSideEvent: make([]gaming.OnPlayerChangeSide, 0),
 	}
 
 	if param != nil {
-		custom := param(&result)
+		custom := param(result)
 
-		callback := setscore.WithDefaultSet(turning.TSA)
+		serving_side := result.whoServ.StartSide()
+		callback := setscore.WithDefaultSet(serving_side)
 		if custom {
-			serving_side := result.whoServ.StartSide()
 			callback = setscore.WithSideSizeAndTieBreak(serving_side, result.setSize, result.decidingPoint, result.tieBreak)
 		}
 		result.score = setscore.New(callback)
@@ -104,15 +104,15 @@ func (s *Set) AddGame(g game.Gaming) error {
 
 	s.games = append(s.games, g)
 	s.whoServ.Execute()
-	if q := len(s.games) % 2; q == 1 {
-		s.sideServ.Execute()
-	}
-
 	s.score.AddScore(g.Score())
 
 	scoreA, scoreB := s.score.Result()
 	done := s.score.Done()
 	s.executeOnAfterAddingGame(scoreA, scoreB, done)
+	if q := len(s.games) % 2; q == 1 {
+		s.sideServ.Execute()
+	}
+
 	return nil
 }
 

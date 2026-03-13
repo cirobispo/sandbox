@@ -89,6 +89,18 @@ func (g *GameScore) AddScore(score scoring.Scoring) error {
 	return nil
 }
 
+func (g GameScore) Result() (int, int) {
+	return g.scoreA, g.scoreB
+}
+
+func (g GameScore) Side() scoring.ScoringSide {
+	return scoring.Side(g)
+}
+
+func (g GameScore) Type() scoring.ScoringType {
+	return scoring.STGame
+}
+
 func (g GameScore) Done() bool {
 	sA, sB := g.Result()
 	diff := 2
@@ -102,16 +114,4 @@ func (g GameScore) Done() bool {
 	result := AWins || BWins
 
 	return result
-}
-
-func (g GameScore) Result() (int, int) {
-	return g.scoreA, g.scoreB
-}
-
-func (g GameScore) Side() scoring.ScoringSide {
-	return scoring.Side(g)
-}
-
-func (g GameScore) Type() scoring.ScoringType {
-	return scoring.STGame
 }

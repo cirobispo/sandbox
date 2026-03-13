@@ -29,11 +29,23 @@ func (t testItem) Points() []point.Point {
 
 type score struct {
 	servingSide    turning.TurningSide
+	decidingPoint  bool
 	scoreA, scoreB int
 }
 
 func (s score) Done() bool {
-	return true
+	sA, sB := s.Result()
+	diff := 2
+	if s.decidingPoint {
+		diff--
+	}
+
+	AWins := sA >= 4 && (sA-sB) >= diff
+	BWins := sB >= 4 && (sB-sA) >= diff
+
+	result := AWins || BWins
+
+	return result
 }
 
 func (s score) Result() (int, int) {
