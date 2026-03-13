@@ -14,13 +14,14 @@ import (
 type ParamOption func(set *Set) bool
 
 type Set struct {
-	whoServ, sideServ *turn.Turn
-	setSize           int
-	decidingPoint     bool
-	tieBreak          bool
-	score             setscore.SetScore
-	games             []game.Game
-	onAddingGameEvent []gaming.OnAfterAddingGame
+	whoServ, sideServ       *turn.Turn
+	setSize                 int
+	decidingPoint           bool
+	tieBreak                bool
+	score                   setscore.SetScore
+	games                   []game.Gaming
+	onAddingGameEvent       []gaming.OnAfterAddingGame
+	onPlayerChangeSideEvent []gaming.OnPlayerChangeSide
 }
 
 func WithDefaultSet(turnForServing *turn.Turn) ParamOption {
@@ -47,8 +48,9 @@ func WithTurnSizeAndTieBreak(turnForServing *turn.Turn, size int, decidingPoint,
 
 func New(param ParamOption) Set {
 	result := Set{
-		games:             make([]game.Game, 0, 13),
-		onAddingGameEvent: make([]gaming.OnAfterAddingGame, 0),
+		games:                   make([]game.Gaming, 0, 13),
+		onAddingGameEvent:       make([]gaming.OnAfterAddingGame, 0),
+		onPlayerChangeSideEvent: make([]gaming.OnPlayerChangeSide, 0),
 	}
 
 	if param != nil {
@@ -62,15 +64,37 @@ func New(param ParamOption) Set {
 		result.score = setscore.New(callback)
 	}
 
+	result.sideServ.AddOnAfterChange(func(ts turning.TurningSide) {
+		result.executeOnPlayerChangeSide()
+	})
+
 	return result
+}
+
+func (s Set) executeOnAfterAddingGame(scoreA, scoreB int, done bool) {
+	for j := range s.onAddingGameEvent {
+		event := s.onAddingGameEvent[j]
+		event(scoreA, scoreB, done)
+	}
+}
+
+func (s Set) executeOnPlayerChangeSide() {
+	for j := range s.onPlayerChangeSideEvent {
+		event := s.onPlayerChangeSideEvent[j]
+		event()
+	}
 }
 
 func (s *Set) AddOnAddingGameEvent(event gaming.OnAfterAddingGame) {
 	s.onAddingGameEvent = append(s.onAddingGameEvent, event)
 }
 
-func (s *Set) AddGame(g game.Game) error {
-	if s.Done() {
+func (s *Set) AddOnPlayerChangeEvent(event gaming.OnPlayerChangeSide) {
+	s.onPlayerChangeSideEvent = append(s.onPlayerChangeSideEvent, event)
+}
+
+func (s *Set) AddGame(g game.Gaming) error {
+	if s.score.Done() {
 		return errors.New("set is closed.")
 	}
 
@@ -92,22 +116,12 @@ func (s *Set) AddGame(g game.Game) error {
 	return nil
 }
 
-// func (s *Set) scoreToCompute() *int {
-// 	s.sideServ.LastSide()
-// 	return s.sc
-// }
+func (s Set) NewGame() *game.Game {
+	newTurn := s.whoServ.Clone(s.whoServ.CurrentSide())
+	result := game.New(newTurn, s.decidingPoint)
+	return result
+}
 
 func (s Set) Score() scoring.ScoringResulting {
 	return s.score
-}
-
-func (s Set) Done() bool {
-	return s.score.Done()
-}
-
-func (s Set) executeOnAfterAddingGame(scoreA, scoreB int, done bool) {
-	for j := range s.onAddingGameEvent {
-		event := s.onAddingGameEvent[j]
-		event(scoreA, scoreB, done)
-	}
 }
