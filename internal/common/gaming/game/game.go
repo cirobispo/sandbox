@@ -5,10 +5,14 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/common/gaming"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/scoring/gamescore"
-	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
+
+type IGame interface {
+	Score() scoring.Scoring
+}
 
 type Game struct {
 	turn               *turn.Turn
@@ -22,7 +26,7 @@ func New(turn *turn.Turn, decidingPoint bool) Game {
 	return Game{
 		turn:               turn,
 		decidingPoint:      decidingPoint,
-		score:              gamescore.New(turning.STA, decidingPoint),
+		score:              gamescore.New(turn.StartSide(), decidingPoint),
 		onAddingPointEvent: make([]gaming.OnAfterAddingPoint, 0),
 	}
 }
@@ -52,7 +56,7 @@ func (g *Game) AddPoint(p point.Point) error {
 	return nil
 }
 
-func (g Game) Score() gamescore.GameScore {
+func (g Game) Score() scoring.ScoringResulting {
 	return g.score
 }
 
