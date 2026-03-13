@@ -33,7 +33,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	t.Log("Game status: ( 0 x 0 )")
 	for i := range blocks {
 		block := blocks[i]
-		point := point.New(turn.New(turning.TSA))
+		point := point.New(turn.New(turn.WithTurningSide(turning.TSA)))
 		for j := range block.Items {
 			hit := block.Items[j].Value
 			point.AddHit(hit)

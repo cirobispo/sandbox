@@ -26,7 +26,7 @@ type Set struct {
 func WithDefaultSet(turnForServing *turn.Turn) ParamOption {
 	return func(score *Set) bool {
 		score.whoServ = turnForServing
-		score.sideServ = turn.New(turnForServing.StartSide())
+		score.sideServ = turn.New(turn.WithTurningSide(turnForServing.StartSide()))
 		score.setSize = 6
 		score.decidingPoint = false
 		score.tieBreak = true
@@ -37,7 +37,7 @@ func WithDefaultSet(turnForServing *turn.Turn) ParamOption {
 func WithTurnSizeAndTieBreak(turnForServing *turn.Turn, size int, decidingPoint, tieBreak bool) ParamOption {
 	return func(score *Set) bool {
 		score.whoServ = turnForServing
-		score.sideServ = turn.New(turnForServing.StartSide())
+		score.sideServ = turn.New(turn.WithTurningSide(turnForServing.StartSide()))
 		score.setSize = size
 		score.decidingPoint = decidingPoint
 		score.tieBreak = tieBreak
@@ -56,7 +56,8 @@ func New(param ParamOption) Set {
 
 		callback := setscore.WithDefaultSet(turning.TSA)
 		if custom {
-			callback = setscore.WithSideSizeAndTieBreak(result.whoServ.StartSide(), result.setSize, result.decidingPoint, result.tieBreak)
+			serving_side := result.whoServ.StartSide()
+			callback = setscore.WithSideSizeAndTieBreak(serving_side, result.setSize, result.decidingPoint, result.tieBreak)
 		}
 		result.score = setscore.New(callback)
 	}

@@ -10,7 +10,7 @@ import (
 )
 
 func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	g := New(turn.New(personToServe), false)
+	g := New(turn.New(turn.WithTurningSide(personToServe)), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		tA, tB := scoring.Score2GameText(scoreA, scoreB)
 		if done {
@@ -25,7 +25,7 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 
 	for i := range blocks {
 		block := blocks[i]
-		tn := turn.New(turning.TSA)
+		tn := turn.New(turn.WithTurningSide(turning.TSA))
 		p := point.New(tn)
 
 		for j := range block.Items {

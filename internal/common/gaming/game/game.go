@@ -23,10 +23,11 @@ type Game struct {
 }
 
 func New(turn *turn.Turn, decidingPoint bool) Game {
+	side := turn.StartSide()
 	return Game{
 		turn:               turn,
 		decidingPoint:      decidingPoint,
-		score:              gamescore.New(turn.StartSide(), decidingPoint),
+		score:              gamescore.New(side, decidingPoint),
 		onAddingPointEvent: make([]gaming.OnAfterAddingPoint, 0),
 	}
 }

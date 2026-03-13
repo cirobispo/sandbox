@@ -13,7 +13,7 @@ import (
 )
 
 func newPoint(side turning.TurningSide) Point {
-	ctt := timingturn.NewFromTurn(countingturn.NewFromTurn(turn.New(side)))
+	ctt := turn.New(timingturn.WithAnotherTurn(turn.New(countingturn.WithAnotherTurn(turn.New(turn.WithTurningSide(side))))))
 
 	return New(ctt)
 }
