@@ -59,6 +59,9 @@ func (t Turn) CurrentSide() turning.TurningSide {
 
 func (t Turn) Clone(start turning.TurningSide) *Turn {
 	result := New(WithTurningSide(start))
+	copy(result.onBeforeChangeEvent, t.onBeforeChangeEvent)
+	copy(result.onAfterChangeEvent, t.onAfterChangeEvent)
+
 	dataCount, dataAdded := len(t.data)-2, 0
 
 	for k, v := range t.data {
