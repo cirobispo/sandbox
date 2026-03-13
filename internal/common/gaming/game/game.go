@@ -7,11 +7,14 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/scoring/gamescore"
+	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
-type IGame interface {
-	Score() scoring.Scoring
+type Gaming interface {
+	ServingSide() turning.TurningSide
+	Score() scoring.ScoringResulting
+	Points() []point.Point
 }
 
 type Game struct {
@@ -22,13 +25,20 @@ type Game struct {
 	onAddingPointEvent []gaming.OnAfterAddingPoint
 }
 
-func New(turn *turn.Turn, decidingPoint bool) Game {
+func New(turn *turn.Turn, decidingPoint bool) *Game {
 	side := turn.StartSide()
-	return Game{
+	return &Game{
 		turn:               turn,
 		decidingPoint:      decidingPoint,
 		score:              gamescore.New(side, decidingPoint),
 		onAddingPointEvent: make([]gaming.OnAfterAddingPoint, 0),
+	}
+}
+
+func (g Game) executeOnAfterAddingPoint(scoreA, scoreB int, done bool) {
+	for j := range g.onAddingPointEvent {
+		event := g.onAddingPointEvent[j]
+		event(scoreA, scoreB, done)
 	}
 }
 
@@ -57,17 +67,17 @@ func (g *Game) AddPoint(p point.Point) error {
 	return nil
 }
 
+func (g Game) ServingSide() turning.TurningSide {
+	return g.turn.StartSide()
+}
+
 func (g Game) Score() scoring.ScoringResulting {
 	return g.score
 }
 
-func (g Game) NewTurn() *turn.Turn {
-	return g.turn.Clone(g.turn.CurrentSide())
-}
+func (g Game) Points() []point.Point {
+	result := make([]point.Point, 0, len(g.points))
+	copy(result, g.points)
 
-func (g Game) executeOnAfterAddingPoint(scoreA, scoreB int, done bool) {
-	for j := range g.onAddingPointEvent {
-		event := g.onAddingPointEvent[j]
-		event(scoreA, scoreB, done)
-	}
+	return result
 }
