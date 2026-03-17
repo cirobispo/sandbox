@@ -121,7 +121,7 @@ func AddData(t *Turn, id string, data mapData) (bool, error) {
 func UpdateData[V any](t *Turn, id string, data V) (bool, error) {
 	d, f := t.data[id]
 	if f {
-		t.data[id] = NewMapData[V](data, d.reset)
+		t.data[id] = NewMapData(data, d.reset)
 		return true, nil
 	}
 
