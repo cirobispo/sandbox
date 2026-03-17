@@ -13,12 +13,12 @@ type Point struct {
 	ballSide          *turn.Turn
 	hits              *[]hitting.Hitting
 	done              bool
-	onAfterScoreEvent *[]pointing.OnPointScore
+	onAfterScoreEvent *[]pointing.OnScoringPoint
 }
 
 func New(sideControl *turn.Turn) Point {
 	hit := make([]hitting.Hitting, 0, 3)
-	events := make([]pointing.OnPointScore, 0)
+	events := make([]pointing.OnScoringPoint, 0)
 	return Point{
 		done:              false,
 		ballSide:          sideControl,
@@ -49,7 +49,7 @@ func hasDoubleFault(hits *[]hitting.Hitting) bool {
 	return result
 }
 
-func (p *Point) AddOnAfterScore(callback pointing.OnPointScore) {
+func (p *Point) AddOnAfterScore(callback pointing.OnScoringPoint) {
 	*p.onAfterScoreEvent = append(*p.onAfterScoreEvent, callback)
 }
 

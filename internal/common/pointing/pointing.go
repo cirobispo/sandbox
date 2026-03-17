@@ -2,7 +2,7 @@ package pointing
 
 import "github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 
-type OnPointScore func(hit hitting.HitType, side hitting.HitSide, done bool)
+type OnScoringPoint func(hit hitting.HitType, side hitting.HitSide, done bool)
 
 type PointSide int
 
