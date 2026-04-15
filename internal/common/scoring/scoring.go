@@ -1,7 +1,5 @@
 package scoring
 
-import "fmt"
-
 type ScoringSide int
 
 const (
@@ -46,19 +44,16 @@ func Side(ss ScoringResulting) ScoringSide {
 	return SSServing
 }
 
-func Score2GameText(scoreA, scoreB int) (string, string) {
+func Score2GameText(values []string, scoreA, scoreB int) (string, string) {
+	if len(values) != 6 {
+		panic("Descrição dos pontos incorreta (0, 15, 30, 40, vantagem e jogo)")
+	}
+
 	getText := func(score, b int) string {
-		switch score {
-		case 1, 2, 3:
-			return fmt.Sprintf("%d", 15*score-((score/3)*5)) // works on int type
-		case 4, 5:
-			if (score == 4 && b < 3) || (score == 5) {
-				return "game"
-			}
-			return "ad"
-		default:
-			return "love"
+		if score == 5 || score == 4 && b < 3 {
+			return values[len(values)-1]
 		}
+		return values[score]
 	}
 
 	return getText(scoreA, scoreB), getText(scoreB, scoreA)

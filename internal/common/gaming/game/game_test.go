@@ -12,7 +12,8 @@ import (
 func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	g := New(turn.New(turn.WithTurningSide(personToServe)), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
-		tA, tB := scoring.Score2GameText(scoreA, scoreB)
+		var description = []string{"love", "15", "30", "40", "ad", "game"}
+		tA, tB := scoring.Score2GameText(description, scoreA, scoreB)
 		if done {
 			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
 			t.Log()

@@ -45,8 +45,10 @@ func runTest(score *MatchScore, results []scoring.ScoringResulting, SideA, SideB
 
 	sA, sB := score.Result()
 	if sA != SideA || sB != SideB {
+		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		for j := range results {
-			scoreA, scoreB := scoring.Score2GameText(results[j].Result())
+			sA, sB = results[j].Result()
+			scoreA, scoreB := scoring.Score2GameText(description, sA, sB)
 			t.Logf("Score (%v x %v)\n", scoreA, scoreB)
 		}
 		t.Errorf("\n\nSet should be (%d x %d) not (%d x %d)\n", SideA, SideB, sA, sB)

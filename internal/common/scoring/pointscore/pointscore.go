@@ -34,15 +34,6 @@ func (p PointScore) Type() scoring.ScoringType {
 	return scoring.STPoint
 }
 
-func (p *PointScore) InverseScore() {
-	A, B := p.scoreA, p.scoreB
-	p.Unset()
-	if B > A {
-		p.SetA()
-	}
-	p.SetB()
-}
-
 func New() PointScore {
 	return PointScore{scoreA: 0, scoreB: 0}
 }
