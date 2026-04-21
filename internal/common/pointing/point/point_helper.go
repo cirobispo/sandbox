@@ -14,75 +14,26 @@ type TestBlock struct {
 	Point pointing.PointSide
 }
 
-var hitServInReturnIn = []TestItem{
-	TestItem{hit.NewServeIn()},
-	TestItem{hit.NewReturnIn()},
-}
+var hitServInReturnIn = []TestItem{{hit.NewServeIn()}, {hit.NewReturnIn()}}
 
-var __winnerSameSide = []TestItem{
-	TestItem{hit.NewWinner()},
-}
+var __winnerSameSide = []TestItem{{hit.NewWinner()}}
 
-var __winnerOppositeSide = []TestItem{
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewWinner()},
-}
+var __winnerOppositeSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewWinner()}}
 
-var hitAce = []TestItem{
-	TestItem{hit.NewAce()},
-}
+var hitAce = []TestItem{{hit.NewAce()}}
 
-var __longRallie = []TestItem{
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitBackIn()},
-}
+var __longRallie = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitBackIn()}}
 
-var hit__NetSameSide = []TestItem{
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitNet()},
-}
+var hit__NetSameSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitBackIn()}, {hit.NewHitNet()}}
 
-var hit__OutSameSide = []TestItem{
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitOut()},
-}
+var hit__OutSameSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitBackIn()}, {hit.NewHitOut()}}
 
-var hit__NetOppositeSide = []TestItem{
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitNet()},
-}
+var hit__NetOppositeSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitNet()}}
 
-var hit__OutOppositeSide = []TestItem{
-	TestItem{hit.NewHitBackIn()},
-	TestItem{hit.NewHitOut()},
-}
+var hit__OutOppositeSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitOut()}}
 
-var doubleFault = []TestItem{
-	TestItem{hit.NewServeNet()},
-	TestItem{hit.NewServeOut()},
-}
+var doubleFault = []TestItem{{hit.NewServeNet()}, {hit.NewServeOut()}}
 
-// func addHits2Test(tt *testing.T, items *[]TestItem, ps pointing.PointSide) TestBlock {
-// 	tb := TestBlock{items: *items}
-// 	ctt := timingturn.NewFromTurn(countingturn.NewFromTurn(turn.New(turning.STA)))
-// 	p := New(ctt)
-// 	for i := range tb.items {
-// 		item := tb.items[i]
-// 		tt.Logf("Testing hit type: %d, giving point to side: %v\n", item.value.Type(), item.value.Side())
-// 		p.AddHit(item.value)
-// 	}
-// 	tb.point = ps
-// 	return tb
-// }
-
-//	func addPoints2Test(tt *testing.T, points *[]TestBlock, results []pointing.PointSide) {
-//		for x := range *points {
-//			items, result := (*points)[x], results[x]
-//			addHits2Test(tt, &items.items, result)
-//		}
-//	}
 func DoubleFault() TestBlock {
 	data := make([]TestItem, 0, 2)
 	data = append(data, doubleFault...)
