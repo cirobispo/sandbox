@@ -48,7 +48,7 @@ func New(param ParamOption) MatchScore {
 }
 
 func (m MatchScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	done := m.Done()
+	done := m.Terminado()
 	for i := range m.onAfterScoreEvent {
 		event := m.onAfterScoreEvent[i]
 		event(scoreA, scoreB, done)
@@ -68,23 +68,23 @@ func (m *MatchScore) AddOnAfterScoreEvent(event OnMatchScore) {
 	m.onAfterScoreEvent = append(m.onAfterScoreEvent, event)
 }
 
-func (m *MatchScore) AddScore(score scoring.Scoring) error {
-	if m.Done() { // am I acepting more points?
+func (m *MatchScore) AddScore(score scoring.EstadoEParametroPlacar) error {
+	if m.Terminado() { // am I acepting more points?
 		return errors.New("Match completed already.")
 	}
 
-	if score.Type() != scoring.STSet {
+	if score.Tipo() != scoring.TPSet {
 		return errors.New("This is not Set Score.")
 	}
 
-	if !score.Done() {
+	if !score.Terminado() {
 		return errors.New("Set is not completed.")
 	}
 
 	sA, sB := m.getScores()
 	sideToAdd := sA
 
-	if score.Side() == scoring.SSOpposite {
+	if score.Lado() == scoring.LPOposto {
 		sideToAdd = sB
 	}
 
@@ -93,12 +93,12 @@ func (m *MatchScore) AddScore(score scoring.Scoring) error {
 	return nil
 }
 
-func (m MatchScore) Result() (int, int) {
+func (m MatchScore) Resultado() (int, int) {
 	return m.scoreA, m.scoreB
 }
 
-func (m MatchScore) Done() bool {
-	sA, sB := m.Result()
+func (m MatchScore) Terminado() bool {
+	sA, sB := m.Resultado()
 
 	amountToWin := (m.bestOf / 2) + (m.bestOf % 2)
 
@@ -109,10 +109,10 @@ func (m MatchScore) Done() bool {
 	return result
 }
 
-func (m MatchScore) Side() scoring.ScoringSide {
-	return scoring.Side(m)
+func (m MatchScore) Lado() scoring.LadoDoPlacar {
+	return scoring.Lado(m)
 }
 
-func (s MatchScore) Type() scoring.ScoringType {
-	return scoring.STMatch
+func (s MatchScore) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPPartida
 }

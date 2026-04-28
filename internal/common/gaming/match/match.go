@@ -15,7 +15,7 @@ type ParamOption func(set *Match) bool
 
 type Setting interface {
 	//	ServingSide() turning.TurningSide
-	Score() scoring.ScoringResulting
+	Score() scoring.EstadoEParametroPlacar
 	Games() []game.Game
 }
 
@@ -81,11 +81,11 @@ func (m *Match) AddOnAddingSetEvent(event gaming.OnAfterAddingSet) {
 }
 
 func (m Match) checkAnyError(s Setting) error {
-	if m.score.Done() {
+	if m.score.Terminado() {
 		return errors.New("set is closed.")
 	}
 
-	if !s.Score().Done() {
+	if !s.Score().Terminado() {
 		return errors.New("game is still in play.")
 	}
 
@@ -100,8 +100,8 @@ func (m *Match) AddSet(s Setting) error {
 	m.sets = append(m.sets, s)
 	m.score.AddScore(s.Score())
 
-	scoreA, scoreB := m.score.Result()
-	done := m.score.Done()
+	scoreA, scoreB := m.score.Resultado()
+	done := m.score.Terminado()
 	m.executeOnAfterAddingSet(scoreA, scoreB, done)
 
 	return nil
@@ -116,6 +116,6 @@ func (m Match) NewSet() *set.Set {
 	return result
 }
 
-func (m Match) Score() scoring.ScoringResulting {
+func (m Match) Score() scoring.EstadoEResultadoPlacar {
 	return m.score
 }

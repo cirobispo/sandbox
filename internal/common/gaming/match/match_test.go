@@ -9,11 +9,11 @@ import (
 )
 
 type testItem struct {
-	score scoring.ScoringResulting
-	sets  []scoring.ScoringResulting
+	score scoring.EstadoEResultadoPlacar
+	sets  []scoring.EstadoResultadoEParametroPlacar
 }
 
-func (t testItem) Score() scoring.ScoringResulting {
+func (t testItem) Score() scoring.EstadoEResultadoPlacar {
 	return t.score
 }
 
@@ -23,8 +23,8 @@ type score struct {
 	scoreA, scoreB int
 }
 
-func (m score) Done() bool {
-	sA, sB := m.Result()
+func (m score) Terminado() bool {
+	sA, sB := m.Resultado()
 
 	amountToWin := (m.bestOf / 2) + (m.bestOf % 2)
 
@@ -35,24 +35,24 @@ func (m score) Done() bool {
 	return result
 }
 
-func (m score) Result() (int, int) {
+func (m score) Resultado() (int, int) {
 	return m.scoreA, m.scoreB
 }
 
-func (m score) Side() scoring.ScoringSide {
+func (m score) Lado() scoring.LadoDoPlacar {
 	if m.scoreB > m.scoreA {
-		return scoring.SSOpposite
+		return scoring.LPOposto
 	}
 
-	return scoring.SSServing
+	return scoring.LPServico
 }
 
-func (m score) Type() scoring.ScoringType {
-	return scoring.STGame
+func (m score) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPJogo
 }
 
 func newItem(scoreA, scoreB int) testItem {
-	result := testItem{score: newScore(turning.TSA, scoreA, scoreB), sets: make([]scoring.ScoringResulting, 0)}
+	result := testItem{score: newScore(turning.TSA, scoreA, scoreB), sets: make([]scoring.EstadoResultadoEParametroPlacar, 0)}
 	return result
 }
 

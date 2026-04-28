@@ -49,30 +49,30 @@ func (g *GameScore) AddOnAfterScoreEvent(event OnGameScore) {
 }
 
 func (g GameScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	done := g.Done()
+	done := g.Terminado()
 	for i := range g.onAfterScoreEvent {
 		event := g.onAfterScoreEvent[i]
 		event(scoreA, scoreB, done)
 	}
 }
 
-func (g *GameScore) AddScore(score scoring.Scoring) error {
-	if g.Done() { // am I acepting more points?
+func (g *GameScore) AddScore(score scoring.EstadoEParametroPlacar) error {
+	if g.Terminado() { // am I acepting more points?
 		return errors.New("Game completed already.")
 	}
 
-	if score.Type() != scoring.STPoint {
+	if score.Tipo() != scoring.TPPonto {
 		return errors.New("This is not a score for a point.")
 	}
 
-	if !score.Done() {
+	if !score.Terminado() {
 		return errors.New("Point is not completed.")
 	}
 
 	incr := 1
 	sA, sB := g.getScores()
 	sideToAdd := sA
-	if who := score.Side(); who == scoring.SSOpposite {
+	if who := score.Lado(); who == scoring.LPOposto {
 		sideToAdd = sB
 	}
 
@@ -89,20 +89,20 @@ func (g *GameScore) AddScore(score scoring.Scoring) error {
 	return nil
 }
 
-func (g GameScore) Result() (int, int) {
+func (g GameScore) Resultado() (int, int) {
 	return g.scoreA, g.scoreB
 }
 
-func (g GameScore) Side() scoring.ScoringSide {
-	return scoring.Side(g)
+func (g GameScore) Lado() scoring.LadoDoPlacar {
+	return scoring.Lado(g)
 }
 
-func (g GameScore) Type() scoring.ScoringType {
-	return scoring.STGame
+func (g GameScore) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPJogo
 }
 
-func (g GameScore) Done() bool {
-	sA, sB := g.Result()
+func (g GameScore) Terminado() bool {
+	sA, sB := g.Resultado()
 	diff := 2
 	if g.decidingPoint {
 		diff--

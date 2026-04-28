@@ -13,7 +13,7 @@ import (
 
 type Gaming interface {
 	ServingSide() turning.TurningSide
-	Score() scoring.ScoringResulting
+	Score() scoring.EstadoResultadoEParametroPlacar
 	Points() []point.Point
 }
 
@@ -61,8 +61,8 @@ func (g *Game) AddPoint(p point.Point) error {
 	g.score.AddScore(scoreToAdd)
 	g.turn.Execute()
 
-	scoreA, scoreB := g.score.Result()
-	done := g.score.Done()
+	scoreA, scoreB := g.score.Resultado()
+	done := g.score.Terminado()
 	g.executeOnAfterAddingPoint(scoreA, scoreB, done)
 	return nil
 }
@@ -71,7 +71,7 @@ func (g Game) ServingSide() turning.TurningSide {
 	return g.turn.StartSide()
 }
 
-func (g Game) Score() scoring.ScoringResulting {
+func (g Game) Score() scoring.EstadoEResultadoPlacar {
 	return g.score
 }
 

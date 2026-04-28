@@ -10,27 +10,27 @@ type score struct {
 	scoreA, scoreB int
 }
 
-func (s score) Done() bool {
+func (s score) Terminado() bool {
 	return true
 }
 
-func (s score) Result() (int, int) {
+func (s score) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s score) Side() scoring.ScoringSide {
+func (s score) Lado() scoring.LadoDoPlacar {
 	if s.scoreB > s.scoreA {
-		return scoring.SSOpposite
+		return scoring.LPOposto
 	}
 
-	return scoring.SSServing
+	return scoring.LPServico
 }
 
-func (s score) Type() scoring.ScoringType {
-	return scoring.STSet
+func (s score) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPSet
 }
 
-func runTest(score *MatchScore, results []scoring.ScoringResulting, SideA, SideB int, t *testing.T) {
+func runTest(score *MatchScore, results []scoring.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
@@ -43,12 +43,12 @@ func runTest(score *MatchScore, results []scoring.ScoringResulting, SideA, SideB
 		score.AddScore(item)
 	}
 
-	sA, sB := score.Result()
+	sA, sB := score.Resultado()
 	if sA != SideA || sB != SideB {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		for j := range results {
-			sA, sB = results[j].Result()
-			scoreA, scoreB := scoring.Score2GameText(description, sA, sB)
+			sA, sB = results[j].Resultado()
+			scoreA, scoreB := scoring.TraduzirPlacar(description, sA, sB)
 			t.Logf("Score (%v x %v)\n", scoreA, scoreB)
 		}
 		t.Errorf("\n\nSet should be (%d x %d) not (%d x %d)\n", SideA, SideB, sA, sB)
@@ -56,7 +56,7 @@ func runTest(score *MatchScore, results []scoring.ScoringResulting, SideA, SideB
 }
 
 func Test_Set_2x1(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 6, scoreB: 4}, score{scoreA: 4, scoreB: 6},
 		score{scoreA: 7, scoreB: 5}, score{scoreA: 6, scoreB: 4},
 	}
@@ -66,7 +66,7 @@ func Test_Set_2x1(t *testing.T) {
 }
 
 func Test_Set_1x2(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 6, scoreB: 4}, score{scoreA: 3, scoreB: 6},
 		score{scoreA: 5, scoreB: 7}, score{scoreA: 6, scoreB: 4},
 	}

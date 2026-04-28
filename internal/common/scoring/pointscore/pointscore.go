@@ -6,16 +6,16 @@ type PointScore struct {
 	scoreA, scoreB int
 }
 
-func (p PointScore) Done() bool {
+func (p PointScore) Terminado() bool {
 	return p.scoreA != p.scoreB
 }
 
-func (p PointScore) Side() scoring.ScoringSide {
+func (p PointScore) Lado() scoring.LadoDoPlacar {
 	if p.scoreB > p.scoreA {
-		return scoring.SSOpposite
+		return scoring.LPOposto
 	}
 
-	return scoring.SSServing
+	return scoring.LPServico
 }
 
 func (p *PointScore) SetA() {
@@ -30,8 +30,8 @@ func (p *PointScore) Unset() {
 	p.scoreA, p.scoreB = 0, 0
 }
 
-func (p PointScore) Type() scoring.ScoringType {
-	return scoring.STPoint
+func (p PointScore) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPPonto
 }
 
 func New() PointScore {

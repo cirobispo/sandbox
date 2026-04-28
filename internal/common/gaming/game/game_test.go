@@ -13,7 +13,7 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 	g := New(turn.New(turn.WithTurningSide(personToServe)), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
-		tA, tB := scoring.Score2GameText(description, scoreA, scoreB)
+		tA, tB := scoring.TraduzirPlacar(description, scoreA, scoreB)
 		if done {
 			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
 			t.Log()
@@ -38,7 +38,7 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 		g.AddPoint(p)
 	}
 
-	a, b := g.Score().Result()
+	a, b := g.Score().Resultado()
 
 	if a != SideA || b != SideB {
 		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)

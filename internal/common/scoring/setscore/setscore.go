@@ -53,7 +53,7 @@ func New(param ParamOption) SetScore {
 }
 
 func (s SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	done, isTieBreak := s.Done(), s.IsTieBreak()
+	done, isTieBreak := s.Terminado(), s.IsTieBreak()
 	for i := range s.onAfterScoreEvent {
 		event := s.onAfterScoreEvent[i]
 		event(scoreA, scoreB, isTieBreak, done)
@@ -73,23 +73,23 @@ func (s *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
 	s.onAfterScoreEvent = append(s.onAfterScoreEvent, event)
 }
 
-func (s *SetScore) AddScore(score scoring.Scoring) error {
-	if s.Done() { // am I acepting more points?
+func (s *SetScore) AddScore(score scoring.EstadoEParametroPlacar) error {
+	if s.Terminado() { // am I acepting more points?
 		return errors.New("Score completed already.")
 	}
 
-	if score.Type() != scoring.STGame {
+	if score.Tipo() != scoring.TPJogo {
 		return errors.New("This is not a Game Score.")
 	}
 
-	if !score.Done() { // am I acepting more points?
+	if !score.Terminado() { // am I acepting more points?
 		return errors.New("Game is not completed.")
 	}
 
 	sA, sB := s.getScores()
 	sideToAdd := sA
 
-	if score.Side() == scoring.SSOpposite {
+	if score.Lado() == scoring.LPOposto {
 		sideToAdd = sB
 	}
 
@@ -98,20 +98,20 @@ func (s *SetScore) AddScore(score scoring.Scoring) error {
 	return nil
 }
 
-func (s SetScore) Result() (int, int) {
+func (s SetScore) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s SetScore) Side() scoring.ScoringSide {
-	return scoring.Side(s)
+func (s SetScore) Lado() scoring.LadoDoPlacar {
+	return scoring.Lado(s)
 }
 
-func (s SetScore) Type() scoring.ScoringType {
-	return scoring.STSet
+func (s SetScore) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPSet
 }
 
-func (s SetScore) Done() bool {
-	sA, sB := s.Result()
+func (s SetScore) Terminado() bool {
+	sA, sB := s.Resultado()
 
 	diff := s.confirmationSize
 	if sA > s.maxEven || sB > s.maxEven {
@@ -126,7 +126,7 @@ func (s SetScore) Done() bool {
 }
 
 func (s SetScore) IsTieBreak() bool {
-	sA, sB := s.Result()
+	sA, sB := s.Resultado()
 	tie := s.maxEven
 	if s.confirmationSize == 1 {
 		tie = s.maxEven - 1

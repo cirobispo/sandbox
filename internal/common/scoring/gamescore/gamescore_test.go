@@ -15,7 +15,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
-		a, b := scoring.Score2GameText(description, scoreA, scoreB)
+		a, b := scoring.TraduzirPlacar(description, scoreA, scoreB)
 		if done {
 			t.Logf("Game FINAL status: ( %s x %s )\n", a, b)
 			return
@@ -47,7 +47,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 		score.AddScore(scoreToAdd)
 	}
 
-	a, b := score.Result()
+	a, b := score.Resultado()
 	if a != SideA || b != SideB {
 		t.Errorf("\n\nScore should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
 	}

@@ -1,60 +1,74 @@
 package scoring
 
-type ScoringSide int
+type LadoDoPlacar int
 
 const (
-	SSNone     ScoringSide = 0
-	SSServing  ScoringSide = 1
-	SSOpposite ScoringSide = 2
+	LPNulo    LadoDoPlacar = 0
+	LPServico LadoDoPlacar = 1
+	LPOposto  LadoDoPlacar = 2
 )
 
-type ScoringType int
+type TipoDoPlacar int
 
 const (
-	STPoint ScoringType = 0
-	STGame  ScoringType = 1
-	STSet   ScoringType = 2
-	STMatch ScoringType = 3
+	TPPonto   TipoDoPlacar = 0
+	TPJogo    TipoDoPlacar = 1
+	TPSet     TipoDoPlacar = 2
+	TPPartida TipoDoPlacar = 3
 )
 
-type Scoring interface {
-	Done() bool
-	Side() ScoringSide
-	Type() ScoringType
+type ParametroDoPlacar interface {
+	Lado() LadoDoPlacar
+	Tipo() TipoDoPlacar
 }
 
-type Resulting interface {
-	Result() (int, int)
+type EstadoDoPlacar interface {
+	Terminado() bool
 }
 
-type ScoringResulting interface {
-	Scoring
-	Resulting
+type ResultadoDoPlacar interface {
+	Resultado() (int, int)
 }
 
-func Side(ss ScoringResulting) ScoringSide {
-	if !ss.Done() {
-		return SSNone
+type EstadoEResultadoPlacar interface {
+	EstadoDoPlacar
+	ResultadoDoPlacar
+}
+
+type EstadoEParametroPlacar interface {
+	EstadoDoPlacar
+	ParametroDoPlacar
+}
+
+type EstadoResultadoEParametroPlacar interface {
+	EstadoDoPlacar
+	ResultadoDoPlacar
+	ParametroDoPlacar
+}
+
+func Lado(erp EstadoEResultadoPlacar) LadoDoPlacar {
+	if !erp.Terminado() {
+		return LPNulo
 	}
 
-	if a, b := ss.Result(); b > a {
-		return SSOpposite
+	if a, b := erp.Resultado(); b > a {
+		return LPOposto
 	}
 
-	return SSServing
+	return LPServico
 }
 
-func Score2GameText(values []string, scoreA, scoreB int) (string, string) {
-	if len(values) != 6 {
+func TraduzirPlacar(valores []string, placarA, placarB int) (string, string) {
+	if len(valores) != 6 {
 		panic("Descrição dos pontos incorreta (0, 15, 30, 40, vantagem e jogo)")
 	}
 
-	getText := func(score, b int) string {
-		if score == 5 || score == 4 && b < 3 {
-			return values[len(values)-1]
+	getText := func(placar, b int) string {
+		if placar == 5 || placar == 4 && b < 3 {
+			return valores[len(valores)-1]
 		}
-		return values[score]
+		return valores[placar]
 	}
 
-	return getText(scoreA, scoreB), getText(scoreB, scoreA)
+	return getText(placarA, placarB), getText(placarB, placarA)
 }

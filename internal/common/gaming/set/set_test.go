@@ -11,7 +11,7 @@ import (
 
 type testItem struct {
 	servingSide turning.TurningSide
-	score       scoring.ScoringResulting
+	score       scoring.EstadoResultadoEParametroPlacar
 	points      []point.Point
 }
 
@@ -19,7 +19,7 @@ func (t testItem) ServingSide() turning.TurningSide {
 	return t.servingSide
 }
 
-func (t testItem) Score() scoring.ScoringResulting {
+func (t testItem) Score() scoring.EstadoResultadoEParametroPlacar {
 	return t.score
 }
 
@@ -33,8 +33,8 @@ type score struct {
 	scoreA, scoreB int
 }
 
-func (s score) Done() bool {
-	sA, sB := s.Result()
+func (s score) Terminado() bool {
+	sA, sB := s.Resultado()
 	diff := 2
 	if s.decidingPoint {
 		diff--
@@ -48,24 +48,24 @@ func (s score) Done() bool {
 	return result
 }
 
-func (s score) Result() (int, int) {
+func (s score) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s score) Side() scoring.ScoringSide {
+func (s score) Lado() scoring.LadoDoPlacar {
 	if s.scoreB > s.scoreA {
-		return scoring.SSOpposite
+		return scoring.LPOposto
 	}
 
-	return scoring.SSServing
+	return scoring.LPServico
 }
 
-func (s score) Type() scoring.ScoringType {
-	return scoring.STGame
+func (s score) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPJogo
 }
 
 func (i *testItem) setServingSide(side turning.TurningSide) {
-	a, b := i.score.Result()
+	a, b := i.score.Resultado()
 	i.servingSide = side
 	i.score = newScore(side, a, b)
 }
@@ -109,11 +109,11 @@ func runTest(blocks []testItem, SideA, SideB int, t *testing.T) {
 			t.Errorf("Error ao adicionar %v. Mensagem: %s", item, err)
 		}
 	}
-	sA, sB := mySet.Score().Result()
+	sA, sB := mySet.Score().Resultado()
 	if sA != SideA || sB != SideB {
 		for i := range blocks {
 			item := blocks[i]
-			a, b := item.Score().Result()
+			a, b := item.Score().Resultado()
 			t.Logf("Score game #%d (%d x %d)\n", i+1, a, b)
 		}
 		t.Errorf("\n\nSet should be (%d x %d) not (%d x %d)\n", SideA, SideB, sA, sB)

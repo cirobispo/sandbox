@@ -94,11 +94,11 @@ func (s *Set) AddOnPlayerChangeEvent(event gaming.OnPlayerChangeSide) {
 }
 
 func (s *Set) AddGame(g game.Gaming) error {
-	if s.score.Done() {
+	if s.score.Terminado() {
 		return errors.New("set is closed.")
 	}
 
-	if !g.Score().Done() {
+	if !g.Score().Terminado() {
 		return errors.New("game is still in play.")
 	}
 
@@ -106,8 +106,8 @@ func (s *Set) AddGame(g game.Gaming) error {
 	s.whoServ.Execute()
 	s.score.AddScore(g.Score())
 
-	scoreA, scoreB := s.score.Result()
-	done := s.score.Done()
+	scoreA, scoreB := s.score.Resultado()
+	done := s.score.Terminado()
 	s.executeOnAfterAddingGame(scoreA, scoreB, done)
 	if q := len(s.games) % 2; q == 1 {
 		s.sideServ.Execute()
@@ -122,6 +122,6 @@ func (s Set) NewGame() *game.Game {
 	return result
 }
 
-func (s Set) Score() scoring.ScoringResulting {
+func (s Set) Score() scoring.EstadoEResultadoPlacar {
 	return s.score
 }

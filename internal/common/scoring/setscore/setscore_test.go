@@ -11,27 +11,27 @@ type score struct {
 	scoreA, scoreB int
 }
 
-func (s score) Done() bool {
+func (s score) Terminado() bool {
 	return true
 }
 
-func (s score) Result() (int, int) {
+func (s score) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s score) Side() scoring.ScoringSide {
+func (s score) Lado() scoring.LadoDoPlacar {
 	if s.scoreB > s.scoreA {
-		return scoring.SSOpposite
+		return scoring.LPOposto
 	}
 
-	return scoring.SSServing
+	return scoring.LPServico
 }
 
-func (s score) Type() scoring.ScoringType {
-	return scoring.STGame
+func (s score) Tipo() scoring.TipoDoPlacar {
+	return scoring.TPJogo
 }
 
-func runTest(custom bool, results []scoring.ScoringResulting, SideA, SideB int, t *testing.T) {
+func runTest(custom bool, results []scoring.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
 	score := New(WithDefaultSet(turning.TSA))
 	if custom {
 		if SideB > SideA {
@@ -59,12 +59,12 @@ func runTest(custom bool, results []scoring.ScoringResulting, SideA, SideB int, 
 		score.AddScore(item)
 	}
 
-	sA, sB := score.Result()
+	sA, sB := score.Resultado()
 	if sA != SideA || sB != SideB {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		for j := range results {
-			sA, sB = results[j].Result()
-			scoreA, scoreB := scoring.Score2GameText(description, sA, sB)
+			sA, sB = results[j].Resultado()
+			scoreA, scoreB := scoring.TraduzirPlacar(description, sA, sB)
 			t.Logf("Score (%v x %v)\n", scoreA, scoreB)
 		}
 		t.Errorf("\n\nSet should be (%d x %d) not (%d x %d)\n", SideA, SideB, sA, sB)
@@ -72,7 +72,7 @@ func runTest(custom bool, results []scoring.ScoringResulting, SideA, SideB int, 
 }
 
 func Test_6x4(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -88,7 +88,7 @@ func Test_6x4(t *testing.T) {
 }
 
 func Test_4x6(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -104,7 +104,7 @@ func Test_4x6(t *testing.T) {
 }
 
 func Test_6x0(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 4, scoreB: 1},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 4, scoreB: 0},
@@ -116,7 +116,7 @@ func Test_6x0(t *testing.T) {
 }
 
 func Test_0x6(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreB: 4, scoreA: 0}, score{scoreB: 4, scoreA: 1},
 
 		score{scoreB: 4, scoreA: 2}, score{scoreB: 4, scoreA: 0},
@@ -128,7 +128,7 @@ func Test_0x6(t *testing.T) {
 }
 
 func Test_7x6(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -148,7 +148,7 @@ func Test_7x6(t *testing.T) {
 }
 
 func Test_6x7(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -169,7 +169,7 @@ func Test_6x7(t *testing.T) {
 }
 
 func Test_7x5(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -189,7 +189,7 @@ func Test_7x5(t *testing.T) {
 }
 
 func Test_4x3(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -203,7 +203,7 @@ func Test_4x3(t *testing.T) {
 }
 
 func Test_3x4(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -218,7 +218,7 @@ func Test_3x4(t *testing.T) {
 }
 
 func Test_TooManyGames(t *testing.T) {
-	scores := []scoring.ScoringResulting{
+	scores := []scoring.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
