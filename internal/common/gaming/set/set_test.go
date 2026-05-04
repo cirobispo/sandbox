@@ -64,7 +64,7 @@ func (p placar) Tipo() scoring.TipoDoPlacar {
 	return scoring.TPJogo
 }
 
-func (s *set) setServingSide(lado turning.TurningSide) {
+func (s *set) ajustaLadoServico(lado turning.TurningSide) {
 	a, b := s.placar.Resultado()
 	s.ladoDoServico = lado
 	s.placar = novoPlacar(lado, a, b)
@@ -103,7 +103,7 @@ func runTest(blocks []set, SideA, SideB int, t *testing.T) {
 	for j := range blocks {
 		currentGame := mySet.NewGame()
 		item := blocks[j]
-		item.setServingSide(currentGame.ServingSide())
+		item.ajustaLadoServico(currentGame.ServingSide())
 		sideToServe = item.ladoDoServico
 		if err := mySet.AddGame(item); err != nil {
 			t.Errorf("Erro ao adicionar %v. Mensagem: %s", item, err)
