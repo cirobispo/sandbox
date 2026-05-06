@@ -1,16 +1,16 @@
-package matchscore
+package partida
 
 import (
 	"errors"
 
-	"github.com/cirobispo/sandbox/internal/common/scoring"
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
 type OnMatchScore func(scoreA, scoreB int, done bool)
-type ParamOption func(score *MatchScore)
+type ParamOption func(score *Partida)
 
-type MatchScore struct {
+type Partida struct {
 	sideToBegin    turning.TurningSide
 	bestOf         int
 	scoreA, scoreB int
@@ -27,14 +27,14 @@ func WithGrandSlam() ParamOption {
 }
 
 func WithSideAndSize(sideToBegin turning.TurningSide, bestOf int) ParamOption {
-	return func(score *MatchScore) {
+	return func(score *Partida) {
 		score.sideToBegin = sideToBegin
 		score.bestOf = bestOf
 	}
 }
 
-func New(param ParamOption) MatchScore {
-	result := MatchScore{
+func New(param ParamOption) Partida {
+	result := Partida{
 		scoreA:            0,
 		scoreB:            0,
 		onAfterScoreEvent: make([]OnMatchScore, 0),
@@ -47,7 +47,7 @@ func New(param ParamOption) MatchScore {
 	return result
 }
 
-func (m MatchScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
+func (m Partida) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	done := m.Terminado()
 	for i := range m.onAfterScoreEvent {
 		event := m.onAfterScoreEvent[i]
@@ -55,7 +55,7 @@ func (m MatchScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	}
 }
 
-func (m *MatchScore) getScores() (*int, *int) {
+func (m *Partida) getScores() (*int, *int) {
 	sA, sB := &m.scoreA, &m.scoreB
 	if m.sideToBegin == turning.TSB {
 		sA, sB = &m.scoreB, &m.scoreA
@@ -64,16 +64,16 @@ func (m *MatchScore) getScores() (*int, *int) {
 	return sA, sB
 }
 
-func (m *MatchScore) AddOnAfterScoreEvent(event OnMatchScore) {
+func (m *Partida) AddOnAfterScoreEvent(event OnMatchScore) {
 	m.onAfterScoreEvent = append(m.onAfterScoreEvent, event)
 }
 
-func (m *MatchScore) AddScore(score scoring.EstadoEParametroPlacar) error {
+func (m *Partida) AddScore(score placares.EstadoEParametroPlacar) error {
 	if m.Terminado() { // am I acepting more points?
 		return errors.New("Match completed already.")
 	}
 
-	if score.Tipo() != scoring.TPSet {
+	if score.Tipo() != placares.TPSet {
 		return errors.New("This is not Set Score.")
 	}
 
@@ -84,7 +84,7 @@ func (m *MatchScore) AddScore(score scoring.EstadoEParametroPlacar) error {
 	sA, sB := m.getScores()
 	sideToAdd := sA
 
-	if score.Lado() == scoring.LPOposto {
+	if score.Lado() == placares.LPOposto {
 		sideToAdd = sB
 	}
 
@@ -93,11 +93,11 @@ func (m *MatchScore) AddScore(score scoring.EstadoEParametroPlacar) error {
 	return nil
 }
 
-func (m MatchScore) Resultado() (int, int) {
+func (m Partida) Resultado() (int, int) {
 	return m.scoreA, m.scoreB
 }
 
-func (m MatchScore) Terminado() bool {
+func (m Partida) Terminado() bool {
 	sA, sB := m.Resultado()
 
 	amountToWin := (m.bestOf / 2) + (m.bestOf % 2)
@@ -109,10 +109,10 @@ func (m MatchScore) Terminado() bool {
 	return result
 }
 
-func (m MatchScore) Lado() scoring.LadoDoPlacar {
-	return scoring.Lado(m)
+func (m Partida) Lado() placares.LadoDoPlacar {
+	return placares.Lado(m)
 }
 
-func (s MatchScore) Tipo() scoring.TipoDoPlacar {
-	return scoring.TPPartida
+func (s Partida) Tipo() placares.TipoDoPlacar {
+	return placares.TPPartida
 }

@@ -6,8 +6,8 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/gaming"
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
 	"github.com/cirobispo/sandbox/internal/common/gaming/set"
-	"github.com/cirobispo/sandbox/internal/common/scoring"
-	"github.com/cirobispo/sandbox/internal/common/scoring/matchscore"
+	"github.com/cirobispo/sandbox/internal/common/placares"
+	matchscore "github.com/cirobispo/sandbox/internal/common/placares/partida"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
@@ -15,7 +15,7 @@ type ParamOption func(set *Match) bool
 
 type Setting interface {
 	//	ServingSide() turning.TurningSide
-	Score() scoring.EstadoEParametroPlacar
+	Score() placares.EstadoEParametroPlacar
 	Games() []game.Game
 }
 
@@ -25,7 +25,7 @@ type Match struct {
 	setSize          int
 	decidingPoint    bool
 	tieBreak         bool
-	score            matchscore.MatchScore
+	score            matchscore.Partida
 	sets             []Setting
 	onAddingSetEvent []gaming.OnAfterAddingSet
 }
@@ -116,6 +116,6 @@ func (m Match) NewSet() *set.Set {
 	return result
 }
 
-func (m Match) Score() scoring.EstadoEResultadoPlacar {
+func (m Match) Score() placares.EstadoEResultadoPlacar {
 	return m.score
 }

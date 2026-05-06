@@ -1,9 +1,9 @@
-package setscore
+package set
 
 import (
 	"testing"
 
-	"github.com/cirobispo/sandbox/internal/common/scoring"
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
@@ -19,19 +19,19 @@ func (s score) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s score) Lado() scoring.LadoDoPlacar {
+func (s score) Lado() placares.LadoDoPlacar {
 	if s.scoreB > s.scoreA {
-		return scoring.LPOposto
+		return placares.LPOposto
 	}
 
-	return scoring.LPServico
+	return placares.LPServico
 }
 
-func (s score) Tipo() scoring.TipoDoPlacar {
-	return scoring.TPJogo
+func (s score) Tipo() placares.TipoDoPlacar {
+	return placares.TPJogo
 }
 
-func runTest(custom bool, results []scoring.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
+func runTest(custom bool, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
 	score := New(WithDefaultSet(turning.TSA))
 	if custom {
 		if SideB > SideA {
@@ -64,7 +64,7 @@ func runTest(custom bool, results []scoring.EstadoResultadoEParametroPlacar, Sid
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		for j := range results {
 			sA, sB = results[j].Resultado()
-			scoreA, scoreB := scoring.TraduzirPlacar(description, sA, sB)
+			scoreA, scoreB := placares.TraduzirPlacar(description, sA, sB)
 			t.Logf("Score (%v x %v)\n", scoreA, scoreB)
 		}
 		t.Errorf("\n\nSet should be (%d x %d) not (%d x %d)\n", SideA, SideB, sA, sB)
@@ -72,7 +72,7 @@ func runTest(custom bool, results []scoring.EstadoResultadoEParametroPlacar, Sid
 }
 
 func Test_6x4(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -88,7 +88,7 @@ func Test_6x4(t *testing.T) {
 }
 
 func Test_4x6(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -104,7 +104,7 @@ func Test_4x6(t *testing.T) {
 }
 
 func Test_6x0(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 4, scoreB: 1},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 4, scoreB: 0},
@@ -116,7 +116,7 @@ func Test_6x0(t *testing.T) {
 }
 
 func Test_0x6(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreB: 4, scoreA: 0}, score{scoreB: 4, scoreA: 1},
 
 		score{scoreB: 4, scoreA: 2}, score{scoreB: 4, scoreA: 0},
@@ -128,7 +128,7 @@ func Test_0x6(t *testing.T) {
 }
 
 func Test_7x6(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -148,7 +148,7 @@ func Test_7x6(t *testing.T) {
 }
 
 func Test_6x7(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -169,7 +169,7 @@ func Test_6x7(t *testing.T) {
 }
 
 func Test_7x5(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -189,7 +189,7 @@ func Test_7x5(t *testing.T) {
 }
 
 func Test_4x3(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -203,7 +203,7 @@ func Test_4x3(t *testing.T) {
 }
 
 func Test_3x4(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},
@@ -218,7 +218,7 @@ func Test_3x4(t *testing.T) {
 }
 
 func Test_TooManyGames(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 4, scoreB: 0}, score{scoreA: 1, scoreB: 4},
 
 		score{scoreA: 4, scoreB: 2}, score{scoreA: 3, scoreB: 5},

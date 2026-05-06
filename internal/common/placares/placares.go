@@ -1,4 +1,4 @@
-package scoring
+package placares
 
 type LadoDoPlacar int
 

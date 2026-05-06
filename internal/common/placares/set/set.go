@@ -1,16 +1,16 @@
-package setscore
+package set
 
 import (
 	"errors"
 
-	"github.com/cirobispo/sandbox/internal/common/scoring"
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
 type OnSetScore func(scoreA, scoreB int, isTieBreak, done bool)
-type ParamOption func(score *SetScore)
+type ParamOption func(score *Set)
 
-type SetScore struct {
+type Set struct {
 	sideToBegin      turning.TurningSide
 	maxEven          int
 	confirmationSize int
@@ -20,7 +20,7 @@ type SetScore struct {
 }
 
 func WithDefaultSet(sideToBegin turning.TurningSide) ParamOption {
-	return func(score *SetScore) {
+	return func(score *Set) {
 		score.sideToBegin = sideToBegin
 		score.maxEven = 6
 		score.confirmationSize = 2
@@ -28,7 +28,7 @@ func WithDefaultSet(sideToBegin turning.TurningSide) ParamOption {
 }
 
 func WithSideSizeAndTieBreak(sideToBegin turning.TurningSide, size int, decidingGame, tieBreakForLastEven bool) ParamOption {
-	return func(score *SetScore) {
+	return func(score *Set) {
 		score.sideToBegin = sideToBegin
 		score.maxEven = size
 		score.confirmationSize = 2
@@ -38,8 +38,8 @@ func WithSideSizeAndTieBreak(sideToBegin turning.TurningSide, size int, deciding
 	}
 }
 
-func New(param ParamOption) SetScore {
-	result := SetScore{
+func New(param ParamOption) Set {
+	result := Set{
 		scoreA:            0,
 		scoreB:            0,
 		onAfterScoreEvent: make([]OnSetScore, 0),
@@ -52,7 +52,7 @@ func New(param ParamOption) SetScore {
 	return result
 }
 
-func (s SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
+func (s Set) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	done, isTieBreak := s.Terminado(), s.IsTieBreak()
 	for i := range s.onAfterScoreEvent {
 		event := s.onAfterScoreEvent[i]
@@ -60,7 +60,7 @@ func (s SetScore) executeOnAfterScoreEvent(scoreA, scoreB int) {
 	}
 }
 
-func (s *SetScore) getScores() (*int, *int) {
+func (s *Set) getScores() (*int, *int) {
 	sA, sB := &s.scoreA, &s.scoreB
 	if s.sideToBegin == turning.TSB {
 		sA, sB = &s.scoreB, &s.scoreA
@@ -69,16 +69,16 @@ func (s *SetScore) getScores() (*int, *int) {
 	return sA, sB
 }
 
-func (s *SetScore) AddOnAfterScoreEvent(event OnSetScore) {
+func (s *Set) AddOnAfterScoreEvent(event OnSetScore) {
 	s.onAfterScoreEvent = append(s.onAfterScoreEvent, event)
 }
 
-func (s *SetScore) AddScore(score scoring.EstadoEParametroPlacar) error {
+func (s *Set) AddScore(score placares.EstadoEParametroPlacar) error {
 	if s.Terminado() { // am I acepting more points?
 		return errors.New("Score completed already.")
 	}
 
-	if score.Tipo() != scoring.TPJogo {
+	if score.Tipo() != placares.TPJogo {
 		return errors.New("This is not a Game Score.")
 	}
 
@@ -89,7 +89,7 @@ func (s *SetScore) AddScore(score scoring.EstadoEParametroPlacar) error {
 	sA, sB := s.getScores()
 	sideToAdd := sA
 
-	if score.Lado() == scoring.LPOposto {
+	if score.Lado() == placares.LPOposto {
 		sideToAdd = sB
 	}
 
@@ -98,19 +98,19 @@ func (s *SetScore) AddScore(score scoring.EstadoEParametroPlacar) error {
 	return nil
 }
 
-func (s SetScore) Resultado() (int, int) {
+func (s Set) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s SetScore) Lado() scoring.LadoDoPlacar {
-	return scoring.Lado(s)
+func (s Set) Lado() placares.LadoDoPlacar {
+	return placares.Lado(s)
 }
 
-func (s SetScore) Tipo() scoring.TipoDoPlacar {
-	return scoring.TPSet
+func (s Set) Tipo() placares.TipoDoPlacar {
+	return placares.TPSet
 }
 
-func (s SetScore) Terminado() bool {
+func (s Set) Terminado() bool {
 	sA, sB := s.Resultado()
 
 	diff := s.confirmationSize
@@ -125,7 +125,7 @@ func (s SetScore) Terminado() bool {
 	return result
 }
 
-func (s SetScore) IsTieBreak() bool {
+func (s Set) IsTieBreak() bool {
 	sA, sB := s.Resultado()
 	tie := s.maxEven
 	if s.confirmationSize == 1 {

@@ -3,15 +3,15 @@ package set
 import (
 	"testing"
 
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 type set struct {
 	ladoDoServico turning.TurningSide
-	placar        scoring.EstadoResultadoEParametroPlacar
+	placar        placares.EstadoResultadoEParametroPlacar
 	pontos        []point.Point
 }
 
@@ -19,7 +19,7 @@ func (s set) ServingSide() turning.TurningSide {
 	return s.ladoDoServico
 }
 
-func (s set) Score() scoring.EstadoResultadoEParametroPlacar {
+func (s set) Score() placares.EstadoResultadoEParametroPlacar {
 	return s.placar
 }
 
@@ -52,16 +52,16 @@ func (p placar) Resultado() (int, int) {
 	return p.placarA, p.placarB
 }
 
-func (p placar) Lado() scoring.LadoDoPlacar {
+func (p placar) Lado() placares.LadoDoPlacar {
 	if p.placarB > p.placarA {
-		return scoring.LPOposto
+		return placares.LPOposto
 	}
 
-	return scoring.LPServico
+	return placares.LPServico
 }
 
-func (p placar) Tipo() scoring.TipoDoPlacar {
-	return scoring.TPJogo
+func (p placar) Tipo() placares.TipoDoPlacar {
+	return placares.TPJogo
 }
 
 func (s *set) ajustaLadoServico(lado turning.TurningSide) {

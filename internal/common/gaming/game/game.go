@@ -4,23 +4,23 @@ import (
 	"errors"
 
 	"github.com/cirobispo/sandbox/internal/common/gaming"
+	"github.com/cirobispo/sandbox/internal/common/placares"
+	"github.com/cirobispo/sandbox/internal/common/placares/jogo"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/scoring"
-	"github.com/cirobispo/sandbox/internal/common/scoring/gamescore"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 type Gaming interface {
 	ServingSide() turning.TurningSide
-	Score() scoring.EstadoResultadoEParametroPlacar
+	Score() placares.EstadoResultadoEParametroPlacar
 	Points() []point.Point
 }
 
 type Game struct {
 	turn               *turn.Turn
 	decidingPoint      bool
-	score              gamescore.GameScore
+	score              jogo.Jogo
 	points             []point.Point
 	onAddingPointEvent []gaming.OnAfterAddingPoint
 }
@@ -30,7 +30,7 @@ func New(turn *turn.Turn, decidingPoint bool) *Game {
 	return &Game{
 		turn:               turn,
 		decidingPoint:      decidingPoint,
-		score:              gamescore.New(side, decidingPoint),
+		score:              jogo.New(side, decidingPoint),
 		onAddingPointEvent: make([]gaming.OnAfterAddingPoint, 0),
 	}
 }
@@ -52,13 +52,13 @@ func (g *Game) AddPoint(p point.Point) error {
 	}
 
 	g.points = append(g.points, p.Clone())
-	scoreToAdd, error := gamescore.PointToScore(&p)
+	scoreToAdd, error := jogo.PontoParaPlacar(&p)
 
 	if error != nil {
 		return errors.New("point is still in play.")
 	}
 
-	g.score.AddScore(scoreToAdd)
+	g.score.AdicionaPlacar(scoreToAdd)
 	g.turn.Execute()
 
 	scoreA, scoreB := g.score.Resultado()
@@ -71,7 +71,7 @@ func (g Game) ServingSide() turning.TurningSide {
 	return g.turn.StartSide()
 }
 
-func (g Game) Score() scoring.EstadoEResultadoPlacar {
+func (g Game) Score() placares.EstadoEResultadoPlacar {
 	return g.score
 }
 

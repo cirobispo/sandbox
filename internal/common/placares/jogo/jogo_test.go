@@ -1,10 +1,10 @@
-package gamescore
+package jogo
 
 import (
 	"testing"
 
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
@@ -13,9 +13,9 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	score := New(turning.TSA, false)
 	breakPoint := 0
 
-	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
+	score.AdicionaAoMudarPlacar(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
-		a, b := scoring.TraduzirPlacar(description, scoreA, scoreB)
+		a, b := placares.TraduzirPlacar(description, scoreA, scoreB)
 		if done {
 			t.Logf("Game FINAL status: ( %s x %s )\n", a, b)
 			return
@@ -24,7 +24,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 		t.Logf("Game status: ( %s x %s )\n", a, b)
 	})
 
-	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
+	score.AdicionaAoMudarPlacar(func(scoreA, scoreB int, done bool) {
 		if !done && (scoreB >= 3 && scoreA < scoreB) {
 			breakPoint++
 			t.Logf("Break point: ( #%v )\n", breakPoint)
@@ -40,11 +40,11 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 			point.AddHit(hit)
 		}
 
-		scoreToAdd, error := PointToScore(&point)
+		scoreToAdd, error := PontoParaPlacar(&point)
 		if error != nil {
 			t.Errorf("\n\n%s", error.Error())
 		}
-		score.AddScore(scoreToAdd)
+		score.AdicionaPlacar(scoreToAdd)
 	}
 
 	a, b := score.Resultado()

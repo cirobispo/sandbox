@@ -3,17 +3,17 @@ package match
 import (
 	"testing"
 
-	"github.com/cirobispo/sandbox/internal/common/scoring"
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
 
 type testItem struct {
-	score scoring.EstadoEResultadoPlacar
-	sets  []scoring.EstadoResultadoEParametroPlacar
+	score placares.EstadoEResultadoPlacar
+	sets  []placares.EstadoResultadoEParametroPlacar
 }
 
-func (t testItem) Score() scoring.EstadoEResultadoPlacar {
+func (t testItem) Score() placares.EstadoEResultadoPlacar {
 	return t.score
 }
 
@@ -39,20 +39,20 @@ func (m score) Resultado() (int, int) {
 	return m.scoreA, m.scoreB
 }
 
-func (m score) Lado() scoring.LadoDoPlacar {
+func (m score) Lado() placares.LadoDoPlacar {
 	if m.scoreB > m.scoreA {
-		return scoring.LPOposto
+		return placares.LPOposto
 	}
 
-	return scoring.LPServico
+	return placares.LPServico
 }
 
-func (m score) Tipo() scoring.TipoDoPlacar {
-	return scoring.TPJogo
+func (m score) Tipo() placares.TipoDoPlacar {
+	return placares.TPJogo
 }
 
 func newItem(scoreA, scoreB int) testItem {
-	result := testItem{score: newScore(turning.TSA, scoreA, scoreB), sets: make([]scoring.EstadoResultadoEParametroPlacar, 0)}
+	result := testItem{score: newScore(turning.TSA, scoreA, scoreB), sets: make([]placares.EstadoResultadoEParametroPlacar, 0)}
 	return result
 }
 

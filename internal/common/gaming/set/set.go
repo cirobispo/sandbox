@@ -5,8 +5,8 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/common/gaming"
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
-	"github.com/cirobispo/sandbox/internal/common/scoring"
-	"github.com/cirobispo/sandbox/internal/common/scoring/setscore"
+	"github.com/cirobispo/sandbox/internal/common/placares"
+	setscore "github.com/cirobispo/sandbox/internal/common/placares/set"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
@@ -18,7 +18,7 @@ type Set struct {
 	setSize                 int
 	decidingPoint           bool
 	tieBreak                bool
-	score                   setscore.SetScore
+	score                   setscore.Set
 	games                   []game.Gaming
 	onAddingGameEvent       []gaming.OnAfterAddingGame
 	onPlayerChangeSideEvent []gaming.OnPlayerChangeSide
@@ -122,6 +122,6 @@ func (s Set) NewGame() *game.Game {
 	return result
 }
 
-func (s Set) Score() scoring.EstadoEResultadoPlacar {
+func (s Set) Score() placares.EstadoEResultadoPlacar {
 	return s.score
 }

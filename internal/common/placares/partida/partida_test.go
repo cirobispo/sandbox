@@ -1,9 +1,9 @@
-package matchscore
+package partida
 
 import (
 	"testing"
 
-	"github.com/cirobispo/sandbox/internal/common/scoring"
+	"github.com/cirobispo/sandbox/internal/common/placares"
 )
 
 type score struct {
@@ -18,19 +18,19 @@ func (s score) Resultado() (int, int) {
 	return s.scoreA, s.scoreB
 }
 
-func (s score) Lado() scoring.LadoDoPlacar {
+func (s score) Lado() placares.LadoDoPlacar {
 	if s.scoreB > s.scoreA {
-		return scoring.LPOposto
+		return placares.LPOposto
 	}
 
-	return scoring.LPServico
+	return placares.LPServico
 }
 
-func (s score) Tipo() scoring.TipoDoPlacar {
-	return scoring.TPSet
+func (s score) Tipo() placares.TipoDoPlacar {
+	return placares.TPSet
 }
 
-func runTest(score *MatchScore, results []scoring.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
+func runTest(score *Partida, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
 	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
@@ -48,7 +48,7 @@ func runTest(score *MatchScore, results []scoring.EstadoResultadoEParametroPlaca
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		for j := range results {
 			sA, sB = results[j].Resultado()
-			scoreA, scoreB := scoring.TraduzirPlacar(description, sA, sB)
+			scoreA, scoreB := placares.TraduzirPlacar(description, sA, sB)
 			t.Logf("Score (%v x %v)\n", scoreA, scoreB)
 		}
 		t.Errorf("\n\nSet should be (%d x %d) not (%d x %d)\n", SideA, SideB, sA, sB)
@@ -56,7 +56,7 @@ func runTest(score *MatchScore, results []scoring.EstadoResultadoEParametroPlaca
 }
 
 func Test_Set_2x1(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 6, scoreB: 4}, score{scoreA: 4, scoreB: 6},
 		score{scoreA: 7, scoreB: 5}, score{scoreA: 6, scoreB: 4},
 	}
@@ -66,7 +66,7 @@ func Test_Set_2x1(t *testing.T) {
 }
 
 func Test_Set_1x2(t *testing.T) {
-	scores := []scoring.EstadoResultadoEParametroPlacar{
+	scores := []placares.EstadoResultadoEParametroPlacar{
 		score{scoreA: 6, scoreB: 4}, score{scoreA: 3, scoreB: 6},
 		score{scoreA: 5, scoreB: 7}, score{scoreA: 6, scoreB: 4},
 	}

@@ -3,8 +3,8 @@ package game
 import (
 	"testing"
 
+	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/scoring"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
@@ -13,7 +13,7 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 	g := New(turn.New(turn.WithTurningSide(personToServe)), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
-		tA, tB := scoring.TraduzirPlacar(description, scoreA, scoreB)
+		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
 		if done {
 			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
 			t.Log()
