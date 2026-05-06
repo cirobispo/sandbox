@@ -85,10 +85,10 @@ func novoPlacar(servingSide turning.TurningSide, scoreA, scoreB int) placar {
 
 func runTest(blocks []set, SideA, SideB int, t *testing.T) {
 	myTurn := turn.New(turn.WithTurningSide(turning.TSA))
-	mySet := New(WithDefaultSet(myTurn))
+	mySet := New(SetPadrao(myTurn))
 
 	sideToServe := myTurn.CurrentSide()
-	mySet.AddOnAddingGameEvent(func(scoreA, scoreB int, done bool) {
+	mySet.AdicionarAoAdicionarJogo(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Log("FINAL ")
 		}
@@ -96,20 +96,20 @@ func runTest(blocks []set, SideA, SideB int, t *testing.T) {
 		t.Logf("%s -> Placar (%d x %d)\n", sideToServe, scoreA, scoreB)
 	})
 
-	mySet.AddOnPlayerChangeEvent(func() {
+	mySet.AdicionarAoMudarLadoJogador(func() {
 		t.Logf("Jogadores mudam de lado\n")
 	})
 
 	for j := range blocks {
-		currentGame := mySet.NewGame()
+		currentGame := mySet.NovoJogo()
 		item := blocks[j]
 		item.ajustaLadoServico(currentGame.ServingSide())
 		sideToServe = item.ladoDoServico
-		if err := mySet.AddGame(item); err != nil {
+		if err := mySet.AdicionarJogo(item); err != nil {
 			t.Errorf("Erro ao adicionar %v. Mensagem: %s", item, err)
 		}
 	}
-	sA, sB := mySet.Score().Resultado()
+	sA, sB := mySet.Placar().Resultado()
 	if sA != SideA || sB != SideB {
 		for i := range blocks {
 			item := blocks[i]

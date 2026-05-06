@@ -108,9 +108,9 @@ func (m *Match) AddSet(s Setting) error {
 }
 
 func (m Match) NewSet() *set.Set {
-	result := set.New(set.WithDefaultSet(nil))
+	result := set.New(set.SetPadrao(nil))
 	if m.custom {
-		result = set.New(set.WithTurnSizeAndTieBreak(nil, m.setSize, m.decidingPoint, m.tieBreak))
+		result = set.New(set.TurnoJogosETieBreak(nil, m.setSize, m.decidingPoint, m.tieBreak))
 	}
 
 	return result

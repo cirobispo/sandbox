@@ -7,42 +7,42 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
-type OnSetScore func(scoreA, scoreB int, isTieBreak, done bool)
+type AoMudarPlacar func(placarA, placarB int, tieBreak, terminado bool)
 type ParamOption func(score *Set)
 
 type Set struct {
-	sideToBegin      turning.TurningSide
-	maxEven          int
-	confirmationSize int
-	scoreA, scoreB   int
+	ladoInicio           turning.TurningSide
+	maiorEmpate          int
+	confirmarPeloTamanho int
+	placarA, placarB     int
 
-	onAfterScoreEvent []OnSetScore
+	eventosAoMudarPlacar []AoMudarPlacar
 }
 
-func WithDefaultSet(sideToBegin turning.TurningSide) ParamOption {
+func SetPadrao(ladoInicio turning.TurningSide) ParamOption {
 	return func(score *Set) {
-		score.sideToBegin = sideToBegin
-		score.maxEven = 6
-		score.confirmationSize = 2
+		score.ladoInicio = ladoInicio
+		score.maiorEmpate = 6
+		score.confirmarPeloTamanho = 2
 	}
 }
 
-func WithSideSizeAndTieBreak(sideToBegin turning.TurningSide, size int, decidingGame, tieBreakForLastEven bool) ParamOption {
+func TamanhoETieBreak(ladoInicio turning.TurningSide, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
 	return func(score *Set) {
-		score.sideToBegin = sideToBegin
-		score.maxEven = size
-		score.confirmationSize = 2
-		if decidingGame {
-			score.confirmationSize--
+		score.ladoInicio = ladoInicio
+		score.maiorEmpate = tamanho
+		score.confirmarPeloTamanho = 2
+		if jogoDecisivo {
+			score.confirmarPeloTamanho--
 		}
 	}
 }
 
 func New(param ParamOption) Set {
 	result := Set{
-		scoreA:            0,
-		scoreB:            0,
-		onAfterScoreEvent: make([]OnSetScore, 0),
+		placarA:              0,
+		placarB:              0,
+		eventosAoMudarPlacar: make([]AoMudarPlacar, 0),
 	}
 
 	if param != nil {
@@ -52,54 +52,54 @@ func New(param ParamOption) Set {
 	return result
 }
 
-func (s Set) executeOnAfterScoreEvent(scoreA, scoreB int) {
+func (s Set) executarAoMudarPlacar(placarA, placarB int) {
 	done, isTieBreak := s.Terminado(), s.IsTieBreak()
-	for i := range s.onAfterScoreEvent {
-		event := s.onAfterScoreEvent[i]
-		event(scoreA, scoreB, isTieBreak, done)
+	for i := range s.eventosAoMudarPlacar {
+		event := s.eventosAoMudarPlacar[i]
+		event(placarA, placarB, isTieBreak, done)
 	}
 }
 
-func (s *Set) getScores() (*int, *int) {
-	sA, sB := &s.scoreA, &s.scoreB
-	if s.sideToBegin == turning.TSB {
-		sA, sB = &s.scoreB, &s.scoreA
+func (s *Set) placares() (*int, *int) {
+	sA, sB := &s.placarA, &s.placarB
+	if s.ladoInicio == turning.TSB {
+		sA, sB = &s.placarB, &s.placarA
 	}
 
 	return sA, sB
 }
 
-func (s *Set) AddOnAfterScoreEvent(event OnSetScore) {
-	s.onAfterScoreEvent = append(s.onAfterScoreEvent, event)
+func (s *Set) AdicionarAoMudarPlacar(event AoMudarPlacar) {
+	s.eventosAoMudarPlacar = append(s.eventosAoMudarPlacar, event)
 }
 
-func (s *Set) AddScore(score placares.EstadoEParametroPlacar) error {
+func (s *Set) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
 	if s.Terminado() { // am I acepting more points?
 		return errors.New("Score completed already.")
 	}
 
-	if score.Tipo() != placares.TPJogo {
+	if placar.Tipo() != placares.TPJogo {
 		return errors.New("This is not a Game Score.")
 	}
 
-	if !score.Terminado() { // am I acepting more points?
+	if !placar.Terminado() { // am I acepting more points?
 		return errors.New("Game is not completed.")
 	}
 
-	sA, sB := s.getScores()
+	sA, sB := s.placares()
 	sideToAdd := sA
 
-	if score.Lado() == placares.LPOposto {
+	if placar.Lado() == placares.LPOposto {
 		sideToAdd = sB
 	}
 
 	*sideToAdd += 1
-	s.executeOnAfterScoreEvent(s.scoreA, s.scoreB)
+	s.executarAoMudarPlacar(s.placarA, s.placarB)
 	return nil
 }
 
 func (s Set) Resultado() (int, int) {
-	return s.scoreA, s.scoreB
+	return s.placarA, s.placarB
 }
 
 func (s Set) Lado() placares.LadoDoPlacar {
@@ -113,13 +113,13 @@ func (s Set) Tipo() placares.TipoDoPlacar {
 func (s Set) Terminado() bool {
 	sA, sB := s.Resultado()
 
-	diff := s.confirmationSize
-	if sA > s.maxEven || sB > s.maxEven {
+	diff := s.confirmarPeloTamanho
+	if sA > s.maiorEmpate || sB > s.maiorEmpate {
 		diff = 1
 	}
 
-	sideAWins := (sA >= s.maxEven && sA-sB >= diff)
-	sideBWins := (sB >= s.maxEven && sB-sA >= diff)
+	sideAWins := (sA >= s.maiorEmpate && sA-sB >= diff)
+	sideBWins := (sB >= s.maiorEmpate && sB-sA >= diff)
 	result := sideAWins || sideBWins
 
 	return result
@@ -127,9 +127,9 @@ func (s Set) Terminado() bool {
 
 func (s Set) IsTieBreak() bool {
 	sA, sB := s.Resultado()
-	tie := s.maxEven
-	if s.confirmationSize == 1 {
-		tie = s.maxEven - 1
+	tie := s.maiorEmpate
+	if s.confirmarPeloTamanho == 1 {
+		tie = s.maiorEmpate - 1
 	}
 	result := (sA >= tie && sB >= tie)
 

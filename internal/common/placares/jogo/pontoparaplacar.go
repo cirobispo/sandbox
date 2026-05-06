@@ -15,9 +15,9 @@ func PontoParaPlacar(p *point.Point) (placares.EstadoEParametroPlacar, error) {
 	}
 
 	result := pointscore.New()
-	result.SetA()
+	result.PontuarA()
 	if p.Side() == pointing.PSOpposite {
-		result.SetB()
+		result.PontuarB()
 	}
 
 	return result, nil

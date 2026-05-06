@@ -32,22 +32,22 @@ func (s score) Tipo() placares.TipoDoPlacar {
 }
 
 func runTest(custom bool, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
-	score := New(WithDefaultSet(turning.TSA))
+	score := New(SetPadrao(turning.TSA))
 	if custom {
 		if SideB > SideA {
-			score = New(WithSideSizeAndTieBreak(turning.TSA, SideB, true, true))
+			score = New(TamanhoETieBreak(turning.TSA, SideB, true, true))
 		} else {
-			score = New(WithSideSizeAndTieBreak(turning.TSA, SideA, true, true))
+			score = New(TamanhoETieBreak(turning.TSA, SideA, true, true))
 		}
 	}
 
-	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, isTieBreak, done bool) {
+	score.AdicionarAoMudarPlacar(func(scoreA, scoreB int, isTieBreak, done bool) {
 		if isTieBreak && !done {
 			t.Logf("TieBreak (%d x %d)\n", scoreA, scoreB)
 		}
 	})
 
-	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, isTieBreak, done bool) {
+	score.AdicionarAoMudarPlacar(func(scoreA, scoreB int, isTieBreak, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
 		}
@@ -56,7 +56,7 @@ func runTest(custom bool, results []placares.EstadoResultadoEParametroPlacar, Si
 	t.Logf("Testing a result for a Set with %d games. Expected result (%d x %d)\n", len(results), SideA, SideB)
 	for j := range results {
 		item := results[j]
-		score.AddScore(item)
+		score.AdicionarPlacar(item)
 	}
 
 	sA, sB := score.Resultado()
