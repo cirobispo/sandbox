@@ -1,4 +1,4 @@
-package set
+package placarset
 
 import (
 	"testing"

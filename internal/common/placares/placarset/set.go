@@ -1,4 +1,4 @@
-package set
+package placarset
 
 import (
 	"errors"
@@ -13,7 +13,7 @@ type ParamOption func(score *Set)
 type Set struct {
 	ladoInicio           turning.TurningSide
 	maiorEmpate          int
-	confirmarPeloTamanho int
+	jogosConfirmaVitoria int
 	placarA, placarB     int
 
 	eventosAoMudarPlacar []AoMudarPlacar
@@ -23,17 +23,17 @@ func SetPadrao(ladoInicio turning.TurningSide) ParamOption {
 	return func(score *Set) {
 		score.ladoInicio = ladoInicio
 		score.maiorEmpate = 6
-		score.confirmarPeloTamanho = 2
+		score.jogosConfirmaVitoria = 2
 	}
 }
 
 func TamanhoETieBreak(ladoInicio turning.TurningSide, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
-	return func(score *Set) {
-		score.ladoInicio = ladoInicio
-		score.maiorEmpate = tamanho
-		score.confirmarPeloTamanho = 2
+	return func(placar *Set) {
+		placar.ladoInicio = ladoInicio
+		placar.maiorEmpate = tamanho
+		placar.jogosConfirmaVitoria = 2
 		if jogoDecisivo {
-			score.confirmarPeloTamanho--
+			placar.jogosConfirmaVitoria--
 		}
 	}
 }
@@ -113,7 +113,7 @@ func (s Set) Tipo() placares.TipoDoPlacar {
 func (s Set) Terminado() bool {
 	sA, sB := s.Resultado()
 
-	diff := s.confirmarPeloTamanho
+	diff := s.jogosConfirmaVitoria
 	if sA > s.maiorEmpate || sB > s.maiorEmpate {
 		diff = 1
 	}
@@ -128,7 +128,7 @@ func (s Set) Terminado() bool {
 func (s Set) IsTieBreak() bool {
 	sA, sB := s.Resultado()
 	tie := s.maiorEmpate
-	if s.confirmarPeloTamanho == 1 {
+	if s.jogosConfirmaVitoria == 1 {
 		tie = s.maiorEmpate - 1
 	}
 	result := (sA >= tie && sB >= tie)

@@ -7,7 +7,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
 	"github.com/cirobispo/sandbox/internal/common/gaming/set"
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	matchscore "github.com/cirobispo/sandbox/internal/common/placares/partida"
+	"github.com/cirobispo/sandbox/internal/common/placares/placarpartida"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 )
 
@@ -25,7 +25,7 @@ type Match struct {
 	setSize          int
 	decidingPoint    bool
 	tieBreak         bool
-	score            matchscore.Partida
+	score            placarpartida.Partida
 	sets             []Setting
 	onAddingSetEvent []gaming.OnAfterAddingSet
 }
@@ -59,11 +59,11 @@ func New(param ParamOption) *Match {
 	if param != nil {
 		result.custom = param(result)
 
-		callback := matchscore.WithDefault()
+		callback := placarpartida.WithDefault()
 		if result.custom {
-			callback = matchscore.WithSideAndSize(turning.TSA, result.matchSize)
+			callback = placarpartida.WithSideAndSize(turning.TSA, result.matchSize)
 		}
-		result.score = matchscore.New(callback)
+		result.score = placarpartida.New(callback)
 	}
 
 	return result

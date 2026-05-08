@@ -1,4 +1,4 @@
-package ponto
+package placarponto
 
 import "github.com/cirobispo/sandbox/internal/common/placares"
 

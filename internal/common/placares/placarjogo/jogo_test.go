@@ -1,4 +1,4 @@
-package jogo
+package placarjogo
 
 import (
 	"testing"

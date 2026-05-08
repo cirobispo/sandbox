@@ -6,7 +6,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/gaming"
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	placar_set "github.com/cirobispo/sandbox/internal/common/placares/set"
+	"github.com/cirobispo/sandbox/internal/common/placares/placarset"
 	"github.com/cirobispo/sandbox/internal/common/turning"
 	"github.com/cirobispo/sandbox/internal/common/turning/turn"
 )
@@ -18,7 +18,7 @@ type Set struct {
 	jogosPorSet               int
 	pontoDecisivo             bool
 	tieBreak                  bool
-	placar                    placar_set.Set
+	placar                    placarset.Set
 	jogos                     []game.Gaming
 	EventosAoAdicionarJogo    []gaming.OnAfterAddingGame
 	EventosAoMudarLadoJogador []gaming.OnPlayerChangeSide
@@ -57,11 +57,11 @@ func New(param ParamOption) *Set {
 		custom := param(result)
 
 		serving_side := result.quemServe.StartSide()
-		callback := placar_set.SetPadrao(serving_side)
+		callback := placarset.SetPadrao(serving_side)
 		if custom {
-			callback = placar_set.TamanhoETieBreak(serving_side, result.jogosPorSet, result.pontoDecisivo, result.tieBreak)
+			callback = placarset.TamanhoETieBreak(serving_side, result.jogosPorSet, result.pontoDecisivo, result.tieBreak)
 		}
-		result.placar = placar_set.New(callback)
+		result.placar = placarset.New(callback)
 	}
 
 	result.ladoServico.AddOnAfterChange(func(ts turning.TurningSide) {

@@ -1,4 +1,4 @@
-package partida
+package placarpartida
 
 import (
 	"errors"
