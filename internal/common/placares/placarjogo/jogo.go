@@ -14,7 +14,7 @@ type Jogo struct {
 	pontoDecisivo    bool
 	placarA, placarB int
 
-	EventosAoMudarPlacar []AoMudarPlacar
+	eventosAoMudarPlacar []AoMudarPlacar
 }
 
 func New(startSide turning.TurningSide, decidingPoint bool) Jogo {
@@ -23,88 +23,96 @@ func New(startSide turning.TurningSide, decidingPoint bool) Jogo {
 		pontoDecisivo:        decidingPoint,
 		placarA:              0,
 		placarB:              0,
-		EventosAoMudarPlacar: make([]AoMudarPlacar, 0),
+		eventosAoMudarPlacar: make([]AoMudarPlacar, 0),
 	}
 }
 
-func (g *Jogo) placares() (*int, *int) {
-	sA, sB := &g.placarA, &g.placarB
-	if g.ladoInicio == turning.TSB {
-		sA, sB = &g.placarB, &g.placarA
+func (j *Jogo) placares() (*int, *int) {
+	sA, sB := &j.placarA, &j.placarB
+	if j.ladoInicio == turning.TSB {
+		sA, sB = &j.placarB, &j.placarA
 	}
 
 	return sA, sB
 }
 
-func (g *Jogo) placarInvertido(side *int) *int {
-	sA, sB := g.placares()
+func (j *Jogo) placarInvertido(side *int) *int {
+	sA, sB := j.placares()
 	if side == sA {
 		return sB
 	}
 	return sA
 }
 
-func (g *Jogo) AdicionaAoMudarPlacar(event AoMudarPlacar) {
-	g.EventosAoMudarPlacar = append(g.EventosAoMudarPlacar, event)
+func (j *Jogo) AdicionaAoMudarPlacar(event AoMudarPlacar) {
+	j.eventosAoMudarPlacar = append(j.eventosAoMudarPlacar, event)
 }
 
-func (g Jogo) executarEventAoMudarPlacar(scoreA, scoreB int) {
-	done := g.Terminado()
-	for i := range g.EventosAoMudarPlacar {
-		event := g.EventosAoMudarPlacar[i]
+func (j Jogo) executarEventosAoMudarPlacar(scoreA, scoreB int) {
+	done := j.Terminado()
+	for i := range j.eventosAoMudarPlacar {
+		event := j.eventosAoMudarPlacar[i]
 		event(scoreA, scoreB, done)
 	}
 }
 
-func (g *Jogo) AdicionaPlacar(score placares.EstadoEParametroPlacar) error {
-	if g.Terminado() { // am I acepting more points?
+func (j Jogo) verificarEstado(placar placares.EstadoEParametroPlacar) error {
+	if j.Terminado() { // am I acepting more points?
 		return errors.New("Game completed already.")
 	}
 
-	if score.Tipo() != placares.TPPonto {
+	if placar.Tipo() != placares.TPPonto {
 		return errors.New("This is not a score for a point.")
 	}
 
-	if !score.Terminado() {
+	if !placar.Terminado() {
 		return errors.New("Point is not completed.")
 	}
 
+	return nil
+}
+
+func (j *Jogo) AdicionaPlacar(score placares.EstadoEParametroPlacar) error {
+	if err := j.verificarEstado(score); err != nil {
+		return err
+	}
+
 	incr := 1
-	sA, sB := g.placares()
+	sA, sB := j.placares()
 	sideToAdd := sA
 	if who := score.Lado(); who == placares.LPOposto {
 		sideToAdd = sB
 	}
 
-	if (!g.pontoDecisivo) && (*sA > 3 || *sB > 3) {
+	if (!j.pontoDecisivo) && (*sA > 3 || *sB > 3) {
 		if *sideToAdd == 3 {
 			incr = -1
-			sideToAdd = g.placarInvertido(sideToAdd)
+			sideToAdd = j.placarInvertido(sideToAdd)
 		}
 	}
 
 	*sideToAdd += incr
-	g.executarEventAoMudarPlacar(g.placarA, g.placarB)
+	j.executarEventosAoMudarPlacar(j.Resultado())
 
 	return nil
 }
 
-func (g Jogo) Resultado() (int, int) {
-	return g.placarA, g.placarB
+func (j Jogo) Resultado() (int, int) {
+	return j.placarA, j.placarB
 }
 
-func (g Jogo) Lado() placares.LadoDoPlacar {
-	return placares.Lado(g)
+func (j Jogo) Lado() placares.LadoDoPlacar {
+	return placares.Lado(j)
 }
 
-func (g Jogo) Tipo() placares.TipoDoPlacar {
+func (j Jogo) Tipo() placares.TipoDoPlacar {
 	return placares.TPJogo
 }
 
-func (g Jogo) Terminado() bool {
-	sA, sB := g.Resultado()
+func (j Jogo) Terminado() bool {
+	sA, sB := j.Resultado()
 	diff := 2
-	if g.pontoDecisivo {
+	if j.pontoDecisivo {
 		diff--
 	}
 
