@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 type testItem struct {
@@ -18,7 +18,7 @@ func (t testItem) Score() placares.EstadoEResultadoPlacar {
 }
 
 type score struct {
-	sideToBegin    turning.TurningSide
+	sideToBegin    turnos.LadoDoTurno
 	bestOf         int
 	scoreA, scoreB int
 }
@@ -52,11 +52,11 @@ func (m score) Tipo() placares.TipoDoPlacar {
 }
 
 func newItem(scoreA, scoreB int) testItem {
-	result := testItem{score: newScore(turning.TSA, scoreA, scoreB), sets: make([]placares.EstadoResultadoEParametroPlacar, 0)}
+	result := testItem{score: newScore(turnos.LTA, scoreA, scoreB), sets: make([]placares.EstadoResultadoEParametroPlacar, 0)}
 	return result
 }
 
-func newScore(servingSide turning.TurningSide, scoreA, scoreB int) score {
+func newScore(servingSide turnos.LadoDoTurno, scoreA, scoreB int) score {
 	return score{
 		sideToBegin: servingSide,
 		scoreA:      scoreA,
@@ -65,10 +65,10 @@ func newScore(servingSide turning.TurningSide, scoreA, scoreB int) score {
 }
 
 func runTest(blocks []testItem, SideA, SideB int, t *testing.T) {
-	myTurn := turn.New(turn.WithTurningSide(turning.TSA))
+	myTurn := turno.New(turno.MudandoLado(turnos.LTA))
 	myMatch := New(DefaultMatch())
 
-	sideToServe := myTurn.CurrentSide()
+	sideToServe := myTurn.LadoCorrente()
 	myMatch.AddOnAddingSetEvent(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Log("FINAL ")

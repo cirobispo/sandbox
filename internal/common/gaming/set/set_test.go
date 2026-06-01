@@ -5,17 +5,17 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 type set struct {
-	ladoDoServico turning.TurningSide
+	ladoDoServico turnos.LadoDoTurno
 	placar        placares.EstadoResultadoEParametroPlacar
 	pontos        []point.Point
 }
 
-func (s set) ServingSide() turning.TurningSide {
+func (s set) ServingSide() turnos.LadoDoTurno {
 	return s.ladoDoServico
 }
 
@@ -28,7 +28,7 @@ func (s set) Points() []point.Point {
 }
 
 type placar struct {
-	ladoDoServico    turning.TurningSide
+	ladoDoServico    turnos.LadoDoTurno
 	pontoDecisivo    bool
 	placarA, placarB int
 }
@@ -64,18 +64,18 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 	return placares.TPJogo
 }
 
-func (s *set) ajustaLadoServico(lado turning.TurningSide) {
+func (s *set) ajustaLadoServico(lado turnos.LadoDoTurno) {
 	a, b := s.placar.Resultado()
 	s.ladoDoServico = lado
 	s.placar = novoPlacar(lado, a, b)
 }
 
 func novoSet(placarA, placarB int) set {
-	result := set{placar: novoPlacar(turning.TSA, placarA, placarB), pontos: make([]point.Point, 0)}
+	result := set{placar: novoPlacar(turnos.LTA, placarA, placarB), pontos: make([]point.Point, 0)}
 	return result
 }
 
-func novoPlacar(servingSide turning.TurningSide, scoreA, scoreB int) placar {
+func novoPlacar(servingSide turnos.LadoDoTurno, scoreA, scoreB int) placar {
 	return placar{
 		ladoDoServico: servingSide,
 		placarA:       scoreA,
@@ -84,10 +84,10 @@ func novoPlacar(servingSide turning.TurningSide, scoreA, scoreB int) placar {
 }
 
 func runTest(blocks []set, SideA, SideB int, t *testing.T) {
-	myTurn := turn.New(turn.WithTurningSide(turning.TSA))
+	myTurn := turno.New(turno.MudandoLado(turnos.LTA))
 	mySet := New(SetPadrao(myTurn))
 
-	sideToServe := myTurn.CurrentSide()
+	sideToServe := myTurn.LadoCorrente()
 	mySet.AdicionarAoAdicionarJogo(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Log("FINAL ")

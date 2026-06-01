@@ -7,14 +7,14 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/placares/placarset"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 type ParamOption func(set *Set) bool
 
 type Set struct {
-	quemServe, ladoServico    *turn.Turn
+	quemServe, ladoServico    *turno.Turno
 	jogosPorSet               int
 	pontoDecisivo             bool
 	tieBreak                  bool
@@ -24,10 +24,10 @@ type Set struct {
 	EventosAoMudarLadoJogador []gaming.OnPlayerChangeSide
 }
 
-func SetPadrao(turnForServing *turn.Turn) ParamOption {
+func SetPadrao(turnForServing *turno.Turno) ParamOption {
 	return func(score *Set) bool {
 		score.quemServe = turnForServing
-		score.ladoServico = turn.New(turn.WithTurningSide(turnForServing.StartSide()))
+		score.ladoServico = turno.New(turno.MudandoLado(turnForServing.LadoInicial()))
 		score.jogosPorSet = 6
 		score.pontoDecisivo = false
 		score.tieBreak = true
@@ -35,10 +35,10 @@ func SetPadrao(turnForServing *turn.Turn) ParamOption {
 	}
 }
 
-func TurnoJogosETieBreak(turnForServing *turn.Turn, size int, decidingPoint, tieBreak bool) ParamOption {
+func TurnoJogosETieBreak(turnForServing *turno.Turno, size int, decidingPoint, tieBreak bool) ParamOption {
 	return func(score *Set) bool {
 		score.quemServe = turnForServing
-		score.ladoServico = turn.New(turn.WithTurningSide(turnForServing.StartSide()))
+		score.ladoServico = turno.New(turno.MudandoLado(turnForServing.LadoInicial()))
 		score.jogosPorSet = size
 		score.pontoDecisivo = decidingPoint
 		score.tieBreak = tieBreak
@@ -56,7 +56,7 @@ func New(param ParamOption) *Set {
 	if param != nil {
 		custom := param(result)
 
-		serving_side := result.quemServe.StartSide()
+		serving_side := result.quemServe.LadoInicial()
 		callback := placarset.SetPadrao(serving_side)
 		if custom {
 			callback = placarset.TamanhoETieBreak(serving_side, result.jogosPorSet, result.pontoDecisivo, result.tieBreak)
@@ -64,7 +64,7 @@ func New(param ParamOption) *Set {
 		result.placar = placarset.New(callback)
 	}
 
-	result.ladoServico.AddOnAfterChange(func(ts turning.TurningSide) {
+	result.ladoServico.AdicionarDepoisDeMudarTurno(func(ts turnos.LadoDoTurno) {
 		result.executarAoMudarLadoJogador()
 	})
 
@@ -117,7 +117,7 @@ func (s *Set) AdicionarJogo(g game.Gaming) error {
 }
 
 func (s Set) NovoJogo() *game.Game {
-	newTurn := s.quemServe.Clone(s.quemServe.CurrentSide())
+	newTurn := s.quemServe.Clonar(s.quemServe.LadoCorrente())
 	result := game.New(newTurn, s.pontoDecisivo)
 	return result
 }

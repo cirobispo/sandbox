@@ -8,7 +8,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/gaming/set"
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/placares/placarpartida"
-	"github.com/cirobispo/sandbox/internal/common/turning"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
 )
 
 type ParamOption func(set *Match) bool
@@ -61,7 +61,7 @@ func New(param ParamOption) *Match {
 
 		callback := placarpartida.WithDefault()
 		if result.custom {
-			callback = placarpartida.WithSideAndSize(turning.TSA, result.matchSize)
+			callback = placarpartida.WithSideAndSize(turnos.LTA, result.matchSize)
 		}
 		result.score = placarpartida.New(callback)
 	}

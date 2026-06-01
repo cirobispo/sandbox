@@ -5,12 +5,12 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
-func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	g := New(turn.New(turn.WithTurningSide(personToServe)), false)
+func runTest(personToServe turnos.LadoDoTurno, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
+	g := New(turno.New(turno.MudandoLado(personToServe)), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
@@ -26,12 +26,12 @@ func runTest(personToServe turning.TurningSide, blocks []point.TestBlock, SideA,
 
 	for i := range blocks {
 		block := blocks[i]
-		tn := turn.New(turn.WithTurningSide(turning.TSA))
+		tn := turno.New(turno.MudandoLado(turnos.LTA))
 		p := point.New(tn)
 
 		for j := range block.Items {
 			item := block.Items[j]
-			t.Logf("%s hits %s, ", tn.CurrentSide().String(), item.Value.Type())
+			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Type())
 			p.AddHit(item.Value)
 		}
 
@@ -55,7 +55,7 @@ func TestTurnA_Game40(t *testing.T) {
 		point.AcePoint(),
 	}
 
-	runTest(turning.TSA, blocks, 5, 3, t)
+	runTest(turnos.LTA, blocks, 5, 3, t)
 }
 
 func TestTurnB_40Game(t *testing.T) {
@@ -68,5 +68,5 @@ func TestTurnB_40Game(t *testing.T) {
 		point.AcePoint(),
 	}
 
-	runTest(turning.TSB, blocks, 3, 5, t)
+	runTest(turnos.LTB, blocks, 3, 5, t)
 }

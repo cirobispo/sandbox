@@ -5,12 +5,12 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
-	score := New(turning.TSA, false)
+	score := New(turnos.LTA, false)
 	breakPoint := 0
 
 	score.AdicionaAoMudarPlacar(func(scoreA, scoreB int, done bool) {
@@ -34,7 +34,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	t.Log("Game status: ( 0 x 0 )")
 	for i := range blocks {
 		block := blocks[i]
-		point := point.New(turn.New(turn.WithTurningSide(turning.TSA)))
+		point := point.New(turno.New(turno.MudandoLado(turnos.LTA)))
 		for j := range block.Items {
 			hit := block.Items[j].Value
 			point.AddHit(hit)

@@ -6,15 +6,14 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/countingturn"
-	"github.com/cirobispo/sandbox/internal/common/turning/timingturn"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turnocontador"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turnotemporizador"
 )
 
-func newPoint(side turning.TurningSide) Point {
-	ctt := turn.New(timingturn.WithAnotherTurn(turn.New(countingturn.WithAnotherTurn(turn.New(turn.WithTurningSide(side))))))
-
+func newPoint(side turnos.LadoDoTurno) Point {
+	ctt := turno.New(turnocontador.ComOutroTurno(turno.New((turnotemporizador.ComOutroTurno(turno.New(turno.MudandoLado(side)))))))
 	return New(ctt)
 }
 
@@ -25,13 +24,13 @@ func TestEverySinglePoint(tt *testing.T) {
 		hit.NewServeLet(), hit.NewWinner(), hit.NewToast(), hit.NewNetTouch(),
 	}
 
-	p := newPoint(turning.TSB)
+	p := newPoint(turnos.LTB)
 	points := make([]Point, 0, len(everyHit))
 	points = append(points, p)
 
 	for i := range everyHit {
 		if p.Side() != pointing.PSNone {
-			p = newPoint(turning.TSB)
+			p = newPoint(turnos.LTB)
 			points = append(points, p)
 		}
 
@@ -43,7 +42,7 @@ func TestEverySinglePoint(tt *testing.T) {
 			isSameSide := (pointSide == pointing.PSServing && hitSide == hitting.HTDSameSide)
 			isOppositeSide := (pointSide == pointing.PSOpposite && hitSide == hitting.HTDOppositeSide)
 			if isSameSide || isOppositeSide {
-				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Length(), p.Ball().CurrentSide(), hit.Type(), hit.Side(), p.Side())
+				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Length(), p.Ball().LadoCorrente(), hit.Type(), hit.Side(), p.Side())
 			}
 		} else {
 			if hitSide == hitting.HTDConditional {
@@ -67,7 +66,7 @@ func showPoints(tt *testing.T, points []Point) {
 				os++
 			}
 
-			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Length(), p.Ball().CurrentSide(), p.Side(), ss, os)
+			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Length(), p.Ball().LadoCorrente(), p.Side(), ss, os)
 		}
 	}
 }

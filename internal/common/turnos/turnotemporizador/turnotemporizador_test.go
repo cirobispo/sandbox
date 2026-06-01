@@ -1,35 +1,35 @@
-package timingturn
+package turnotemporizador
 
 import (
 	"testing"
 	"time"
 
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 type testItem struct {
 	turns     int
-	startSide turning.TurningSide
+	startSide turnos.LadoDoTurno
 }
 
 func runTest(test testItem, t *testing.T) {
-	obj := turn.New(WithAnotherTurn(turn.New(turn.WithTurningSide(test.startSide))))
+	obj := turno.New(ComOutroTurno(turno.New(turno.MudandoLado(test.startSide))))
 	begin := time.Now()
 	for a := test.turns; a > 0; a-- {
 		obj.Execute()
 	}
 	diff := time.Since(begin).Round(time.Millisecond)
 
-	if value := Duration(obj).Round(time.Millisecond); value != diff {
+	if value := Duracao(obj).Round(time.Millisecond); value != diff {
 		t.Errorf("turn is \"%v\" turns and should be \"%v\"", value, diff)
 	}
 }
 
 func Test10CrancksSideA(t *testing.T) {
-	runTest(testItem{100, turning.TSA}, t)
+	runTest(testItem{100, turnos.LTA}, t)
 }
 
 func Test10CrancksSideB(t *testing.T) {
-	runTest(testItem{100, turning.TSB}, t)
+	runTest(testItem{100, turnos.LTB}, t)
 }

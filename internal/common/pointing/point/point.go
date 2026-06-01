@@ -6,17 +6,17 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 type Point struct {
-	ballSide          *turn.Turn
+	ballSide          *turno.Turno
 	hits              *[]hitting.Hitting
 	done              bool
 	onAfterScoreEvent *[]pointing.OnScoringPoint
 }
 
-func New(sideControl *turn.Turn) Point {
+func New(sideControl *turno.Turno) Point {
 	hit := make([]hitting.Hitting, 0, 3)
 	events := make([]pointing.OnScoringPoint, 0)
 	return Point{
@@ -98,7 +98,7 @@ func (p Point) LastHit() (hitting.HitType, error) {
 	return (*p.hits)[hitCount-1].Type(), nil
 }
 
-func (p Point) Ball() turn.Turn {
+func (p Point) Ball() turno.Turno {
 	return *p.ballSide
 }
 
@@ -118,7 +118,7 @@ func (p Point) Side() pointing.PointSide {
 		lastHit = hit.NewDoubleFault()
 	}
 
-	if p.ballSide.CurrentSide() == p.ballSide.StartSide() {
+	if p.ballSide.LadoCorrente() == p.ballSide.LadoInicial() {
 		return HitSide2PointSide(lastHit.Side())
 	} else {
 		return HitSide2PointSide(lastHit.Side()).Inverse()
@@ -130,7 +130,7 @@ func (p Point) Done() bool {
 }
 
 func (p Point) Clone() Point {
-	result := New(p.ballSide.Clone(p.ballSide.StartSide()))
+	result := New(p.ballSide.Clonar(p.ballSide.LadoInicial()))
 	copy(*result.hits, *p.hits)
 	copy(*result.onAfterScoreEvent, *p.onAfterScoreEvent)
 	result.done = p.done

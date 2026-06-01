@@ -4,14 +4,14 @@ import (
 	"errors"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/turning"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
 )
 
 type OnMatchScore func(scoreA, scoreB int, done bool)
 type ParamOption func(score *Partida)
 
 type Partida struct {
-	sideToBegin    turning.TurningSide
+	sideToBegin    turnos.LadoDoTurno
 	bestOf         int
 	scoreA, scoreB int
 
@@ -19,14 +19,14 @@ type Partida struct {
 }
 
 func WithDefault() ParamOption {
-	return WithSideAndSize(turning.TSA, 3)
+	return WithSideAndSize(turnos.LTA, 3)
 }
 
 func WithGrandSlam() ParamOption {
-	return WithSideAndSize(turning.TSA, 5)
+	return WithSideAndSize(turnos.LTA, 5)
 }
 
-func WithSideAndSize(sideToBegin turning.TurningSide, bestOf int) ParamOption {
+func WithSideAndSize(sideToBegin turnos.LadoDoTurno, bestOf int) ParamOption {
 	return func(score *Partida) {
 		score.sideToBegin = sideToBegin
 		score.bestOf = bestOf
@@ -57,7 +57,7 @@ func (m Partida) executeOnAfterScoreEvent(scoreA, scoreB int) {
 
 func (m *Partida) getScores() (*int, *int) {
 	sA, sB := &m.scoreA, &m.scoreB
-	if m.sideToBegin == turning.TSB {
+	if m.sideToBegin == turnos.LTB {
 		sA, sB = &m.scoreB, &m.scoreA
 	}
 

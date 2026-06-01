@@ -7,26 +7,26 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/placares/placarjogo"
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
-	"github.com/cirobispo/sandbox/internal/common/turning"
-	"github.com/cirobispo/sandbox/internal/common/turning/turn"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
+	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
 type Gaming interface {
-	ServingSide() turning.TurningSide
+	ServingSide() turnos.LadoDoTurno
 	Score() placares.EstadoResultadoEParametroPlacar
 	Points() []point.Point
 }
 
 type Game struct {
-	turn               *turn.Turn
+	turn               *turno.Turno
 	decidingPoint      bool
 	score              placarjogo.Jogo
 	points             []point.Point
 	onAddingPointEvent []gaming.OnAfterAddingPoint
 }
 
-func New(turn *turn.Turn, decidingPoint bool) *Game {
-	side := turn.StartSide()
+func New(turn *turno.Turno, decidingPoint bool) *Game {
+	side := turn.LadoInicial()
 	return &Game{
 		turn:               turn,
 		decidingPoint:      decidingPoint,
@@ -67,8 +67,8 @@ func (g *Game) AddPoint(p point.Point) error {
 	return nil
 }
 
-func (g Game) ServingSide() turning.TurningSide {
-	return g.turn.StartSide()
+func (g Game) ServingSide() turnos.LadoDoTurno {
+	return g.turn.LadoInicial()
 }
 
 func (g Game) Score() placares.EstadoEResultadoPlacar {

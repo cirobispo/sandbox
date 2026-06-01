@@ -4,20 +4,20 @@ import (
 	"errors"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/turning"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
 )
 
 type AoMudarPlacar func(placarA, placarB int, terminado bool)
 
 type Jogo struct {
-	ladoInicio       turning.TurningSide
+	ladoInicio       turnos.LadoDoTurno
 	pontoDecisivo    bool
 	placarA, placarB int
 
 	eventosAoMudarPlacar []AoMudarPlacar
 }
 
-func New(startSide turning.TurningSide, decidingPoint bool) Jogo {
+func New(startSide turnos.LadoDoTurno, decidingPoint bool) Jogo {
 	return Jogo{
 		ladoInicio:           startSide,
 		pontoDecisivo:        decidingPoint,
@@ -29,7 +29,7 @@ func New(startSide turning.TurningSide, decidingPoint bool) Jogo {
 
 func (j *Jogo) placares() (*int, *int) {
 	sA, sB := &j.placarA, &j.placarB
-	if j.ladoInicio == turning.TSB {
+	if j.ladoInicio == turnos.LTB {
 		sA, sB = &j.placarB, &j.placarA
 	}
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/turning"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
 )
 
 type score struct {
@@ -32,12 +32,12 @@ func (s score) Tipo() placares.TipoDoPlacar {
 }
 
 func runTest(custom bool, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
-	score := New(SetPadrao(turning.TSA))
+	score := New(SetPadrao(turnos.LTA))
 	if custom {
 		if SideB > SideA {
-			score = New(TamanhoETieBreak(turning.TSA, SideB, true, true))
+			score = New(TamanhoETieBreak(turnos.LTA, SideB, true, true))
 		} else {
-			score = New(TamanhoETieBreak(turning.TSA, SideA, true, true))
+			score = New(TamanhoETieBreak(turnos.LTA, SideA, true, true))
 		}
 	}
 

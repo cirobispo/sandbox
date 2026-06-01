@@ -4,14 +4,14 @@ import (
 	"errors"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/turning"
+	"github.com/cirobispo/sandbox/internal/common/turnos"
 )
 
 type AoMudarPlacar func(placarA, placarB int, tieBreak, terminado bool)
 type ParamOption func(score *Set)
 
 type Set struct {
-	ladoInicio           turning.TurningSide
+	ladoInicio           turnos.LadoDoTurno
 	maiorEmpate          int
 	jogosConfirmaVitoria int
 	placarA, placarB     int
@@ -19,7 +19,7 @@ type Set struct {
 	eventosAoMudarPlacar []AoMudarPlacar
 }
 
-func SetPadrao(ladoInicio turning.TurningSide) ParamOption {
+func SetPadrao(ladoInicio turnos.LadoDoTurno) ParamOption {
 	return func(score *Set) {
 		score.ladoInicio = ladoInicio
 		score.maiorEmpate = 6
@@ -27,7 +27,7 @@ func SetPadrao(ladoInicio turning.TurningSide) ParamOption {
 	}
 }
 
-func TamanhoETieBreak(ladoInicio turning.TurningSide, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
+func TamanhoETieBreak(ladoInicio turnos.LadoDoTurno, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
 	return func(placar *Set) {
 		placar.ladoInicio = ladoInicio
 		placar.maiorEmpate = tamanho
@@ -62,7 +62,7 @@ func (s Set) executarAoMudarPlacar(placarA, placarB int) {
 
 func (s *Set) placares() (*int, *int) {
 	sA, sB := &s.placarA, &s.placarB
-	if s.ladoInicio == turning.TSB {
+	if s.ladoInicio == turnos.LTB {
 		sA, sB = &s.placarB, &s.placarA
 	}
 
