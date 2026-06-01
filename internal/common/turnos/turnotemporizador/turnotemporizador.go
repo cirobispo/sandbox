@@ -9,7 +9,7 @@ import (
 
 type TurnoTemporizador interface {
 	turnos.Turning
-	Duration(t *turno.Turno) int
+	Duracao(t *turno.Turno) int
 }
 
 func ComOutroTurno(t *turno.Turno) func(t *turno.Turno) {

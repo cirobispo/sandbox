@@ -9,25 +9,25 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
-type Point struct {
-	ballSide          *turno.Turno
-	hits              *[]hitting.Hitting
-	done              bool
-	onAfterScoreEvent *[]pointing.OnScoringPoint
+type Ponto struct {
+	ladoDaBola               *turno.Turno
+	golpes                   *[]hitting.Hitting
+	terminado                bool
+	eventosAoPontuarNoPlacar *[]pointing.AoPontuarNoPlacar
 }
 
-func New(sideControl *turno.Turno) Point {
+func New(sideControl *turno.Turno) Ponto {
 	hit := make([]hitting.Hitting, 0, 3)
-	events := make([]pointing.OnScoringPoint, 0)
-	return Point{
-		done:              false,
-		ballSide:          sideControl,
-		hits:              &hit,
-		onAfterScoreEvent: &events,
+	events := make([]pointing.AoPontuarNoPlacar, 0)
+	return Ponto{
+		terminado:                false,
+		ladoDaBola:               sideControl,
+		golpes:                   &hit,
+		eventosAoPontuarNoPlacar: &events,
 	}
 }
 
-func hasDoubleFault(hits *[]hitting.Hitting) bool {
+func temDuplaFalta(hits *[]hitting.Hitting) bool {
 	lastHit := (*hits)[len(*hits)-1]
 	fault := lastHit.Type() == hitting.HTFootFault || lastHit.Type() == hitting.HTServeNet || lastHit.Type() == hitting.HTServeOut
 	if lastHit.Side() != hitting.HTDConditional && !fault {
@@ -49,109 +49,109 @@ func hasDoubleFault(hits *[]hitting.Hitting) bool {
 	return result
 }
 
-func (p *Point) AddOnAfterScore(callback pointing.OnScoringPoint) {
-	*p.onAfterScoreEvent = append(*p.onAfterScoreEvent, callback)
+func (p *Ponto) AdicionarEventoAoPontuarNoPlacar(callback pointing.AoPontuarNoPlacar) {
+	*p.eventosAoPontuarNoPlacar = append(*p.eventosAoPontuarNoPlacar, callback)
 }
 
-func (p *Point) AddHit(h hitting.Hitting) {
-	if p.done {
+func (p *Ponto) AdicionaGolpe(h hitting.Hitting) {
+	if p.terminado {
 		return
 	}
 
-	*p.hits = append(*p.hits, h)
+	*p.golpes = append(*p.golpes, h)
 
 	ballInPlay := (h.Side() == hitting.HTDNone || h.Side() == hitting.HTDChangeSide)
 	if ballInPlay {
-		p.ballSide.Execute()
+		p.ladoDaBola.Execute()
 		return
 	}
 
-	if h.Side() == hitting.HTDConditional && !hasDoubleFault(p.hits) {
+	if h.Side() == hitting.HTDConditional && !temDuplaFalta(p.golpes) {
 		return
 	}
 
-	p.done = true
-	p.executeOnScore(h.Type(), h.Side(), p.done)
+	p.terminado = true
+	p.executeEventosAoPontuarNoPlacar(h.Type(), h.Side(), p.terminado)
 }
 
-func (p Point) Hits() []hit.Hit {
-	result := make([]hit.Hit, 0, len(*p.hits))
-	for j := range *p.hits {
-		item := (*p.hits)[j]
+func (p Ponto) Golpes() []hit.Hit {
+	result := make([]hit.Hit, 0, len(*p.golpes))
+	for j := range *p.golpes {
+		item := (*p.golpes)[j]
 		result = append(result, hit.New(item.Type(), item.Side()))
 	}
 
 	return result
 }
 
-func (p Point) Length() int {
-	result := len(*p.hits)
+func (p Ponto) Tamanho() int {
+	result := len(*p.golpes)
 	return result
 }
 
-func (p Point) LastHit() (hitting.HitType, error) {
-	hitCount := p.Length()
+func (p Ponto) UltimoGolpe() (hitting.HitType, error) {
+	hitCount := p.Tamanho()
 	if hitCount == 0 {
 		return hitting.HTDoubleFault, errors.New("no hit found.")
 	}
 
-	return (*p.hits)[hitCount-1].Type(), nil
+	return (*p.golpes)[hitCount-1].Type(), nil
 }
 
-func (p Point) Ball() turno.Turno {
-	return *p.ballSide
+func (p Ponto) LadoDaBola() turno.Turno {
+	return *p.ladoDaBola
 }
 
-func (p Point) Side() pointing.PointSide {
-	if !p.Done() {
-		return pointing.PSNone
+func (p Ponto) LadoDoPonto() pointing.LadoDoPonto {
+	if !p.Terminado() {
+		return pointing.LPNulo
 	}
 
-	lastHit := (*p.hits)[len(*p.hits)-1]
-	isDoubleFault := (lastHit.Side() == hitting.HTDConditional && hasDoubleFault(p.hits))
+	lastHit := (*p.golpes)[len(*p.golpes)-1]
+	isDoubleFault := (lastHit.Side() == hitting.HTDConditional && temDuplaFalta(p.golpes))
 	isOrdinaryPoint := (lastHit.Side() == hitting.HTDSameSide || lastHit.Side() == hitting.HTDOppositeSide)
 	if !isOrdinaryPoint && !isDoubleFault {
-		return pointing.PSNone
+		return pointing.LPNulo
 	}
 
 	if isDoubleFault {
 		lastHit = hit.NewDoubleFault()
 	}
 
-	if p.ballSide.LadoCorrente() == p.ballSide.LadoInicial() {
-		return HitSide2PointSide(lastHit.Side())
+	if p.ladoDaBola.LadoCorrente() == p.ladoDaBola.LadoInicial() {
+		return LadoDoGolpeParaLadoDoPonto(lastHit.Side())
 	} else {
-		return HitSide2PointSide(lastHit.Side()).Inverse()
+		return LadoDoGolpeParaLadoDoPonto(lastHit.Side()).Inverso()
 	}
 }
 
-func (p Point) Done() bool {
-	return p.done
+func (p Ponto) Terminado() bool {
+	return p.terminado
 }
 
-func (p Point) Clone() Point {
-	result := New(p.ballSide.Clonar(p.ballSide.LadoInicial()))
-	copy(*result.hits, *p.hits)
-	copy(*result.onAfterScoreEvent, *p.onAfterScoreEvent)
-	result.done = p.done
+func (p Ponto) Clonar() Ponto {
+	result := New(p.ladoDaBola.Clonar(p.ladoDaBola.LadoInicial()))
+	copy(*result.golpes, *p.golpes)
+	copy(*result.eventosAoPontuarNoPlacar, *p.eventosAoPontuarNoPlacar)
+	result.terminado = p.terminado
 
 	return result
 }
 
-func (p Point) executeOnScore(hitType hitting.HitType, side hitting.HitSide, done bool) {
-	for i := range *p.onAfterScoreEvent {
-		event := (*p.onAfterScoreEvent)[i]
+func (p Ponto) executeEventosAoPontuarNoPlacar(hitType hitting.HitType, side hitting.HitSide, done bool) {
+	for i := range *p.eventosAoPontuarNoPlacar {
+		event := (*p.eventosAoPontuarNoPlacar)[i]
 		event(hitType, side, done)
 	}
 }
 
-func HitSide2PointSide(s hitting.HitSide) pointing.PointSide {
+func LadoDoGolpeParaLadoDoPonto(s hitting.HitSide) pointing.LadoDoPonto {
 	switch s {
 	case hitting.HTDSameSide:
-		return pointing.PSServing
+		return pointing.LPServico
 	case hitting.HTDOppositeSide:
-		return pointing.PSOpposite
+		return pointing.LPOposto
 	default:
-		return pointing.PSNone
+		return pointing.LPNulo
 	}
 }

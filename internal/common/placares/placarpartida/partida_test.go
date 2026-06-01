@@ -31,7 +31,7 @@ func (s score) Tipo() placares.TipoDoPlacar {
 }
 
 func runTest(score *Partida, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
-	score.AddOnAfterScoreEvent(func(scoreA, scoreB int, done bool) {
+	score.AdicionarEventoAoPontuarNaPartida(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
 		}
@@ -40,7 +40,7 @@ func runTest(score *Partida, results []placares.EstadoResultadoEParametroPlacar,
 	t.Logf("Testing a result for a Set with %d games. Expected result (%d x %d)\n", len(results), SideA, SideB)
 	for j := range results {
 		item := results[j]
-		score.AddScore(item)
+		score.AdicionarPlacar(item)
 	}
 
 	sA, sB := score.Resultado()
@@ -61,7 +61,7 @@ func Test_Set_2x1(t *testing.T) {
 		score{scoreA: 7, scoreB: 5}, score{scoreA: 6, scoreB: 4},
 	}
 
-	match := New(WithDefault())
+	match := New(Padrao())
 	runTest(&match, scores, 2, 1, t)
 }
 
@@ -71,6 +71,6 @@ func Test_Set_1x2(t *testing.T) {
 		score{scoreA: 5, scoreB: 7}, score{scoreA: 6, scoreB: 4},
 	}
 
-	match := New(WithDefault())
+	match := New(Padrao())
 	runTest(&match, scores, 1, 2, t)
 }

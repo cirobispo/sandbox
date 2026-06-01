@@ -7,37 +7,37 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/turnos"
 )
 
-type OnMatchScore func(scoreA, scoreB int, done bool)
-type ParamOption func(score *Partida)
+type AoPontuarNaPartida func(placarA, placarB int, terminado bool)
+type ParamOption func(p *Partida)
 
 type Partida struct {
-	sideToBegin    turnos.LadoDoTurno
-	bestOf         int
-	scoreA, scoreB int
+	ladoInicial      turnos.LadoDoTurno
+	melhorDe         int
+	placarA, placarB int
 
-	onAfterScoreEvent []OnMatchScore
+	eventosAoPontuarNaPartida []AoPontuarNaPartida
 }
 
-func WithDefault() ParamOption {
-	return WithSideAndSize(turnos.LTA, 3)
+func Padrao() ParamOption {
+	return TamanhoELado(turnos.LTA, 3)
 }
 
-func WithGrandSlam() ParamOption {
-	return WithSideAndSize(turnos.LTA, 5)
+func ModoGrandSLAM() ParamOption {
+	return TamanhoELado(turnos.LTA, 5)
 }
 
-func WithSideAndSize(sideToBegin turnos.LadoDoTurno, bestOf int) ParamOption {
+func TamanhoELado(ladoIncial turnos.LadoDoTurno, melhorDe int) ParamOption {
 	return func(score *Partida) {
-		score.sideToBegin = sideToBegin
-		score.bestOf = bestOf
+		score.ladoInicial = ladoIncial
+		score.melhorDe = melhorDe
 	}
 }
 
 func New(param ParamOption) Partida {
 	result := Partida{
-		scoreA:            0,
-		scoreB:            0,
-		onAfterScoreEvent: make([]OnMatchScore, 0),
+		placarA:                   0,
+		placarB:                   0,
+		eventosAoPontuarNaPartida: make([]AoPontuarNaPartida, 0),
 	}
 
 	if param != nil {
@@ -47,60 +47,60 @@ func New(param ParamOption) Partida {
 	return result
 }
 
-func (m Partida) executeOnAfterScoreEvent(scoreA, scoreB int) {
-	done := m.Terminado()
-	for i := range m.onAfterScoreEvent {
-		event := m.onAfterScoreEvent[i]
-		event(scoreA, scoreB, done)
+func (p Partida) executeEventosAoPontuarNaPartida(placarA, placarB int) {
+	done := p.Terminado()
+	for i := range p.eventosAoPontuarNaPartida {
+		event := p.eventosAoPontuarNaPartida[i]
+		event(placarA, placarB, done)
 	}
 }
 
-func (m *Partida) getScores() (*int, *int) {
-	sA, sB := &m.scoreA, &m.scoreB
-	if m.sideToBegin == turnos.LTB {
-		sA, sB = &m.scoreB, &m.scoreA
+func (p *Partida) placares() (*int, *int) {
+	sA, sB := &p.placarA, &p.placarB
+	if p.ladoInicial == turnos.LTB {
+		sA, sB = &p.placarB, &p.placarA
 	}
 
 	return sA, sB
 }
 
-func (m *Partida) AddOnAfterScoreEvent(event OnMatchScore) {
-	m.onAfterScoreEvent = append(m.onAfterScoreEvent, event)
+func (p *Partida) AdicionarEventoAoPontuarNaPartida(event AoPontuarNaPartida) {
+	p.eventosAoPontuarNaPartida = append(p.eventosAoPontuarNaPartida, event)
 }
 
-func (m *Partida) AddScore(score placares.EstadoEParametroPlacar) error {
-	if m.Terminado() { // am I acepting more points?
+func (p *Partida) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
+	if p.Terminado() { // am I acepting more points?
 		return errors.New("Match completed already.")
 	}
 
-	if score.Tipo() != placares.TPSet {
+	if placar.Tipo() != placares.TPSet {
 		return errors.New("This is not Set Score.")
 	}
 
-	if !score.Terminado() {
+	if !placar.Terminado() {
 		return errors.New("Set is not completed.")
 	}
 
-	sA, sB := m.getScores()
+	sA, sB := p.placares()
 	sideToAdd := sA
 
-	if score.Lado() == placares.LPOposto {
+	if placar.Lado() == placares.LPOposto {
 		sideToAdd = sB
 	}
 
 	*sideToAdd += 1
-	m.executeOnAfterScoreEvent(m.scoreA, m.scoreB)
+	p.executeEventosAoPontuarNaPartida(p.placarA, p.placarB)
 	return nil
 }
 
-func (m Partida) Resultado() (int, int) {
-	return m.scoreA, m.scoreB
+func (p Partida) Resultado() (int, int) {
+	return p.placarA, p.placarB
 }
 
-func (m Partida) Terminado() bool {
-	sA, sB := m.Resultado()
+func (p Partida) Terminado() bool {
+	sA, sB := p.Resultado()
 
-	amountToWin := (m.bestOf / 2) + (m.bestOf % 2)
+	amountToWin := (p.melhorDe / 2) + (p.melhorDe % 2)
 
 	sideAWins := (sA >= amountToWin && sA-sB >= 1)
 	sideBWins := (sB >= amountToWin && sB-sA >= 1)
@@ -109,10 +109,10 @@ func (m Partida) Terminado() bool {
 	return result
 }
 
-func (m Partida) Lado() placares.LadoDoPlacar {
-	return placares.Lado(m)
+func (p Partida) Lado() placares.LadoDoPlacar {
+	return placares.Lado(p)
 }
 
-func (s Partida) Tipo() placares.TipoDoPlacar {
+func (p Partida) Tipo() placares.TipoDoPlacar {
 	return placares.TPPartida
 }

@@ -37,7 +37,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 		point := point.New(turno.New(turno.MudandoLado(turnos.LTA)))
 		for j := range block.Items {
 			hit := block.Items[j].Value
-			point.AddHit(hit)
+			point.AdicionaGolpe(hit)
 		}
 
 		scoreToAdd, error := PontoParaPlacar(&point)

@@ -2,33 +2,33 @@ package pointing
 
 import "github.com/cirobispo/sandbox/internal/common/pointing/hitting"
 
-type OnScoringPoint func(hit hitting.HitType, side hitting.HitSide, done bool)
+type AoPontuarNoPlacar func(golpe hitting.HitType, lado hitting.HitSide, done bool)
 
-type PointSide int
+type LadoDoPonto int
 
 const (
-	PSServing  PointSide = 1
-	PSOpposite PointSide = 2
-	PSNone     PointSide = 0
+	LPServico LadoDoPonto = 1
+	LPOposto  LadoDoPonto = 2
+	LPNulo    LadoDoPonto = 0
 )
 
-func (s PointSide) String() string {
+func (s LadoDoPonto) String() string {
 	switch s {
-	case PSServing:
+	case LPServico:
 		return "Serving side"
-	case PSOpposite:
+	case LPOposto:
 		return "Opposite side"
 	default:
 		return "None"
 	}
 }
 
-func (s PointSide) Inverse() PointSide {
+func (s LadoDoPonto) Inverso() LadoDoPonto {
 	switch s {
-	case PSServing:
-		return PSOpposite
-	case PSOpposite:
-		return PSServing
+	case LPServico:
+		return LPOposto
+	case LPOposto:
+		return LPServico
 	default:
 		return s
 	}

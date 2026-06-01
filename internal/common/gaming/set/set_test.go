@@ -12,7 +12,7 @@ import (
 type set struct {
 	ladoDoServico turnos.LadoDoTurno
 	placar        placares.EstadoResultadoEParametroPlacar
-	pontos        []point.Point
+	pontos        []point.Ponto
 }
 
 func (s set) ServingSide() turnos.LadoDoTurno {
@@ -23,7 +23,7 @@ func (s set) Score() placares.EstadoResultadoEParametroPlacar {
 	return s.placar
 }
 
-func (s set) Points() []point.Point {
+func (s set) Points() []point.Ponto {
 	return s.pontos
 }
 
@@ -71,7 +71,7 @@ func (s *set) ajustaLadoServico(lado turnos.LadoDoTurno) {
 }
 
 func novoSet(placarA, placarB int) set {
-	result := set{placar: novoPlacar(turnos.LTA, placarA, placarB), pontos: make([]point.Point, 0)}
+	result := set{placar: novoPlacar(turnos.LTA, placarA, placarB), pontos: make([]point.Ponto, 0)}
 	return result
 }
 

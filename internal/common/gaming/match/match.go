@@ -59,9 +59,9 @@ func New(param ParamOption) *Match {
 	if param != nil {
 		result.custom = param(result)
 
-		callback := placarpartida.WithDefault()
+		callback := placarpartida.Padrao()
 		if result.custom {
-			callback = placarpartida.WithSideAndSize(turnos.LTA, result.matchSize)
+			callback = placarpartida.TamanhoELado(turnos.LTA, result.matchSize)
 		}
 		result.score = placarpartida.New(callback)
 	}
@@ -98,7 +98,7 @@ func (m *Match) AddSet(s Setting) error {
 	}
 
 	m.sets = append(m.sets, s)
-	m.score.AddScore(s.Score())
+	m.score.AdicionarPlacar(s.Score())
 
 	scoreA, scoreB := m.score.Resultado()
 	done := m.score.Terminado()

@@ -32,7 +32,7 @@ func runTest(personToServe turnos.LadoDoTurno, blocks []point.TestBlock, SideA, 
 		for j := range block.Items {
 			item := block.Items[j]
 			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Type())
-			p.AddHit(item.Value)
+			p.AdicionaGolpe(item.Value)
 		}
 
 		g.AddPoint(p)

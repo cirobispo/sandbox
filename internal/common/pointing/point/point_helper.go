@@ -11,7 +11,7 @@ type TestItem struct {
 
 type TestBlock struct {
 	Items []TestItem
-	Point pointing.PointSide
+	Point pointing.LadoDoPonto
 }
 
 var hitServInReturnIn = []TestItem{{hit.NewServeIn()}, {hit.NewReturnIn()}}

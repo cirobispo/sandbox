@@ -14,14 +14,14 @@ import (
 type Gaming interface {
 	ServingSide() turnos.LadoDoTurno
 	Score() placares.EstadoResultadoEParametroPlacar
-	Points() []point.Point
+	Points() []point.Ponto
 }
 
 type Game struct {
 	turn               *turno.Turno
 	decidingPoint      bool
 	score              placarjogo.Jogo
-	points             []point.Point
+	points             []point.Ponto
 	onAddingPointEvent []gaming.OnAfterAddingPoint
 }
 
@@ -46,12 +46,12 @@ func (g *Game) AddOnAddingPointEvent(event gaming.OnAfterAddingPoint) {
 	g.onAddingPointEvent = append(g.onAddingPointEvent, event)
 }
 
-func (g *Game) AddPoint(p point.Point) error {
-	if !p.Done() {
+func (g *Game) AddPoint(p point.Ponto) error {
+	if !p.Terminado() {
 		return errors.New("point is still in play.")
 	}
 
-	g.points = append(g.points, p.Clone())
+	g.points = append(g.points, p.Clonar())
 	scoreToAdd, error := placarjogo.PontoParaPlacar(&p)
 
 	if error != nil {
@@ -75,8 +75,8 @@ func (g Game) Score() placares.EstadoEResultadoPlacar {
 	return g.score
 }
 
-func (g Game) Points() []point.Point {
-	result := make([]point.Point, 0, len(g.points))
+func (g Game) Points() []point.Ponto {
+	result := make([]point.Ponto, 0, len(g.points))
 	copy(result, g.points)
 
 	return result

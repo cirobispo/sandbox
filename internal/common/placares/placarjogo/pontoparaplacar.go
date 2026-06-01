@@ -9,14 +9,14 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 )
 
-func PontoParaPlacar(p *point.Point) (placares.EstadoEParametroPlacar, error) {
-	if !p.Done() {
+func PontoParaPlacar(p *point.Ponto) (placares.EstadoEParametroPlacar, error) {
+	if !p.Terminado() {
 		return nil, errors.New("point is still in play.")
 	}
 
 	result := placarponto.New()
 	result.PontuarA()
-	if p.Side() == pointing.PSOpposite {
+	if p.LadoDoPonto() == pointing.LPOposto {
 		result.PontuarB()
 	}
 
