@@ -8,7 +8,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/pointing/point"
 )
 
-type ExecuteOnPoint func(p *point.Point)
+type ExecuteOnPoint func(p *point.Ponto)
 
 type PointState struct {
 	hit            hitting.Hitting
@@ -43,7 +43,7 @@ func (s *PointState) SubStates() []PointState {
 	return result
 }
 
-func (s *PointState) Execute(p *point.Point) error {
+func (s *PointState) Execute(p *point.Ponto) error {
 	if s.execute == nil {
 		return fmt.Errorf("execute function undefined.")
 	}

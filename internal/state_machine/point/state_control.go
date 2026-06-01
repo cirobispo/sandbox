@@ -10,12 +10,12 @@ import (
 type ExecuteOnGame func(g *game.Game)
 
 type PointStateControl struct {
-	point        *point.Point
+	point        *point.Ponto
 	currentState *PointState
 	states       []*PointState
 }
 
-func NewPointStateControl(point *point.Point) PointStateControl {
+func NewPointStateControl(point *point.Ponto) PointStateControl {
 	states := []*PointState{PointStarting(),
 		AfterServeIn(), AfterServeNet(), AfterServeOut(), AfterServeLet(), AfterHitAce(),
 		AfterReturnIn(), AfterReturnNet(), AfterReturnOut(),
@@ -31,13 +31,13 @@ func NewPointStateControl(point *point.Point) PointStateControl {
 
 func (c *PointStateControl) UpdateState(s *PointState) {
 	c.currentState = s
-	c.point.AddHit(s.Hit())
+	c.point.AdicionaGolpe(s.Hit())
 	s.Execute(c.point)
 
-	if c.point.Done() {
-		fmt.Printf("Ponto encerrado com %d hit(s)\n", c.point.Length())
+	if c.point.Terminado() {
+		fmt.Printf("Ponto encerrado com %d hit(s)\n", c.point.Tamanho())
 		fmt.Println()
-		items := c.point.Hits()
+		items := c.point.Golpes()
 		for j := range items {
 			item := items[j]
 			fmt.Printf("%s\n", item.Type())
@@ -50,7 +50,7 @@ func (c *PointStateControl) CurrentState() *PointState {
 }
 
 func (c PointStateControl) BallInPlay() bool {
-	return !c.point.Done()
+	return !c.point.Terminado()
 }
 
 func (c PointStateControl) FindState(state string) *PointState {
