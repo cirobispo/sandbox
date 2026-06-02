@@ -3,9 +3,9 @@ package ponto
 import (
 	"fmt"
 
-	"github.com/cirobispo/sandbox/internal/common/pontos/golpes"
-	"github.com/cirobispo/sandbox/internal/common/pontos/golpes/golpe"
-	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 )
 
 type ExecuteOnPoint func(p *ponto.Ponto)

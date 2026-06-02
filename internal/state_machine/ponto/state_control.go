@@ -3,8 +3,8 @@ package ponto
 import (
 	"fmt"
 
-	"github.com/cirobispo/sandbox/internal/common/gaming/game"
-	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
+	"github.com/cirobispo/sandbox/internal/comum/gaming/game"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 )
 
 type ExecuteOnGame func(g *game.Game)

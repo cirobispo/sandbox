@@ -1,7 +1,7 @@
 package ponto
 
 import (
-	"github.com/cirobispo/sandbox/internal/common/pontos/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
 )
 
 func PointStarting() *PointState {
