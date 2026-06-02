@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	sm_point "github.com/cirobispo/sandbox/internal/state_machine/point"
+	"github.com/cirobispo/sandbox/internal/state_machine/ponto"
 )
 
 type VerificarResultado func(valores ...int) bool
@@ -29,12 +29,12 @@ func (p Placar) Terminou() bool {
 	return p.verificar(p.placarA, p.placarB, boolParaInt(p.confirmar))
 }
 
-func readCommand(s *sm_point.PointState) int {
+func readCommand(s *ponto.PointState) int {
 	fmt.Printf("\t0 Sair")
 	subStates := s.SubStates()
 	for j := range subStates {
 		item := subStates[j]
-		fmt.Printf("\t%d %s", j+1, item.Hit().Type())
+		fmt.Printf("\t%d %s", j+1, item.Hit().Tipo())
 	}
 	size := len(subStates)
 	result := 0

@@ -1,30 +1,30 @@
-package point
+package ponto
 
 import (
 	"fmt"
 
-	"github.com/cirobispo/sandbox/internal/common/pointing/hitting"
-	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/pontos/golpes"
+	"github.com/cirobispo/sandbox/internal/common/pontos/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
 )
 
-type ExecuteOnPoint func(p *point.Ponto)
+type ExecuteOnPoint func(p *ponto.Ponto)
 
 type PointState struct {
-	hit            hitting.Hitting
+	hit            golpes.Hitting
 	subPointsState []*PointState
 	execute        ExecuteOnPoint
 }
 
-func NewPointState(hit hitting.Hitting) *PointState {
+func NewPointState(hit golpes.Hitting) *PointState {
 	return &PointState{
 		hit:            hit,
 		subPointsState: make([]*PointState, 0),
 	}
 }
 
-func (s PointState) Hit() hit.Hit {
-	result := hit.New(s.hit.Type(), s.hit.Side())
+func (s PointState) Hit() golpe.Hit {
+	result := golpe.New(s.hit.Tipo(), s.hit.Lado())
 	return result
 }
 
@@ -43,7 +43,7 @@ func (s *PointState) SubStates() []PointState {
 	return result
 }
 
-func (s *PointState) Execute(p *point.Ponto) error {
+func (s *PointState) Execute(p *ponto.Ponto) error {
 	if s.execute == nil {
 		return fmt.Errorf("execute function undefined.")
 	}
@@ -56,7 +56,7 @@ func (s PointState) StatesToChoose() []string {
 	result := make([]string, 0, len(s.subPointsState))
 	for j := range s.subPointsState {
 		state := s.subPointsState[j]
-		result = append(result, fmt.Sprint((*state).hit.Type()))
+		result = append(result, fmt.Sprint((*state).hit.Tipo()))
 	}
 
 	return result

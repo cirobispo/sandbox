@@ -1,42 +1,42 @@
-package hitting
+package golpes
 
-type HitType int
-type HitSide int
+type TipoDoGolpe int
+type LadoDoGolpe int
 
 const (
-	HTFootFault   HitType = 1
-	HTServeNet    HitType = 2
-	HTServeLet    HitType = 3
-	HTServeIn     HitType = 4
-	HTAce         HitType = 5
-	HTServeOut    HitType = 6
-	HTReturnOut   HitType = 7
-	HTReturnNet   HitType = 8
-	HTReturnIn    HitType = 9
-	HTDoubleFault HitType = 10
-	HTNet         HitType = 11
-	HTIn          HitType = 12
-	HTOut         HitType = 13
-	HTWinner      HitType = 14
-	HTToast       HitType = 15
-	HTNetTouch    HitType = 16
-	HTMiss        HitType = 17
+	HTFootFault   TipoDoGolpe = 1
+	HTServeNet    TipoDoGolpe = 2
+	HTServeLet    TipoDoGolpe = 3
+	HTServeIn     TipoDoGolpe = 4
+	HTAce         TipoDoGolpe = 5
+	HTServeOut    TipoDoGolpe = 6
+	HTReturnOut   TipoDoGolpe = 7
+	HTReturnNet   TipoDoGolpe = 8
+	HTReturnIn    TipoDoGolpe = 9
+	HTDoubleFault TipoDoGolpe = 10
+	HTNet         TipoDoGolpe = 11
+	HTIn          TipoDoGolpe = 12
+	HTOut         TipoDoGolpe = 13
+	HTWinner      TipoDoGolpe = 14
+	HTToast       TipoDoGolpe = 15
+	HTNetTouch    TipoDoGolpe = 16
+	HTMiss        TipoDoGolpe = 17
 )
 
 const (
-	HTDNone         HitSide = 0
-	HTDChangeSide   HitSide = 1
-	HTDSameSide     HitSide = 2
-	HTDOppositeSide HitSide = 3
-	HTDConditional  HitSide = 4
+	HTDNone         LadoDoGolpe = 0
+	HTDChangeSide   LadoDoGolpe = 1
+	HTDSameSide     LadoDoGolpe = 2
+	HTDOppositeSide LadoDoGolpe = 3
+	HTDConditional  LadoDoGolpe = 4
 )
 
 type Hitting interface {
-	Type() HitType
-	Side() HitSide
+	Tipo() TipoDoGolpe
+	Lado() LadoDoGolpe
 }
 
-func (h HitSide) Inverse() HitSide {
+func (h LadoDoGolpe) Inverso() LadoDoGolpe {
 	switch h {
 	case HTDSameSide:
 		return HTDOppositeSide
@@ -47,7 +47,7 @@ func (h HitSide) Inverse() HitSide {
 	}
 }
 
-func (h HitType) String() string {
+func (h TipoDoGolpe) String() string {
 	switch h {
 	case HTFootFault:
 		return "Foot fault"
@@ -88,7 +88,7 @@ func (h HitType) String() string {
 	}
 }
 
-func (h HitSide) String() string {
+func (h LadoDoGolpe) String() string {
 	switch h {
 	case HTDNone:
 		return "None"

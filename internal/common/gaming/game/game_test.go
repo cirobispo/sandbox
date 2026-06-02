@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/common/turnos"
 	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
-func runTest(personToServe turnos.LadoDoTurno, blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
+func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
 	g := New(turno.New(turno.MudandoLado(personToServe)), false)
 	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
@@ -27,11 +27,11 @@ func runTest(personToServe turnos.LadoDoTurno, blocks []point.TestBlock, SideA, 
 	for i := range blocks {
 		block := blocks[i]
 		tn := turno.New(turno.MudandoLado(turnos.LTA))
-		p := point.New(tn)
+		p := ponto.New(tn)
 
 		for j := range block.Items {
 			item := block.Items[j]
-			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Type())
+			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Tipo())
 			p.AdicionaGolpe(item.Value)
 		}
 
@@ -46,26 +46,26 @@ func runTest(personToServe turnos.LadoDoTurno, blocks []point.TestBlock, SideA, 
 }
 
 func TestTurnA_Game40(t *testing.T) {
-	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(),
-		point.WinnerOSPoint(), point.WinnerOSPoint(), point.WinnerOSPoint(), point.WinnerOSPoint(),
+	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
+		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
 		// point.DoubleFault(),
-		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
-		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
+		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
+		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
-		point.AcePoint(),
+		ponto.AcePoint(),
 	}
 
 	runTest(turnos.LTA, blocks, 5, 3, t)
 }
 
 func TestTurnB_40Game(t *testing.T) {
-	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(),
-		point.WinnerOSPoint(), point.WinnerOSPoint(), point.WinnerOSPoint(), point.WinnerOSPoint(),
+	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
+		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
 		// point.DoubleFault(),
-		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
-		point.LongRallieOSPoint(2, point.NetOppositeSide(true)),
+		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
+		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
-		point.AcePoint(),
+		ponto.AcePoint(),
 	}
 
 	runTest(turnos.LTB, blocks, 3, 5, t)

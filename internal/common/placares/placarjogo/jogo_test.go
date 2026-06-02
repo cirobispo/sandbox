@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/common/turnos"
 	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
 
-func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
+func runTest(blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
 	score := New(turnos.LTA, false)
 	breakPoint := 0
 
@@ -34,7 +34,7 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 	t.Log("Game status: ( 0 x 0 )")
 	for i := range blocks {
 		block := blocks[i]
-		point := point.New(turno.New(turno.MudandoLado(turnos.LTA)))
+		point := ponto.New(turno.New(turno.MudandoLado(turnos.LTA)))
 		for j := range block.Items {
 			hit := block.Items[j].Value
 			point.AdicionaGolpe(hit)
@@ -54,18 +54,18 @@ func runTest(blocks []point.TestBlock, SideA, SideB int, t *testing.T) {
 }
 
 func TestToSideA(t *testing.T) {
-	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
-		point.WinnerOSPoint(), point.WinnerOSPoint(), point.DoubleFault(), point.AcePoint(), point.AcePoint(), point.AcePoint(),
-		point.LongRallieOSPoint(3, point.NetOppositeSide(true)),
+	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(), ponto.WinnerOSPoint(),
+		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.DoubleFault(), ponto.AcePoint(), ponto.AcePoint(), ponto.AcePoint(),
+		ponto.LongRallieOSPoint(3, ponto.NetOppositeSide(true)),
 	}
 
 	runTest(blocks, 5, 3, t)
 }
 
 func TestToSideB(t *testing.T) {
-	blocks := []point.TestBlock{point.AcePoint(), point.AcePoint(), point.WinnerSSPoint(), point.WinnerOSPoint(),
-		point.WinnerOSPoint(), point.WinnerOSPoint(), point.DoubleFault(), point.AcePoint(), point.DoubleFault(), point.DoubleFault(),
-		point.LongRallieOSPoint(3, point.NetOppositeSide(true)),
+	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(), ponto.WinnerOSPoint(),
+		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.DoubleFault(), ponto.AcePoint(), ponto.DoubleFault(), ponto.DoubleFault(),
+		ponto.LongRallieOSPoint(3, ponto.NetOppositeSide(true)),
 	}
 
 	runTest(blocks, 3, 5, t)

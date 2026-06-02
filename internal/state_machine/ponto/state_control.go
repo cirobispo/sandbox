@@ -1,21 +1,21 @@
-package point
+package ponto
 
 import (
 	"fmt"
 
 	"github.com/cirobispo/sandbox/internal/common/gaming/game"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
 )
 
 type ExecuteOnGame func(g *game.Game)
 
 type PointStateControl struct {
-	point        *point.Ponto
+	point        *ponto.Ponto
 	currentState *PointState
 	states       []*PointState
 }
 
-func NewPointStateControl(point *point.Ponto) PointStateControl {
+func NewPointStateControl(point *ponto.Ponto) PointStateControl {
 	states := []*PointState{PointStarting(),
 		AfterServeIn(), AfterServeNet(), AfterServeOut(), AfterServeLet(), AfterHitAce(),
 		AfterReturnIn(), AfterReturnNet(), AfterReturnOut(),
@@ -40,7 +40,7 @@ func (c *PointStateControl) UpdateState(s *PointState) {
 		items := c.point.Golpes()
 		for j := range items {
 			item := items[j]
-			fmt.Printf("%s\n", item.Type())
+			fmt.Printf("%s\n", item.Tipo())
 		}
 	}
 }
@@ -57,7 +57,7 @@ func (c PointStateControl) FindState(state string) *PointState {
 	var result *PointState
 	for j := range c.states {
 		item := c.states[j]
-		if item.hit != nil && item.Hit().Type().String() == state {
+		if item.hit != nil && item.Hit().Tipo().String() == state {
 			result = item
 			break
 		}

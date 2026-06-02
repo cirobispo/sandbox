@@ -6,7 +6,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/common/gaming"
 	"github.com/cirobispo/sandbox/internal/common/placares"
 	"github.com/cirobispo/sandbox/internal/common/placares/placarjogo"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/common/turnos"
 	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
@@ -14,14 +14,14 @@ import (
 type Gaming interface {
 	ServingSide() turnos.LadoDoTurno
 	Score() placares.EstadoResultadoEParametroPlacar
-	Points() []point.Ponto
+	Points() []ponto.Ponto
 }
 
 type Game struct {
 	turn               *turno.Turno
 	decidingPoint      bool
 	score              placarjogo.Jogo
-	points             []point.Ponto
+	points             []ponto.Ponto
 	onAddingPointEvent []gaming.OnAfterAddingPoint
 }
 
@@ -46,7 +46,7 @@ func (g *Game) AddOnAddingPointEvent(event gaming.OnAfterAddingPoint) {
 	g.onAddingPointEvent = append(g.onAddingPointEvent, event)
 }
 
-func (g *Game) AddPoint(p point.Ponto) error {
+func (g *Game) AddPoint(p ponto.Ponto) error {
 	if !p.Terminado() {
 		return errors.New("point is still in play.")
 	}
@@ -75,8 +75,8 @@ func (g Game) Score() placares.EstadoEResultadoPlacar {
 	return g.score
 }
 
-func (g Game) Points() []point.Ponto {
-	result := make([]point.Ponto, 0, len(g.points))
+func (g Game) Points() []ponto.Ponto {
+	result := make([]ponto.Ponto, 0, len(g.points))
 	copy(result, g.points)
 
 	return result

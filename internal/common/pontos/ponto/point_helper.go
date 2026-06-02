@@ -1,38 +1,38 @@
-package point
+package ponto
 
 import (
-	"github.com/cirobispo/sandbox/internal/common/pointing"
-	"github.com/cirobispo/sandbox/internal/common/pointing/hitting/hit"
+	"github.com/cirobispo/sandbox/internal/common/pontos"
+	"github.com/cirobispo/sandbox/internal/common/pontos/golpes/golpe"
 )
 
 type TestItem struct {
-	Value hit.Hit
+	Value golpe.Hit
 }
 
 type TestBlock struct {
 	Items []TestItem
-	Point pointing.LadoDoPonto
+	Point pontos.LadoDoPonto
 }
 
-var hitServInReturnIn = []TestItem{{hit.NewServeIn()}, {hit.NewReturnIn()}}
+var hitServInReturnIn = []TestItem{{golpe.NewServeIn()}, {golpe.NewReturnIn()}}
 
-var __winnerSameSide = []TestItem{{hit.NewWinner()}}
+var __winnerSameSide = []TestItem{{golpe.NewWinner()}}
 
-var __winnerOppositeSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewWinner()}}
+var __winnerOppositeSide = []TestItem{{golpe.NewHitBackIn()}, {golpe.NewWinner()}}
 
-var hitAce = []TestItem{{hit.NewAce()}}
+var hitAce = []TestItem{{golpe.NewAce()}}
 
-var __longRallie = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitBackIn()}}
+var __longRallie = []TestItem{{golpe.NewHitBackIn()}, {golpe.NewHitBackIn()}}
 
-var hit__NetSameSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitBackIn()}, {hit.NewHitNet()}}
+var hit__NetSameSide = []TestItem{{golpe.NewHitBackIn()}, {golpe.NewHitBackIn()}, {golpe.NewHitNet()}}
 
-var hit__OutSameSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitBackIn()}, {hit.NewHitOut()}}
+var hit__OutSameSide = []TestItem{{golpe.NewHitBackIn()}, {golpe.NewHitBackIn()}, {golpe.NewHitOut()}}
 
-var hit__NetOppositeSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitNet()}}
+var hit__NetOppositeSide = []TestItem{{golpe.NewHitBackIn()}, {golpe.NewHitNet()}}
 
-var hit__OutOppositeSide = []TestItem{{hit.NewHitBackIn()}, {hit.NewHitOut()}}
+var hit__OutOppositeSide = []TestItem{{golpe.NewHitBackIn()}, {golpe.NewHitOut()}}
 
-var doubleFault = []TestItem{{hit.NewServeNet()}, {hit.NewServeOut()}}
+var doubleFault = []TestItem{{golpe.NewServeNet()}, {golpe.NewServeOut()}}
 
 func DoubleFault() TestBlock {
 	data := make([]TestItem, 0, 2)

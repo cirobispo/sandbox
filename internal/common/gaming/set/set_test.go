@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/common/placares"
-	"github.com/cirobispo/sandbox/internal/common/pointing/point"
+	"github.com/cirobispo/sandbox/internal/common/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/common/turnos"
 	"github.com/cirobispo/sandbox/internal/common/turnos/turno"
 )
@@ -12,7 +12,7 @@ import (
 type set struct {
 	ladoDoServico turnos.LadoDoTurno
 	placar        placares.EstadoResultadoEParametroPlacar
-	pontos        []point.Ponto
+	pontos        []ponto.Ponto
 }
 
 func (s set) ServingSide() turnos.LadoDoTurno {
@@ -23,7 +23,7 @@ func (s set) Score() placares.EstadoResultadoEParametroPlacar {
 	return s.placar
 }
 
-func (s set) Points() []point.Ponto {
+func (s set) Points() []ponto.Ponto {
 	return s.pontos
 }
 
@@ -71,7 +71,7 @@ func (s *set) ajustaLadoServico(lado turnos.LadoDoTurno) {
 }
 
 func novoSet(placarA, placarB int) set {
-	result := set{placar: novoPlacar(turnos.LTA, placarA, placarB), pontos: make([]point.Ponto, 0)}
+	result := set{placar: novoPlacar(turnos.LTA, placarA, placarB), pontos: make([]ponto.Ponto, 0)}
 	return result
 }
 

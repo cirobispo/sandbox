@@ -1,8 +1,8 @@
-package pointing
+package pontos
 
-import "github.com/cirobispo/sandbox/internal/common/pointing/hitting"
+import "github.com/cirobispo/sandbox/internal/common/pontos/golpes"
 
-type AoPontuarNoPlacar func(golpe hitting.HitType, lado hitting.HitSide, done bool)
+type AoPontuarNoPlacar func(tipoDoGolpe golpes.TipoDoGolpe, lado golpes.LadoDoGolpe, done bool)
 
 type LadoDoPonto int
 
