@@ -11,13 +11,13 @@ import (
 
 type Ponto struct {
 	ladoDaBola               *turno.Turno
-	golpes                   *[]golpes.Hitting
+	golpes                   *[]golpes.Golpes
 	terminado                bool
 	eventosAoPontuarNoPlacar *[]pontos.AoPontuarNoPlacar
 }
 
 func New(sideControl *turno.Turno) Ponto {
-	hit := make([]golpes.Hitting, 0, 3)
+	hit := make([]golpes.Golpes, 0, 3)
 	events := make([]pontos.AoPontuarNoPlacar, 0)
 	return Ponto{
 		terminado:                false,
@@ -27,7 +27,7 @@ func New(sideControl *turno.Turno) Ponto {
 	}
 }
 
-func temDuplaFalta(hits *[]golpes.Hitting) bool {
+func temDuplaFalta(hits *[]golpes.Golpes) bool {
 	lastHit := (*hits)[len(*hits)-1]
 	fault := lastHit.Tipo() == golpes.HTFootFault || lastHit.Tipo() == golpes.HTServeNet || lastHit.Tipo() == golpes.HTServeOut
 	if lastHit.Lado() != golpes.HTDConditional && !fault {
@@ -53,7 +53,7 @@ func (p *Ponto) AdicionarEventoAoPontuarNoPlacar(callback pontos.AoPontuarNoPlac
 	*p.eventosAoPontuarNoPlacar = append(*p.eventosAoPontuarNoPlacar, callback)
 }
 
-func (p *Ponto) AdicionaGolpe(h golpes.Hitting) {
+func (p *Ponto) AdicionaGolpe(h golpes.Golpes) {
 	if p.terminado {
 		return
 	}
@@ -74,8 +74,8 @@ func (p *Ponto) AdicionaGolpe(h golpes.Hitting) {
 	p.executeEventosAoPontuarNoPlacar(h.Tipo(), h.Lado(), p.terminado)
 }
 
-func (p Ponto) Golpes() []golpe.Hit {
-	result := make([]golpe.Hit, 0, len(*p.golpes))
+func (p Ponto) Golpes() []golpe.Golpe {
+	result := make([]golpe.Golpe, 0, len(*p.golpes))
 	for j := range *p.golpes {
 		item := (*p.golpes)[j]
 		result = append(result, golpe.New(item.Tipo(), item.Lado()))

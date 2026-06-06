@@ -18,7 +18,7 @@ func newPoint(side turnos.LadoDoTurno) Ponto {
 }
 
 func TestEverySinglePoint(tt *testing.T) {
-	everyHit := []golpe.Hit{golpe.NewAce(), golpe.NewFootFault(), golpe.NewServeOut(),
+	everyHit := []golpe.Golpe{golpe.NewAce(), golpe.NewFootFault(), golpe.NewServeOut(),
 		golpe.NewHitBackIn(), golpe.NewMiss(), golpe.NewHitNet(), golpe.NewHitOut(), golpe.NewReturnIn(),
 		golpe.NewReturnNet(), golpe.NewReturnOut(), golpe.NewServeNet(), golpe.NewServeIn(),
 		golpe.NewServeLet(), golpe.NewWinner(), golpe.NewToast(), golpe.NewNetTouch(),

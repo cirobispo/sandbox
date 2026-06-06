@@ -11,19 +11,19 @@ import (
 type ExecuteOnPoint func(p *ponto.Ponto)
 
 type PointState struct {
-	hit            golpes.Hitting
+	hit            golpes.Golpes
 	subPointsState []*PointState
 	execute        ExecuteOnPoint
 }
 
-func NewPointState(hit golpes.Hitting) *PointState {
+func NewPointState(hit golpes.Golpes) *PointState {
 	return &PointState{
 		hit:            hit,
 		subPointsState: make([]*PointState, 0),
 	}
 }
 
-func (s PointState) Hit() golpe.Hit {
+func (s PointState) Hit() golpe.Golpe {
 	result := golpe.New(s.hit.Tipo(), s.hit.Lado())
 	return result
 }

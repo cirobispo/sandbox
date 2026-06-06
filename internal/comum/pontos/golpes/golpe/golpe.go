@@ -4,140 +4,140 @@ import (
 	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
 )
 
-type Hit struct {
+type Golpe struct {
 	tipo golpes.TipoDoGolpe
 	lado golpes.LadoDoGolpe
 }
 
-func (h Hit) Tipo() golpes.TipoDoGolpe {
-	return h.tipo
+func (g Golpe) Tipo() golpes.TipoDoGolpe {
+	return g.tipo
 }
 
-func (h Hit) Lado() golpes.LadoDoGolpe {
-	return h.lado
+func (g Golpe) Lado() golpes.LadoDoGolpe {
+	return g.lado
 }
 
-func New(t golpes.TipoDoGolpe, s golpes.LadoDoGolpe) Hit {
-	return Hit{
+func New(t golpes.TipoDoGolpe, s golpes.LadoDoGolpe) Golpe {
+	return Golpe{
 		tipo: t,
 		lado: s,
 	}
 }
 
-func NewFootFault() Hit {
-	return Hit{
+func NewFootFault() Golpe {
+	return Golpe{
 		tipo: golpes.HTFootFault,
 		lado: golpes.HTDConditional,
 	}
 }
 
-func NewAce() Hit {
-	return Hit{
+func NewAce() Golpe {
+	return Golpe{
 		tipo: golpes.HTAce,
 		lado: golpes.HTDSameSide,
 	}
 }
 
-func NewServeOut() Hit {
-	return Hit{
+func NewServeOut() Golpe {
+	return Golpe{
 		tipo: golpes.HTServeOut,
 		lado: golpes.HTDConditional,
 	}
 }
 
-func NewServeIn() Hit {
-	return Hit{
+func NewServeIn() Golpe {
+	return Golpe{
 		tipo: golpes.HTServeIn,
 		lado: golpes.HTDChangeSide,
 	}
 }
 
-func NewServeLet() Hit {
-	return Hit{
+func NewServeLet() Golpe {
+	return Golpe{
 		tipo: golpes.HTServeLet,
 		lado: golpes.HTDNone,
 	}
 }
 
-func NewServeNet() Hit {
-	return Hit{
+func NewServeNet() Golpe {
+	return Golpe{
 		tipo: golpes.HTServeNet,
 		lado: golpes.HTDConditional,
 	}
 }
 
-func NewReturnNet() Hit {
-	return Hit{
+func NewReturnNet() Golpe {
+	return Golpe{
 		tipo: golpes.HTReturnNet,
 		lado: golpes.HTDOppositeSide,
 	}
 }
 
-func NewReturnIn() Hit {
-	return Hit{
+func NewReturnIn() Golpe {
+	return Golpe{
 		tipo: golpes.HTReturnIn,
 		lado: golpes.HTDChangeSide,
 	}
 }
 
-func NewReturnOut() Hit {
-	return Hit{
+func NewReturnOut() Golpe {
+	return Golpe{
 		tipo: golpes.HTReturnOut,
 		lado: golpes.HTDOppositeSide,
 	}
 }
 
-func NewDoubleFault() Hit {
-	return Hit{
+func NewDoubleFault() Golpe {
+	return Golpe{
 		tipo: golpes.HTDoubleFault,
 		lado: golpes.HTDOppositeSide,
 	}
 }
 
-func NewHitNet() Hit {
-	return Hit{
+func NewHitNet() Golpe {
+	return Golpe{
 		tipo: golpes.HTNet,
 		lado: golpes.HTDOppositeSide,
 	}
 }
 
-func NewHitBackIn() Hit {
-	return Hit{
+func NewHitBackIn() Golpe {
+	return Golpe{
 		tipo: golpes.HTIn,
 		lado: golpes.HTDChangeSide,
 	}
 }
 
-func NewWinner() Hit {
-	return Hit{
+func NewWinner() Golpe {
+	return Golpe{
 		tipo: golpes.HTWinner,
 		lado: golpes.HTDSameSide,
 	}
 }
 
-func NewHitOut() Hit {
-	return Hit{
+func NewHitOut() Golpe {
+	return Golpe{
 		tipo: golpes.HTOut,
 		lado: golpes.HTDOppositeSide,
 	}
 }
 
-func NewMiss() Hit {
-	return Hit{
+func NewMiss() Golpe {
+	return Golpe{
 		tipo: golpes.HTOut,
 		lado: golpes.HTDOppositeSide,
 	}
 }
 
-func NewToast() Hit {
-	return Hit{
+func NewToast() Golpe {
+	return Golpe{
 		tipo: golpes.HTToast,
 		lado: golpes.HTDSameSide,
 	}
 }
 
-func NewNetTouch() Hit {
-	return Hit{
+func NewNetTouch() Golpe {
+	return Golpe{
 		tipo: golpes.HTNetTouch,
 		lado: golpes.HTDOppositeSide,
 	}

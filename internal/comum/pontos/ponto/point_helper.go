@@ -6,7 +6,7 @@ import (
 )
 
 type TestItem struct {
-	Value golpe.Hit
+	Value golpe.Golpe
 }
 
 type TestBlock struct {

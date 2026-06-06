@@ -31,24 +31,24 @@ const (
 	HTDConditional  LadoDoGolpe = 4
 )
 
-type Hitting interface {
+type Golpes interface {
 	Tipo() TipoDoGolpe
 	Lado() LadoDoGolpe
 }
 
-func (h LadoDoGolpe) Inverso() LadoDoGolpe {
-	switch h {
+func (l LadoDoGolpe) Inverso() LadoDoGolpe {
+	switch l {
 	case HTDSameSide:
 		return HTDOppositeSide
 	case HTDOppositeSide:
 		return HTDSameSide
 	default:
-		return h
+		return l
 	}
 }
 
-func (h TipoDoGolpe) String() string {
-	switch h {
+func (t TipoDoGolpe) String() string {
+	switch t {
 	case HTFootFault:
 		return "Foot fault"
 	case HTServeNet:
@@ -88,8 +88,8 @@ func (h TipoDoGolpe) String() string {
 	}
 }
 
-func (h LadoDoGolpe) String() string {
-	switch h {
+func (l LadoDoGolpe) String() string {
+	switch l {
 	case HTDNone:
 		return "None"
 	case HTDChangeSide:
