@@ -3,8 +3,8 @@ package set
 import (
 	"errors"
 
-	"github.com/cirobispo/sandbox/internal/comum/gaming"
-	"github.com/cirobispo/sandbox/internal/comum/gaming/game"
+	"github.com/cirobispo/sandbox/internal/comum/jogos"
+	"github.com/cirobispo/sandbox/internal/comum/jogos/jogo"
 	"github.com/cirobispo/sandbox/internal/comum/placares"
 	"github.com/cirobispo/sandbox/internal/comum/placares/placarset"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
@@ -19,9 +19,9 @@ type Set struct {
 	pontoDecisivo             bool
 	tieBreak                  bool
 	placar                    placarset.Set
-	jogos                     []game.Gaming
-	EventosAoAdicionarJogo    []gaming.OnAfterAddingGame
-	EventosAoMudarLadoJogador []gaming.OnPlayerChangeSide
+	jogos                     []jogo.Gaming
+	EventosAoAdicionarJogo    []jogos.OnAfterAddingGame
+	EventosAoMudarLadoJogador []jogos.OnPlayerChangeSide
 }
 
 func SetPadrao(turnForServing *turno.Turno) ParamOption {
@@ -48,9 +48,9 @@ func TurnoJogosETieBreak(turnForServing *turno.Turno, size int, decidingPoint, t
 
 func New(param ParamOption) *Set {
 	result := &Set{
-		jogos:                     make([]game.Gaming, 0, 13),
-		EventosAoAdicionarJogo:    make([]gaming.OnAfterAddingGame, 0),
-		EventosAoMudarLadoJogador: make([]gaming.OnPlayerChangeSide, 0),
+		jogos:                     make([]jogo.Gaming, 0, 13),
+		EventosAoAdicionarJogo:    make([]jogos.OnAfterAddingGame, 0),
+		EventosAoMudarLadoJogador: make([]jogos.OnPlayerChangeSide, 0),
 	}
 
 	if param != nil {
@@ -85,26 +85,26 @@ func (s Set) executarAoMudarLadoJogador() {
 	}
 }
 
-func (s *Set) AdicionarAoAdicionarJogo(event gaming.OnAfterAddingGame) {
+func (s *Set) AdicionarAoAdicionarJogo(event jogos.OnAfterAddingGame) {
 	s.EventosAoAdicionarJogo = append(s.EventosAoAdicionarJogo, event)
 }
 
-func (s *Set) AdicionarAoMudarLadoJogador(event gaming.OnPlayerChangeSide) {
+func (s *Set) AdicionarAoMudarLadoJogador(event jogos.OnPlayerChangeSide) {
 	s.EventosAoMudarLadoJogador = append(s.EventosAoMudarLadoJogador, event)
 }
 
-func (s *Set) AdicionarJogo(g game.Gaming) error {
+func (s *Set) AdicionarJogo(j jogo.Gaming) error {
 	if s.placar.Terminado() {
 		return errors.New("set is closed.")
 	}
 
-	if !g.Score().Terminado() {
+	if !j.Score().Terminado() {
 		return errors.New("game is still in play.")
 	}
 
-	s.jogos = append(s.jogos, g)
+	s.jogos = append(s.jogos, j)
 	s.quemServe.Execute()
-	s.placar.AdicionarPlacar(g.Score())
+	s.placar.AdicionarPlacar(j.Score())
 
 	scoreA, scoreB := s.placar.Resultado()
 	done := s.placar.Terminado()
@@ -116,9 +116,9 @@ func (s *Set) AdicionarJogo(g game.Gaming) error {
 	return nil
 }
 
-func (s Set) NovoJogo() *game.Game {
+func (s Set) NovoJogo() *jogo.Jogo {
 	newTurn := s.quemServe.Clonar(s.quemServe.LadoCorrente())
-	result := game.New(newTurn, s.pontoDecisivo)
+	result := jogo.New(newTurn, s.pontoDecisivo)
 	return result
 }
 

@@ -1,4 +1,4 @@
-package game
+package jogo
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 
 func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
 	g := New(turno.New(turno.MudandoLado(personToServe)), false)
-	g.AddOnAddingPointEvent(func(scoreA, scoreB int, done bool) {
+	g.AdicionarEventoAoAdicionarPonto(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
 		if done {
@@ -35,10 +35,10 @@ func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, 
 			p.AdicionaGolpe(item.Value)
 		}
 
-		g.AddPoint(p)
+		g.AdicionarPonto(p)
 	}
 
-	a, b := g.Score().Resultado()
+	a, b := g.Placar().Resultado()
 
 	if a != SideA || b != SideB {
 		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)

@@ -103,7 +103,7 @@ func runTest(blocks []set, SideA, SideB int, t *testing.T) {
 	for j := range blocks {
 		currentGame := mySet.NovoJogo()
 		item := blocks[j]
-		item.ajustaLadoServico(currentGame.ServingSide())
+		item.ajustaLadoServico(currentGame.LadoDoServico())
 		sideToServe = item.ladoDoServico
 		if err := mySet.AdicionarJogo(item); err != nil {
 			t.Errorf("Erro ao adicionar %v. Mensagem: %s", item, err)

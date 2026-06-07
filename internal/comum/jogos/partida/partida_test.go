@@ -1,4 +1,4 @@
-package match
+package partida
 
 import (
 	"testing"
@@ -66,10 +66,10 @@ func newScore(servingSide turnos.LadoDoTurno, scoreA, scoreB int) score {
 
 func runTest(blocks []testItem, SideA, SideB int, t *testing.T) {
 	myTurn := turno.New(turno.MudandoLado(turnos.LTA))
-	myMatch := New(DefaultMatch())
+	myMatch := New(PartidaPadrao())
 
 	sideToServe := myTurn.LadoCorrente()
-	myMatch.AddOnAddingSetEvent(func(scoreA, scoreB int, done bool) {
+	myMatch.AdicionarEventoAoAdicionarSet(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Log("FINAL ")
 		}

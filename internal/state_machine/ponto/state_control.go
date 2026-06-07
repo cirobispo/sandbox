@@ -3,11 +3,11 @@ package ponto
 import (
 	"fmt"
 
-	"github.com/cirobispo/sandbox/internal/comum/gaming/game"
+	"github.com/cirobispo/sandbox/internal/comum/jogos/jogo"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 )
 
-type ExecuteOnGame func(g *game.Game)
+type ExecuteOnGame func(g *jogo.Jogo)
 
 type PointStateControl struct {
 	point        *ponto.Ponto
