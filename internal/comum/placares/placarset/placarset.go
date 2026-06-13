@@ -8,7 +8,7 @@ import (
 )
 
 type AoMudarPlacar func(placarA, placarB int, tieBreak, terminado bool)
-type ParamOption func(score *Set)
+type ParamOption func(s *Set)
 
 type Set struct {
 	ladoInicio           turnos.LadoDoTurno
@@ -27,7 +27,7 @@ func SetPadrao(ladoInicio turnos.LadoDoTurno) ParamOption {
 	}
 }
 
-func TamanhoETieBreak(ladoInicio turnos.LadoDoTurno, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
+func TamanhoVantagemETieBreak(ladoInicio turnos.LadoDoTurno, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
 	return func(placar *Set) {
 		placar.ladoInicio = ladoInicio
 		placar.maiorEmpate = tamanho
