@@ -10,7 +10,7 @@ import (
 )
 
 func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
-	g := New(turno.New(turno.MudandoLado(personToServe)), false)
+	g := New(turno.New(turno.DefinindoLado(personToServe)), false)
 	g.AdicionarEventoAoAdicionarPonto(func(scoreA, scoreB int, done bool) {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
@@ -26,7 +26,7 @@ func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, 
 
 	for i := range blocks {
 		block := blocks[i]
-		tn := turno.New(turno.MudandoLado(turnos.LTA))
+		tn := turno.New(turno.DefinindoLado(turnos.LTA))
 		p := ponto.New(tn)
 
 		for j := range block.Items {

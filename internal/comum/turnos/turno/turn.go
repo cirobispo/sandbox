@@ -58,7 +58,7 @@ func (t Turno) LadoCorrente() turnos.LadoDoTurno {
 }
 
 func (t Turno) Clonar(start turnos.LadoDoTurno) *Turno {
-	result := New(MudandoLado(start))
+	result := New(DefinindoLado(start))
 	copy(result.eventosAntesDeMudarTurno, t.eventosAntesDeMudarTurno)
 	copy(result.eventosDepoisDeMudarTurno, t.eventosDepoisDeMudarTurno)
 
@@ -86,7 +86,7 @@ func (t Turno) executeAoMudarTurno(list []turnos.AoMudarTurno) {
 	}
 }
 
-func MudandoLado(start turnos.LadoDoTurno) func(t *Turno) {
+func DefinindoLado(start turnos.LadoDoTurno) func(t *Turno) {
 	return func(t *Turno) {
 		startSide := NewMapData(start, func() any { return start })
 		currentSide := NewMapData(start, func() any { return start })

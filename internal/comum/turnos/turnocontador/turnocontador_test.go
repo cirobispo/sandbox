@@ -13,7 +13,7 @@ type testItem struct {
 }
 
 func runTest(test testItem, t *testing.T) {
-	obj := turno.New(ComOutroTurno(turno.New(turno.MudandoLado(test.startSide))))
+	obj := turno.New(ComOutroTurno(turno.New(turno.DefinindoLado(test.startSide))))
 
 	for a := test.turns; a > 0; a-- {
 		obj.Execute()

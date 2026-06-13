@@ -19,7 +19,7 @@ func inverse(s turnos.LadoDoTurno) turnos.LadoDoTurno {
 }
 
 func runTest(test testItem, t *testing.T) {
-	obj := New(MudandoLado(test.startSide))
+	obj := New(DefinindoLado(test.startSide))
 	endSide := test.startSide
 	if test.turns%2 != 0 {
 		endSide = inverse(endSide)

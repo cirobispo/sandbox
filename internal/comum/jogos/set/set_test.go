@@ -84,7 +84,7 @@ func novoPlacar(servingSide turnos.LadoDoTurno, scoreA, scoreB int) placar {
 }
 
 func runTest(blocks []set, SideA, SideB int, t *testing.T) {
-	myTurn := turno.New(turno.MudandoLado(turnos.LTA))
+	myTurn := turno.New(turno.DefinindoLado(turnos.LTA))
 	mySet := New(SetPadrao(myTurn))
 
 	sideToServe := myTurn.LadoCorrente()

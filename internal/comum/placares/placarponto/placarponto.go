@@ -2,15 +2,11 @@ package placarponto
 
 import "github.com/cirobispo/sandbox/internal/comum/placares"
 
-type Ponto struct {
+type PlacarPonto struct {
 	placarA, placarB int
 }
 
-func (p Ponto) Terminado() bool {
-	return p.placarA != p.placarB
-}
-
-func (p Ponto) Lado() placares.LadoDoPlacar {
+func (p PlacarPonto) Lado() placares.LadoDoPlacar {
 	if p.placarB > p.placarA {
 		return placares.LPOposto
 	}
@@ -18,22 +14,30 @@ func (p Ponto) Lado() placares.LadoDoPlacar {
 	return placares.LPServico
 }
 
-func (p *Ponto) PontuarA() {
-	p.placarA, p.placarB = 1, 0
-}
-
-func (p *Ponto) PontuarB() {
-	p.placarB, p.placarA = 1, 0
-}
-
-func (p *Ponto) Zerar() {
-	p.placarA, p.placarB = 0, 0
-}
-
-func (p Ponto) Tipo() placares.TipoDoPlacar {
+func (p PlacarPonto) Tipo() placares.TipoDoPlacar {
 	return placares.TPPonto
 }
 
-func New() Ponto {
-	return Ponto{placarA: 0, placarB: 0}
+func (p PlacarPonto) Terminado() bool {
+	return p.placarA != p.placarB
+}
+
+func (p PlacarPonto) Resultado() (int, int) {
+	return 0, 0
+}
+
+func (p *PlacarPonto) PontuarA() {
+	p.placarA, p.placarB = 1, 0
+}
+
+func (p *PlacarPonto) PontuarB() {
+	p.placarB, p.placarA = 1, 0
+}
+
+func (p *PlacarPonto) Zerar() {
+	p.placarA, p.placarB = 0, 0
+}
+
+func New() PlacarPonto {
+	return PlacarPonto{placarA: 0, placarB: 0}
 }

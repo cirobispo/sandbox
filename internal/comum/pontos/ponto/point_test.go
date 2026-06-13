@@ -13,7 +13,7 @@ import (
 )
 
 func newPoint(side turnos.LadoDoTurno) Ponto {
-	ctt := turno.New(turnocontador.ComOutroTurno(turno.New((turnotemporizador.ComOutroTurno(turno.New(turno.MudandoLado(side)))))))
+	ctt := turno.New(turnocontador.ComOutroTurno(turno.New((turnotemporizador.ComOutroTurno(turno.New(turno.DefinindoLado(side)))))))
 	return New(ctt)
 }
 

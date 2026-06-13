@@ -27,7 +27,7 @@ type Set struct {
 func SetPadrao(turnForServing *turno.Turno) ParamOption {
 	return func(score *Set) bool {
 		score.quemServe = turnForServing
-		score.ladoServico = turno.New(turno.MudandoLado(turnForServing.LadoInicial()))
+		score.ladoServico = turno.New(turno.DefinindoLado(turnForServing.LadoInicial()))
 		score.jogosPorSet = 6
 		score.pontoDecisivo = false
 		score.tieBreak = true
@@ -38,7 +38,7 @@ func SetPadrao(turnForServing *turno.Turno) ParamOption {
 func TurnoJogosETieBreak(turnForServing *turno.Turno, size int, decidingPoint, tieBreak bool) ParamOption {
 	return func(score *Set) bool {
 		score.quemServe = turnForServing
-		score.ladoServico = turno.New(turno.MudandoLado(turnForServing.LadoInicial()))
+		score.ladoServico = turno.New(turno.DefinindoLado(turnForServing.LadoInicial()))
 		score.jogosPorSet = size
 		score.pontoDecisivo = decidingPoint
 		score.tieBreak = tieBreak
@@ -59,7 +59,7 @@ func New(param ParamOption) *Set {
 		serving_side := result.quemServe.LadoInicial()
 		callback := placarset.SetPadrao(serving_side)
 		if custom {
-			callback = placarset.TamanhoETieBreak(serving_side, result.jogosPorSet, result.pontoDecisivo, result.tieBreak)
+			callback = placarset.TamanhoVantagemETieBreak(serving_side, result.jogosPorSet, result.pontoDecisivo, result.tieBreak)
 		}
 		result.placar = placarset.New(callback)
 	}
