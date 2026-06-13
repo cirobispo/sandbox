@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/comum/placares"
+	"github.com/cirobispo/sandbox/internal/comum/placares/placarponto"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
@@ -40,10 +41,7 @@ func runTest(blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
 			point.AdicionaGolpe(hit)
 		}
 
-		scoreToAdd, error := PontoParaPlacar(&point)
-		if error != nil {
-			t.Errorf("\n\n%s", error.Error())
-		}
+		scoreToAdd := placarponto.New(&point)
 		score.AdicionaPlacar(scoreToAdd)
 	}
 

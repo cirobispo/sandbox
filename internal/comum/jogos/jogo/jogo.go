@@ -6,6 +6,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/comum/jogos"
 	"github.com/cirobispo/sandbox/internal/comum/placares"
 	"github.com/cirobispo/sandbox/internal/comum/placares/placarjogo"
+	"github.com/cirobispo/sandbox/internal/comum/placares/placarponto"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
@@ -52,11 +53,7 @@ func (j *Jogo) AdicionarPonto(p ponto.Ponto) error {
 	}
 
 	j.pontos = append(j.pontos, p.Clonar())
-	scoreToAdd, error := placarjogo.PontoParaPlacar(&p)
-
-	if error != nil {
-		return errors.New("point is still in play.")
-	}
+	scoreToAdd := placarponto.New(&p)
 
 	j.placar.AdicionaPlacar(scoreToAdd)
 	j.turno.Execute()
