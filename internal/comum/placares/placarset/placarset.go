@@ -73,7 +73,7 @@ func (s *Set) AdicionarAoMudarPlacar(event AoMudarPlacar) {
 	s.eventosAoMudarPlacar = append(s.eventosAoMudarPlacar, event)
 }
 
-func (s *Set) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
+func (s Set) verificarEstado(placar placares.EstadoEParametroPlacar) error {
 	if s.Terminado() { // am I acepting more points?
 		return errors.New("Score completed already.")
 	}
@@ -84,6 +84,14 @@ func (s *Set) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
 
 	if !placar.Terminado() { // am I acepting more points?
 		return errors.New("Game is not completed.")
+	}
+
+	return nil
+}
+
+func (s *Set) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
+	if err := s.verificarEstado(placar); err != nil {
+		return err
 	}
 
 	sA, sB := s.placares()

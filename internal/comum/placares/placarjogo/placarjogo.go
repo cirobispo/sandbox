@@ -72,15 +72,15 @@ func (j Jogo) verificarEstado(placar placares.EstadoEParametroPlacar) error {
 	return nil
 }
 
-func (j *Jogo) AdicionaPlacar(score placares.EstadoEParametroPlacar) error {
-	if err := j.verificarEstado(score); err != nil {
+func (j *Jogo) AdicionaPlacar(placar placares.EstadoEParametroPlacar) error {
+	if err := j.verificarEstado(placar); err != nil {
 		return err
 	}
 
 	incr := 1
 	sA, sB := j.placares()
 	sideToAdd := sA
-	if who := score.Lado(); who == placares.LPOposto {
+	if who := placar.Lado(); who == placares.LPOposto {
 		sideToAdd = sB
 	}
 

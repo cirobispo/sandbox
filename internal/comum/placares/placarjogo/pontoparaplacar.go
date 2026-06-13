@@ -5,7 +5,6 @@ import (
 
 	"github.com/cirobispo/sandbox/internal/comum/placares"
 	"github.com/cirobispo/sandbox/internal/comum/placares/placarponto"
-	"github.com/cirobispo/sandbox/internal/comum/pontos"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 )
 
@@ -15,10 +14,7 @@ func PontoParaPlacar(p *ponto.Ponto) (placares.EstadoEParametroPlacar, error) {
 	}
 
 	result := placarponto.New()
-	result.PontuarA()
-	if p.LadoDoPonto() == pontos.LPOposto {
-		result.PontuarB()
-	}
+	result.AdicionarPonto(p)
 
 	return result, nil
 }

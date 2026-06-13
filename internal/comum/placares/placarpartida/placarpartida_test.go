@@ -30,7 +30,7 @@ func (s score) Tipo() placares.TipoDoPlacar {
 	return placares.TPSet
 }
 
-func runTest(score *PlacarPartida, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
+func runTest(score *Partida, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
 	score.AdicionarEventoAoPontuarNaPartida(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)

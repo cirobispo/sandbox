@@ -25,7 +25,7 @@ type Partida struct {
 	tamanhoSet            int
 	pontoDecisivo         bool
 	tieBreak              bool
-	placar                placarpartida.PlacarPartida
+	placar                placarpartida.Partida
 	sets                  []Setting
 	eventosAoAdicionarSet []jogos.AoAdicionarSet
 }

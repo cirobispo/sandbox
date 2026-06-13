@@ -8,9 +8,9 @@ import (
 )
 
 type AoPontuarNaPartida func(placarA, placarB int, terminado bool)
-type ParamOption func(p *PlacarPartida)
+type ParamOption func(p *Partida)
 
-type PlacarPartida struct {
+type Partida struct {
 	ladoInicial      turnos.LadoDoTurno
 	melhorDe         int
 	placarA, placarB int
@@ -27,14 +27,14 @@ func ModoGrandSLAM() ParamOption {
 }
 
 func TamanhoELado(ladoIncial turnos.LadoDoTurno, melhorDe int) ParamOption {
-	return func(score *PlacarPartida) {
+	return func(score *Partida) {
 		score.ladoInicial = ladoIncial
 		score.melhorDe = melhorDe
 	}
 }
 
-func New(param ParamOption) PlacarPartida {
-	result := PlacarPartida{
+func New(param ParamOption) Partida {
+	result := Partida{
 		placarA:                   0,
 		placarB:                   0,
 		eventosAoPontuarNaPartida: make([]AoPontuarNaPartida, 0),
@@ -47,7 +47,7 @@ func New(param ParamOption) PlacarPartida {
 	return result
 }
 
-func (p PlacarPartida) executeEventosAoPontuarNaPartida(placarA, placarB int) {
+func (p Partida) executeEventosAoPontuarNaPartida(placarA, placarB int) {
 	done := p.Terminado()
 	for i := range p.eventosAoPontuarNaPartida {
 		event := p.eventosAoPontuarNaPartida[i]
@@ -55,7 +55,7 @@ func (p PlacarPartida) executeEventosAoPontuarNaPartida(placarA, placarB int) {
 	}
 }
 
-func (p *PlacarPartida) placares() (*int, *int) {
+func (p *Partida) placares() (*int, *int) {
 	sA, sB := &p.placarA, &p.placarB
 	if p.ladoInicial == turnos.LTB {
 		sA, sB = &p.placarB, &p.placarA
@@ -64,11 +64,11 @@ func (p *PlacarPartida) placares() (*int, *int) {
 	return sA, sB
 }
 
-func (p *PlacarPartida) AdicionarEventoAoPontuarNaPartida(event AoPontuarNaPartida) {
+func (p *Partida) AdicionarEventoAoPontuarNaPartida(event AoPontuarNaPartida) {
 	p.eventosAoPontuarNaPartida = append(p.eventosAoPontuarNaPartida, event)
 }
 
-func (p *PlacarPartida) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
+func (p Partida) verificarEstado(placar placares.EstadoEParametroPlacar) error {
 	if p.Terminado() { // am I acepting more points?
 		return errors.New("Match completed already.")
 	}
@@ -79,6 +79,14 @@ func (p *PlacarPartida) AdicionarPlacar(placar placares.EstadoEParametroPlacar) 
 
 	if !placar.Terminado() {
 		return errors.New("Set is not completed.")
+	}
+
+	return nil
+}
+
+func (p *Partida) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
+	if err := p.verificarEstado(placar); err != nil {
+		return err
 	}
 
 	sA, sB := p.placares()
@@ -93,11 +101,11 @@ func (p *PlacarPartida) AdicionarPlacar(placar placares.EstadoEParametroPlacar) 
 	return nil
 }
 
-func (p PlacarPartida) Resultado() (int, int) {
+func (p Partida) Resultado() (int, int) {
 	return p.placarA, p.placarB
 }
 
-func (p PlacarPartida) Terminado() bool {
+func (p Partida) Terminado() bool {
 	sA, sB := p.Resultado()
 
 	amountToWin := (p.melhorDe / 2) + (p.melhorDe % 2)
@@ -109,10 +117,10 @@ func (p PlacarPartida) Terminado() bool {
 	return result
 }
 
-func (p PlacarPartida) Lado() placares.LadoDoPlacar {
+func (p Partida) Lado() placares.LadoDoPlacar {
 	return placares.Lado(p)
 }
 
-func (p PlacarPartida) Tipo() placares.TipoDoPlacar {
+func (p Partida) Tipo() placares.TipoDoPlacar {
 	return placares.TPPartida
 }
