@@ -57,22 +57,26 @@ func (t Turno) LadoCorrente() turnos.LadoDoTurno {
 	return result
 }
 
-func (t Turno) Clonar(start turnos.LadoDoTurno) *Turno {
-	result := New(DefinindoLado(start))
+func (t Turno) Clonar(ladoInicial turnos.LadoDoTurno) *Turno {
+	result := New(DefinindoLado(ladoInicial))
+
+	result.eventosAntesDeMudarTurno = make([]turnos.AoMudarTurno, len(t.eventosAntesDeMudarTurno))
 	copy(result.eventosAntesDeMudarTurno, t.eventosAntesDeMudarTurno)
+
+	result.eventosDepoisDeMudarTurno = make([]turnos.AoMudarTurno, len(t.eventosDepoisDeMudarTurno))
 	copy(result.eventosDepoisDeMudarTurno, t.eventosDepoisDeMudarTurno)
 
-	dataCount, dataAdded := len(t.dados)-2, 0
+	total, totalAdicionado := len(t.dados)-2, 0
 
 	for k, v := range t.dados {
 		if f, _ := AdicionarDados(result, k, v); f {
 			AtualizarDados(result, k, v.funcaoReset())
-			dataAdded++
+			totalAdicionado++
 		}
 	}
 
-	if dataAdded != dataCount {
-		panic(errors.New("data added to clone turn does not match."))
+	if totalAdicionado != total {
+		panic(errors.New("dado adicionado para clonagem não confere."))
 	}
 
 	return result
@@ -108,33 +112,33 @@ func New(param func(t *Turno)) *Turno {
 	return result
 }
 
-func AdicionarDados(t *Turno, id string, data mapData) (bool, error) {
-	_, f := t.dados[id]
-	if !f {
-		t.dados[id] = data
+func AdicionarDados(t *Turno, id string, valor mapData) (bool, error) {
+	_, achou := t.dados[id]
+	if !achou {
+		t.dados[id] = valor
 		return true, nil
 	}
 
-	return false, errors.New("id not found.")
+	return false, errors.New("id não encontrado.")
 }
 
-func AtualizarDados[V any](t *Turno, id string, data V) (bool, error) {
-	d, f := t.dados[id]
-	if f {
-		t.dados[id] = NewMapData(data, d.funcaoReset)
+func AtualizarDados[V any](t *Turno, id string, valor V) (bool, error) {
+	dado, existe := t.dados[id]
+	if existe {
+		t.dados[id] = NewMapData(valor, dado.funcaoReset)
 		return true, nil
 	}
 
-	return false, errors.New("id not found.")
+	return false, errors.New("id não encontrado.")
 }
 
 func ObterDados[V any](t *Turno, id string) (V, bool) {
-	data, found := t.dados[id]
+	dado, existe := t.dados[id]
 
 	var result V
-	if found {
-		result = data.valor.(V)
+	if existe {
+		result = dado.valor.(V)
 	}
 
-	return result, found
+	return result, existe
 }
