@@ -71,10 +71,15 @@ func New(param ParamOption) *Set {
 	return result
 }
 
-func (s Set) executarAoAdicionarJogo(scoreA, scoreB int, done bool) {
-	for j := range s.EventosAoAdicionarJogo {
-		event := s.EventosAoAdicionarJogo[j]
-		event(scoreA, scoreB, done)
+func (s Set) executarAoAdicionarJogo() {
+	if len(s.EventosAoAdicionarJogo) > 0 {
+		placarA, placarB := s.placar.Resultado()
+		terminado := s.placar.Terminado()
+
+		for j := range s.EventosAoAdicionarJogo {
+			event := s.EventosAoAdicionarJogo[j]
+			event(placarA, placarB, terminado)
+		}
 	}
 }
 
@@ -95,20 +100,18 @@ func (s *Set) AdicionarAoMudarLadoJogador(event jogos.OnPlayerChangeSide) {
 
 func (s *Set) AdicionarJogo(j jogo.Gaming) error {
 	if s.placar.Terminado() {
-		return errors.New("set is closed.")
+		return errors.New("O set está encerrado.")
 	}
 
 	if !j.Score().Terminado() {
-		return errors.New("game is still in play.")
+		return errors.New("O jogo está em andamento.")
 	}
 
 	s.jogos = append(s.jogos, j)
 	s.quemServe.Execute()
 	s.placar.AdicionarPlacar(j.Score())
 
-	scoreA, scoreB := s.placar.Resultado()
-	done := s.placar.Terminado()
-	s.executarAoAdicionarJogo(scoreA, scoreB, done)
+	s.executarAoAdicionarJogo()
 	if q := len(s.jogos) % 2; q == 1 {
 		s.ladoServico.Execute()
 	}

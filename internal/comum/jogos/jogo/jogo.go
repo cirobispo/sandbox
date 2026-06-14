@@ -36,10 +36,15 @@ func New(turn *turno.Turno, decidingPoint bool) *Jogo {
 	}
 }
 
-func (j Jogo) executeEventosAoAdicionarPonto(scoreA, scoreB int, done bool) {
-	for e := range j.eventosAoAdicionarPonto {
-		event := j.eventosAoAdicionarPonto[e]
-		event(scoreA, scoreB, done)
+func (j Jogo) executeEventosAoAdicionarPonto() {
+	if len(j.eventosAoAdicionarPonto) > 0 {
+		placarA, placarB := j.placar.Resultado()
+		terminado := j.placar.Terminado()
+
+		for e := range j.eventosAoAdicionarPonto {
+			event := j.eventosAoAdicionarPonto[e]
+			event(placarA, placarB, terminado)
+		}
 	}
 }
 
@@ -58,9 +63,7 @@ func (j *Jogo) AdicionarPonto(p ponto.Ponto) error {
 	j.placar.AdicionaPlacar(placar)
 	j.turno.Execute()
 
-	placarA, placarB := j.placar.Resultado()
-	terminado := j.placar.Terminado()
-	j.executeEventosAoAdicionarPonto(placarA, placarB, terminado)
+	j.executeEventosAoAdicionarPonto()
 	return nil
 }
 

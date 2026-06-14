@@ -69,10 +69,15 @@ func New(param ParamOption) *Partida {
 	return result
 }
 
-func (m Partida) executeEventosAoAdicionarSet(scoreA, scoreB int, done bool) {
-	for j := range m.eventosAoAdicionarSet {
-		event := m.eventosAoAdicionarSet[j]
-		event(scoreA, scoreB, done)
+func (p Partida) executeEventosAoAdicionarSet() {
+	if len(p.eventosAoAdicionarSet) > 0 {
+		placarA, placarB := p.placar.Resultado()
+		terminado := p.placar.Terminado()
+
+		for j := range p.eventosAoAdicionarSet {
+			event := p.eventosAoAdicionarSet[j]
+			event(placarA, placarB, terminado)
+		}
 	}
 }
 
@@ -82,11 +87,11 @@ func (m *Partida) AdicionarEventoAoAdicionarSet(event jogos.AoAdicionarSet) {
 
 func (m Partida) verificarAlgumErro(s Setting) error {
 	if m.placar.Terminado() {
-		return errors.New("set is closed.")
+		return errors.New("A partida está encerrada.")
 	}
 
 	if !s.Score().Terminado() {
-		return errors.New("game is still in play.")
+		return errors.New("O set está em andamento.")
 	}
 
 	return nil
@@ -100,9 +105,7 @@ func (m *Partida) AdicionarSet(s Setting) error {
 	m.sets = append(m.sets, s)
 	m.placar.AdicionarPlacar(s.Score())
 
-	scoreA, scoreB := m.placar.Resultado()
-	done := m.placar.Terminado()
-	m.executeEventosAoAdicionarSet(scoreA, scoreB, done)
+	m.executeEventosAoAdicionarSet()
 
 	return nil
 }
