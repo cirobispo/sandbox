@@ -49,18 +49,18 @@ func (j *Jogo) AdicionarEventoAoAdicionarPonto(event jogos.AoAdicionarPonto) {
 
 func (j *Jogo) AdicionarPonto(p ponto.Ponto) error {
 	if !p.Terminado() {
-		return errors.New("point is still in play.")
+		return errors.New("O ponto ainda está em andamento.")
 	}
 
 	j.pontos = append(j.pontos, p.Clonar())
-	scoreToAdd := placarponto.New(&p)
+	placar := placarponto.New(&p)
 
-	j.placar.AdicionaPlacar(scoreToAdd)
+	j.placar.AdicionaPlacar(placar)
 	j.turno.Execute()
 
-	scoreA, scoreB := j.placar.Resultado()
-	done := j.placar.Terminado()
-	j.executeEventosAoAdicionarPonto(scoreA, scoreB, done)
+	placarA, placarB := j.placar.Resultado()
+	terminado := j.placar.Terminado()
+	j.executeEventosAoAdicionarPonto(placarA, placarB, terminado)
 	return nil
 }
 
@@ -73,7 +73,7 @@ func (j Jogo) Placar() placares.EstadoEResultadoPlacar {
 }
 
 func (j Jogo) Pontos() []ponto.Ponto {
-	result := make([]ponto.Ponto, 0, len(j.pontos))
+	result := make([]ponto.Ponto, len(j.pontos))
 	copy(result, j.pontos)
 
 	return result
