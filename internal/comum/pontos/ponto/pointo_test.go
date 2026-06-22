@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/cirobispo/sandbox/internal/comum/pontos"
-	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
@@ -35,20 +34,20 @@ func TestEverySinglePoint(tt *testing.T) {
 		}
 
 		hit := everyHit[i]
-		p.AdicionaGolpe(hit)
-		pointSide := p.LadoDoPonto()
-		hitSide := hit.Lado()
-		if hitSide == golpes.HTDSameSide || hitSide == golpes.HTDOppositeSide {
-			isSameSide := (pointSide == pontos.LPServico && hitSide == golpes.HTDSameSide)
-			isOppositeSide := (pointSide == pontos.LPOposto && hitSide == golpes.HTDOppositeSide)
-			if isSameSide || isOppositeSide {
-				tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Tamanho(), p.LadoDaBola().LadoCorrente(), hit.Tipo(), hit.Lado(), p.LadoDoPonto())
-			}
-		} else {
-			if hitSide == golpes.HTDConditional {
-				tt.Logf("point type is %s (%s), point side is %s\n", hit.Tipo(), hit.Lado(), p.LadoDoPonto())
-			}
-		}
+		p.AdicionarGolpe(hit)
+		// pointSide := p.LadoDoPonto()
+		// hitSide := hit.Lado()
+		// if hitSide == golpes.HTDSameSide || hitSide == golpes.HTDOppositeSide {
+		// 	isSameSide := (pointSide == pontos.LPCorrente && hitSide == golpes.HTDSameSide)
+		// 	isOppositeSide := (pointSide == pontos.LPOposto && hitSide == golpes.HTDOppositeSide)
+		// 	if isSameSide || isOppositeSide {
+		// 		tt.Logf("On point last ( %d ) side was: %s, point type is %s (%s), point side is %s\n", p.Tamanho(), p.LadoDaBola(), hit.Tipo(), hit.Lado(), p.LadoDoPonto())
+		// 	}
+		// } else {
+		// 	if hitSide == golpes.HTDConditional {
+		// 		tt.Logf("point type is %s (%s), point side is %s\n", hit.Tipo(), hit.Lado(), p.LadoDoPonto())
+		// 	}
+		// }
 	}
 
 	showPoints(tt, points)
@@ -66,7 +65,7 @@ func showPoints(tt *testing.T, points []Ponto) {
 				os++
 			}
 
-			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Tamanho(), p.LadoDaBola().LadoCorrente(), p.LadoDoPonto(), ss, os)
+			tt.Logf("Point (%d) last side was: %s, point side is %s => (%d x %d)\n", p.Tamanho(), p.LadoDaBola(), p.LadoDoPonto(), ss, os)
 		}
 	}
 }

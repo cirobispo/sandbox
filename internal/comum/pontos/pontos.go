@@ -2,33 +2,33 @@ package pontos
 
 import "github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
 
-type AoPontuarNoPlacar func(tipoDoGolpe golpes.TipoDoGolpe, lado golpes.LadoDoGolpe, done bool)
+type AoPontuar func(tipoDoGolpe golpes.TipoDoGolpe, done bool)
 
 type LadoDoPonto int
 
 const (
-	LPServico LadoDoPonto = 1
-	LPOposto  LadoDoPonto = 2
-	LPNulo    LadoDoPonto = 0
+	LPCorrente LadoDoPonto = 1
+	LPOposto   LadoDoPonto = 2
+	LPNulo     LadoDoPonto = 0
 )
 
 func (s LadoDoPonto) String() string {
 	switch s {
-	case LPServico:
-		return "Serving side"
+	case LPCorrente:
+		return "Lado corrente"
 	case LPOposto:
-		return "Opposite side"
+		return "Lado oposto"
 	default:
-		return "None"
+		return "Nulo"
 	}
 }
 
 func (s LadoDoPonto) Inverso() LadoDoPonto {
 	switch s {
-	case LPServico:
+	case LPCorrente:
 		return LPOposto
 	case LPOposto:
-		return LPServico
+		return LPCorrente
 	default:
 		return s
 	}

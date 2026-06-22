@@ -2,6 +2,10 @@ package golpes
 
 type TipoDoGolpe int
 type LadoDoGolpe int
+type Encerramento int
+type LadoEncerramento int
+
+type TipoAcao int
 
 const (
 	HTFootFault   TipoDoGolpe = 1
@@ -31,9 +35,22 @@ const (
 	HTDConditional  LadoDoGolpe = 4
 )
 
+const (
+	TAProsseguir  TipoAcao = 0
+	TAEncerrarPLC TipoAcao = 1
+	TAEncerrarPLO TipoAcao = 2
+	TACondicional TipoAcao = 3
+)
+
 type Golpes interface {
 	Tipo() TipoDoGolpe
-	Lado() LadoDoGolpe
+	GeraEncerramento() Encerramento
+	AcionaTurno() bool
+}
+
+type Golpe interface {
+	Tipo() TipoDoGolpe
+	Acao(golpe []Golpe) TipoAcao
 }
 
 func (l LadoDoGolpe) Inverso() LadoDoGolpe {
@@ -52,35 +69,35 @@ func (t TipoDoGolpe) String() string {
 	case HTFootFault:
 		return "Foot fault"
 	case HTServeNet:
-		return "Serve on net"
+		return "Serviço na rede"
 	case HTServeLet:
 		return "Let"
 	case HTServeIn:
-		return "Serve in"
+		return "Serviço dentro"
 	case HTAce:
 		return "Ace!"
 	case HTServeOut:
-		return "Serve out"
+		return "Serviço fora"
 	case HTReturnOut:
-		return "Return out"
+		return "Retorno fora"
 	case HTReturnNet:
-		return "Return net"
+		return "Retorno rede"
 	case HTReturnIn:
-		return "Return in"
+		return "Retorno dentro"
 	case HTDoubleFault:
 		return "Double fault"
 	case HTNet:
-		return "Hit net"
+		return "Hit rede"
 	case HTIn:
-		return "Hit in"
+		return "Hit dentro"
 	case HTOut:
-		return "Hit out"
+		return "Hit fora"
 	case HTWinner:
 		return "Winner!"
 	case HTToast:
 		return "Toast!"
 	case HTNetTouch:
-		return "Touch net"
+		return "Touch rede"
 	case HTMiss:
 		return "Miss"
 	default:

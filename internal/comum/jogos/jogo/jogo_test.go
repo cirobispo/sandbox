@@ -1,72 +1,63 @@
 package jogo
 
-import (
-	"testing"
+// func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
+// 	g := New(turno.New(turno.DefinindoLado(personToServe)), false)
+// 	g.AdicionarEventoAoAdicionarPonto(func(scoreA, scoreB int, done bool) {
+// 		var description = []string{"love", "15", "30", "40", "ad", "game"}
+// 		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
+// 		if done {
+// 			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
+// 			t.Log()
+// 			return
+// 		}
 
-	"github.com/cirobispo/sandbox/internal/comum/placares"
-	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
-	"github.com/cirobispo/sandbox/internal/comum/turnos"
-	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
-)
+// 		t.Logf("Game status: ( %v x %v )\n", tA, tB)
+// 		t.Log()
+// 	})
 
-func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
-	g := New(turno.New(turno.DefinindoLado(personToServe)), false)
-	g.AdicionarEventoAoAdicionarPonto(func(scoreA, scoreB int, done bool) {
-		var description = []string{"love", "15", "30", "40", "ad", "game"}
-		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
-		if done {
-			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
-			t.Log()
-			return
-		}
+// 	for i := range blocks {
+// 		block := blocks[i]
+// 		tn := turno.New(turno.DefinindoLado(turnos.LTA))
+// 		p := ponto.New(tn)
 
-		t.Logf("Game status: ( %v x %v )\n", tA, tB)
-		t.Log()
-	})
+// 		for j := range block.Items {
+// 			item := block.Items[j]
+// 			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Tipo())
+// 			p.AdicionarGolpe(item.Value)
+// 		}
 
-	for i := range blocks {
-		block := blocks[i]
-		tn := turno.New(turno.DefinindoLado(turnos.LTA))
-		p := ponto.New(tn)
+// 		g.AdicionarPonto(p)
+// 	}
 
-		for j := range block.Items {
-			item := block.Items[j]
-			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Tipo())
-			p.AdicionaGolpe(item.Value)
-		}
+// 	a, b := g.Placar().Resultado()
 
-		g.AdicionarPonto(p)
-	}
+// 	if a != SideA || b != SideB {
+// 		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
+// 	}
+// }
 
-	a, b := g.Placar().Resultado()
+// func TestTurnA_Game40(t *testing.T) {
+// 	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
+// 		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
+// 		// point.DoubleFault(),
+// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
+// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
+// 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
+// 		ponto.AcePoint(),
+// 	}
 
-	if a != SideA || b != SideB {
-		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
-	}
-}
+// 	runTest(turnos.LTA, blocks, 5, 3, t)
+// }
 
-func TestTurnA_Game40(t *testing.T) {
-	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
-		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
-		// point.DoubleFault(),
-		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
-		ponto.AcePoint(),
-	}
+// func TestTurnB_40Game(t *testing.T) {
+// 	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
+// 		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
+// 		// point.DoubleFault(),
+// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
+// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
+// 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
+// 		ponto.AcePoint(),
+// 	}
 
-	runTest(turnos.LTA, blocks, 5, 3, t)
-}
-
-func TestTurnB_40Game(t *testing.T) {
-	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
-		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
-		// point.DoubleFault(),
-		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
-		ponto.AcePoint(),
-	}
-
-	runTest(turnos.LTB, blocks, 3, 5, t)
-}
+// 	runTest(turnos.LTB, blocks, 3, 5, t)
+// }

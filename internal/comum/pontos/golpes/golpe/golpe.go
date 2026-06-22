@@ -2,143 +2,112 @@ package golpe
 
 import (
 	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/utilitario"
 )
 
+type VerificarGolpes func(golpes []golpes.Golpe) golpes.TipoAcao
+
 type Golpe struct {
-	tipo golpes.TipoDoGolpe
-	lado golpes.LadoDoGolpe
+	tipoGolpe golpes.TipoDoGolpe
+	tipoAcao  golpes.TipoAcao
+	verificar VerificarGolpes
 }
 
 func (g Golpe) Tipo() golpes.TipoDoGolpe {
-	return g.tipo
+	return g.tipoGolpe
 }
 
-func (g Golpe) Lado() golpes.LadoDoGolpe {
-	return g.lado
-}
-
-func New(t golpes.TipoDoGolpe, s golpes.LadoDoGolpe) Golpe {
-	return Golpe{
-		tipo: t,
-		lado: s,
+func (g Golpe) Acao(gs []golpes.Golpe) golpes.TipoAcao {
+	if g.tipoAcao == golpes.TACondicional {
+		if g.verificar != nil {
+			return g.verificar(gs)
+		}
 	}
+	return g.tipoAcao
+}
+
+func New(t golpes.TipoDoGolpe, acao golpes.TipoAcao, verificador VerificarGolpes) Golpe {
+	return Golpe{
+		tipoGolpe: t,
+		tipoAcao:  acao,
+		verificar: verificador,
+	}
+}
+
+func verificaDuplaFalta(gps []golpes.Golpe) golpes.TipoAcao {
+	if utilitario.ExisteDuplaFalta(&gps) {
+		return golpes.TAEncerrarPLO
+	}
+	return golpes.TACondicional
 }
 
 func NewFootFault() Golpe {
-	return Golpe{
-		tipo: golpes.HTFootFault,
-		lado: golpes.HTDConditional,
-	}
+	return New(golpes.HTFootFault, golpes.TACondicional, verificaDuplaFalta)
 }
 
 func NewAce() Golpe {
-	return Golpe{
-		tipo: golpes.HTAce,
-		lado: golpes.HTDSameSide,
-	}
+	return New(golpes.HTAce, golpes.TAEncerrarPLC, nil)
 }
 
 func NewServeOut() Golpe {
-	return Golpe{
-		tipo: golpes.HTServeOut,
-		lado: golpes.HTDConditional,
-	}
+	return New(golpes.HTServeOut, golpes.TACondicional, verificaDuplaFalta)
 }
 
 func NewServeIn() Golpe {
-	return Golpe{
-		tipo: golpes.HTServeIn,
-		lado: golpes.HTDChangeSide,
-	}
+	return New(golpes.HTServeIn, golpes.TAProsseguir, nil)
 }
 
 func NewServeLet() Golpe {
-	return Golpe{
-		tipo: golpes.HTServeLet,
-		lado: golpes.HTDNone,
-	}
+	return New(golpes.HTServeLet, golpes.TACondicional, nil)
 }
 
 func NewServeNet() Golpe {
-	return Golpe{
-		tipo: golpes.HTServeNet,
-		lado: golpes.HTDConditional,
-	}
+	return New(golpes.HTServeNet, golpes.TACondicional, verificaDuplaFalta)
 }
 
 func NewReturnNet() Golpe {
-	return Golpe{
-		tipo: golpes.HTReturnNet,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTReturnNet, golpes.TAEncerrarPLO, nil)
 }
 
 func NewReturnIn() Golpe {
-	return Golpe{
-		tipo: golpes.HTReturnIn,
-		lado: golpes.HTDChangeSide,
-	}
+	return New(golpes.HTReturnIn, golpes.TAProsseguir, nil)
 }
 
 func NewReturnOut() Golpe {
-	return Golpe{
-		tipo: golpes.HTReturnOut,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTReturnOut, golpes.TAEncerrarPLO, nil)
 }
 
 func NewDoubleFault() Golpe {
-	return Golpe{
-		tipo: golpes.HTDoubleFault,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTDoubleFault, golpes.TAEncerrarPLO, nil)
 }
 
 func NewHitNet() Golpe {
-	return Golpe{
-		tipo: golpes.HTNet,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTNet, golpes.TAEncerrarPLO, nil)
 }
 
 func NewHitBackIn() Golpe {
-	return Golpe{
-		tipo: golpes.HTIn,
-		lado: golpes.HTDChangeSide,
-	}
+	return New(golpes.HTIn, golpes.TAProsseguir, nil)
 }
 
 func NewWinner() Golpe {
-	return Golpe{
-		tipo: golpes.HTWinner,
-		lado: golpes.HTDSameSide,
-	}
+	// Aqui será preciso avaliar como atuar aqui.
+	// Se o winner é confirmado depois ou no momento do golpe.
+	// Provavelmente deverá ser depois. E daí, ficaria, devolveu na rede, fora, winner adversario.
+	return New(golpes.HTWinner, golpes.TAEncerrarPLC, nil)
 }
 
 func NewHitOut() Golpe {
-	return Golpe{
-		tipo: golpes.HTOut,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTOut, golpes.TAEncerrarPLO, nil)
 }
 
 func NewMiss() Golpe {
-	return Golpe{
-		tipo: golpes.HTOut,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTOut, golpes.TAEncerrarPLO, nil)
 }
 
 func NewToast() Golpe {
-	return Golpe{
-		tipo: golpes.HTToast,
-		lado: golpes.HTDSameSide,
-	}
+	return New(golpes.HTToast, golpes.TAEncerrarPLO, nil)
 }
 
 func NewNetTouch() Golpe {
-	return Golpe{
-		tipo: golpes.HTNetTouch,
-		lado: golpes.HTDOppositeSide,
-	}
+	return New(golpes.HTNetTouch, golpes.TAEncerrarPLO, nil)
 }

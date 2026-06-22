@@ -61,7 +61,7 @@ func Test_Set_2x1(t *testing.T) {
 		score{scoreA: 7, scoreB: 5}, score{scoreA: 6, scoreB: 4},
 	}
 
-	match := New(Padrao())
+	match := New(MelhorDeTres())
 	runTest(&match, scores, 2, 1, t)
 }
 
@@ -71,6 +71,6 @@ func Test_Set_1x2(t *testing.T) {
 		score{scoreA: 5, scoreB: 7}, score{scoreA: 6, scoreB: 4},
 	}
 
-	match := New(Padrao())
+	match := New(MelhorDeTres())
 	runTest(&match, scores, 1, 2, t)
 }

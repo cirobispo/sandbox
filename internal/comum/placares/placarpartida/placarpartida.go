@@ -18,11 +18,11 @@ type Partida struct {
 	eventosAoPontuarNaPartida []AoPontuarNaPartida
 }
 
-func Padrao() ParamOption {
+func MelhorDeTres() ParamOption {
 	return TamanhoELado(turnos.LTA, 3)
 }
 
-func ModoGrandSLAM() ParamOption {
+func MelhorDeCinco() ParamOption {
 	return TamanhoELado(turnos.LTA, 5)
 }
 

@@ -1,85 +1,61 @@
 package ponto
 
 import (
-	"errors"
-
 	"github.com/cirobispo/sandbox/internal/comum/pontos"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
-	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
 )
 
 type Ponto struct {
 	ladoDaBola               *turno.Turno
-	golpes                   *[]golpes.Golpes
+	golpes                   *[]golpes.Golpe
+	duplasFaltas             int
+	ladoDoPonto              pontos.LadoDoPonto
 	terminado                bool
-	eventosAoPontuarNoPlacar *[]pontos.AoPontuarNoPlacar
+	eventosAoPontuarNoPlacar *[]pontos.AoPontuar
 }
 
 func New(sideControl *turno.Turno) Ponto {
-	hit := make([]golpes.Golpes, 0, 3)
-	events := make([]pontos.AoPontuarNoPlacar, 0)
+	hit := make([]golpes.Golpe, 0, 3)
+	events := make([]pontos.AoPontuar, 0)
 	return Ponto{
 		terminado:                false,
+		ladoDoPonto:              pontos.LPNulo,
 		ladoDaBola:               sideControl,
+		duplasFaltas:             0,
 		golpes:                   &hit,
 		eventosAoPontuarNoPlacar: &events,
 	}
 }
 
-func temDuplaFalta(hits *[]golpes.Golpes) bool {
-	lastHit := (*hits)[len(*hits)-1]
-	fault := lastHit.Tipo() == golpes.HTFootFault || lastHit.Tipo() == golpes.HTServeNet || lastHit.Tipo() == golpes.HTServeOut
-	if lastHit.Lado() != golpes.HTDConditional && !fault {
-		return false
-	}
-
-	count := 0
-	result := false
-	for i := range *hits {
-		hit := (*hits)[i]
-		if tp := hit.Tipo(); tp == golpes.HTServeOut || tp == golpes.HTServeNet || tp == golpes.HTFootFault {
-			count++
-			if count > 1 {
-				result = true
-				break
-			}
-		}
-	}
-	return result
+func (p *Ponto) AdicionarEventoAoPontuar(ponteiroFnc pontos.AoPontuar) {
+	*p.eventosAoPontuarNoPlacar = append(*p.eventosAoPontuarNoPlacar, ponteiroFnc)
 }
 
-func (p *Ponto) AdicionarEventoAoPontuarNoPlacar(callback pontos.AoPontuarNoPlacar) {
-	*p.eventosAoPontuarNoPlacar = append(*p.eventosAoPontuarNoPlacar, callback)
-}
-
-func (p *Ponto) AdicionaGolpe(h golpes.Golpes) {
+func (p *Ponto) AdicionarGolpe(g golpes.Golpe) {
 	if p.terminado {
 		return
 	}
 
-	*p.golpes = append(*p.golpes, h)
-
-	ballInPlay := (h.Lado() == golpes.HTDNone || h.Lado() == golpes.HTDChangeSide)
-	if ballInPlay {
+	*p.golpes = append(*p.golpes, g)
+	acao := g.Acao(*p.golpes)
+	p.terminado = (acao == golpes.TAEncerrarPLC) || (acao == golpes.TAEncerrarPLO)
+	if !p.terminado {
 		p.ladoDaBola.Execute()
 		return
 	}
 
-	if h.Lado() == golpes.HTDConditional && !temDuplaFalta(p.golpes) {
-		return
+	if acao == golpes.TAEncerrarPLC {
+		p.ladoDoPonto = pontos.LPCorrente
 	}
 
-	p.terminado = true
-	p.executeEventosAoPontuarNoPlacar(h.Tipo(), h.Lado(), p.terminado)
+	p.ladoDoPonto = pontos.LPOposto
 }
 
-func (p Ponto) Golpes() []golpe.Golpe {
-	result := make([]golpe.Golpe, 0, len(*p.golpes))
-	for j := range *p.golpes {
-		item := (*p.golpes)[j]
-		result = append(result, golpe.New(item.Tipo(), item.Lado()))
-	}
+func (p Ponto) Golpes() []golpes.Golpe {
+	result := make([]golpes.Golpe, len(*p.golpes))
+	copy(result, *p.golpes)
 
 	return result
 }
@@ -89,40 +65,12 @@ func (p Ponto) Tamanho() int {
 	return result
 }
 
-func (p Ponto) UltimoGolpe() (golpes.TipoDoGolpe, error) {
-	hitCount := p.Tamanho()
-	if hitCount == 0 {
-		return golpes.HTDoubleFault, errors.New("no hit found.")
-	}
-
-	return (*p.golpes)[hitCount-1].Tipo(), nil
-}
-
-func (p Ponto) LadoDaBola() turno.Turno {
-	return *p.ladoDaBola
+func (p Ponto) LadoDaBola() turnos.LadoDoTurno {
+	return p.ladoDaBola.LadoCorrente()
 }
 
 func (p Ponto) LadoDoPonto() pontos.LadoDoPonto {
-	if !p.Terminado() {
-		return pontos.LPNulo
-	}
-
-	lastHit := (*p.golpes)[len(*p.golpes)-1]
-	isDoubleFault := (lastHit.Lado() == golpes.HTDConditional && temDuplaFalta(p.golpes))
-	isOrdinaryPoint := (lastHit.Lado() == golpes.HTDSameSide || lastHit.Lado() == golpes.HTDOppositeSide)
-	if !isOrdinaryPoint && !isDoubleFault {
-		return pontos.LPNulo
-	}
-
-	if isDoubleFault {
-		lastHit = golpe.NewDoubleFault()
-	}
-
-	if p.ladoDaBola.LadoCorrente() == p.ladoDaBola.LadoInicial() {
-		return LadoDoGolpeParaLadoDoPonto(lastHit.Lado())
-	} else {
-		return LadoDoGolpeParaLadoDoPonto(lastHit.Lado()).Inverso()
-	}
+	return p.ladoDoPonto
 }
 
 func (p Ponto) Terminado() bool {
@@ -131,27 +79,24 @@ func (p Ponto) Terminado() bool {
 
 func (p Ponto) Clonar() Ponto {
 	result := New(p.ladoDaBola.Clonar(p.ladoDaBola.LadoInicial()))
+	*result.golpes = make([]golpes.Golpe, len(*p.golpes))
 	copy(*result.golpes, *p.golpes)
+
+	*result.eventosAoPontuarNoPlacar = make([]pontos.AoPontuar, len(*p.eventosAoPontuarNoPlacar))
 	copy(*result.eventosAoPontuarNoPlacar, *p.eventosAoPontuarNoPlacar)
 	result.terminado = p.terminado
 
 	return result
 }
 
-func (p Ponto) executeEventosAoPontuarNoPlacar(hitType golpes.TipoDoGolpe, side golpes.LadoDoGolpe, done bool) {
-	for i := range *p.eventosAoPontuarNoPlacar {
-		event := (*p.eventosAoPontuarNoPlacar)[i]
-		event(hitType, side, done)
-	}
-}
+func (p Ponto) executeEventosAoPontuar() {
+	if len(*p.eventosAoPontuarNoPlacar) > 0 {
+		golpe := (*p.golpes)[p.Tamanho()-1]
+		tipo, terminado := golpe.Tipo(), p.terminado
 
-func LadoDoGolpeParaLadoDoPonto(s golpes.LadoDoGolpe) pontos.LadoDoPonto {
-	switch s {
-	case golpes.HTDSameSide:
-		return pontos.LPServico
-	case golpes.HTDOppositeSide:
-		return pontos.LPOposto
-	default:
-		return pontos.LPNulo
+		for i := range *p.eventosAoPontuarNoPlacar {
+			event := (*p.eventosAoPontuarNoPlacar)[i]
+			event(tipo, terminado)
+		}
 	}
 }

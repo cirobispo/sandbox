@@ -59,7 +59,7 @@ func New(param ParamOption) *Partida {
 	if param != nil {
 		result.custom = param(result)
 
-		callback := placarpartida.Padrao()
+		callback := placarpartida.MelhorDeTres()
 		if result.custom {
 			callback = placarpartida.TamanhoELado(turnos.LTA, result.tamanhoPartida)
 		}
