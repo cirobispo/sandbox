@@ -36,10 +36,11 @@ const (
 )
 
 const (
-	TAProsseguir  TipoAcao = 0
-	TAEncerrarPLC TipoAcao = 1
-	TAEncerrarPLO TipoAcao = 2
-	TACondicional TipoAcao = 3
+	TANulo        TipoAcao = 0
+	TAProsseguir  TipoAcao = 1
+	TAEncerrarPLC TipoAcao = 2
+	TAEncerrarPLO TipoAcao = 3
+	TACondicional TipoAcao = 4
 )
 
 type Golpes interface {
@@ -85,21 +86,21 @@ func (t TipoDoGolpe) String() string {
 	case HTReturnIn:
 		return "Retorno dentro"
 	case HTDoubleFault:
-		return "Double fault"
+		return "Dupla falta"
 	case HTNet:
-		return "Hit rede"
+		return "Devolveu na rede"
 	case HTIn:
-		return "Hit dentro"
+		return "Devolveu dentro"
 	case HTOut:
-		return "Hit fora"
+		return "Devolveu foras"
 	case HTWinner:
 		return "Winner!"
 	case HTToast:
-		return "Toast!"
+		return "Bola no jogador"
 	case HTNetTouch:
-		return "Touch rede"
+		return "Tocou a rede"
 	case HTMiss:
-		return "Miss"
+		return "Não tocou"
 	default:
 		return "Other"
 	}

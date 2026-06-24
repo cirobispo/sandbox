@@ -2,7 +2,7 @@ package pontos
 
 import "github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
 
-type AoPontuar func(tipoDoGolpe golpes.TipoDoGolpe, done bool)
+type AoAdicionarGolpe func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool)
 
 type LadoDoPonto int
 

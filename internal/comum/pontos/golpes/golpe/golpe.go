@@ -5,33 +5,28 @@ import (
 	"github.com/cirobispo/sandbox/internal/comum/pontos/utilitario"
 )
 
-type VerificarGolpes func(golpes []golpes.Golpe) golpes.TipoAcao
+type VerificarAcaoCondicional func(golpes []golpes.Golpe) golpes.TipoAcao
 
 type Golpe struct {
-	tipoGolpe golpes.TipoDoGolpe
-	tipoAcao  golpes.TipoAcao
-	verificar VerificarGolpes
+	tipoGolpe   golpes.TipoDoGolpe
+	tipoAcao    golpes.TipoAcao
+	verificador VerificarAcaoCondicional
 }
 
+func (g *Golpe) defineVerificadorCondicional(verificador VerificarAcaoCondicional) {
+	g.verificador = verificador
+}
 func (g Golpe) Tipo() golpes.TipoDoGolpe {
 	return g.tipoGolpe
 }
 
 func (g Golpe) Acao(gs []golpes.Golpe) golpes.TipoAcao {
 	if g.tipoAcao == golpes.TACondicional {
-		if g.verificar != nil {
-			return g.verificar(gs)
+		if g.verificador != nil {
+			return g.verificador(gs)
 		}
 	}
 	return g.tipoAcao
-}
-
-func New(t golpes.TipoDoGolpe, acao golpes.TipoAcao, verificador VerificarGolpes) Golpe {
-	return Golpe{
-		tipoGolpe: t,
-		tipoAcao:  acao,
-		verificar: verificador,
-	}
 }
 
 func verificaDuplaFalta(gps []golpes.Golpe) golpes.TipoAcao {
@@ -41,73 +36,86 @@ func verificaDuplaFalta(gps []golpes.Golpe) golpes.TipoAcao {
 	return golpes.TACondicional
 }
 
+func NewGolpe(t golpes.TipoDoGolpe, acao golpes.TipoAcao, verificador VerificarAcaoCondicional) Golpe {
+	return Golpe{
+		tipoGolpe: t,
+		tipoAcao:  acao,
+	}
+}
+
 func NewFootFault() Golpe {
-	return New(golpes.HTFootFault, golpes.TACondicional, verificaDuplaFalta)
+	result := NewGolpe(golpes.HTFootFault, golpes.TACondicional, verificaDuplaFalta)
+	result.defineVerificadorCondicional(verificaDuplaFalta)
+	return result
 }
 
 func NewAce() Golpe {
-	return New(golpes.HTAce, golpes.TAEncerrarPLC, nil)
+	return NewGolpe(golpes.HTAce, golpes.TAEncerrarPLC, nil)
 }
 
-func NewServeOut() Golpe {
-	return New(golpes.HTServeOut, golpes.TACondicional, verificaDuplaFalta)
+func NewServicoFora() Golpe {
+	result := NewGolpe(golpes.HTServeOut, golpes.TACondicional, verificaDuplaFalta)
+	result.defineVerificadorCondicional(verificaDuplaFalta)
+	return result
 }
 
-func NewServeIn() Golpe {
-	return New(golpes.HTServeIn, golpes.TAProsseguir, nil)
+func NewServicoDentro() Golpe {
+	return NewGolpe(golpes.HTServeIn, golpes.TAProsseguir, nil)
 }
 
-func NewServeLet() Golpe {
-	return New(golpes.HTServeLet, golpes.TACondicional, nil)
+func NewLET() Golpe {
+	return NewGolpe(golpes.HTServeLet, golpes.TANulo, nil)
 }
 
-func NewServeNet() Golpe {
-	return New(golpes.HTServeNet, golpes.TACondicional, verificaDuplaFalta)
+func NewServicoNaRede() Golpe {
+	result := NewGolpe(golpes.HTServeNet, golpes.TACondicional, verificaDuplaFalta)
+	result.defineVerificadorCondicional(verificaDuplaFalta)
+	return result
 }
 
-func NewReturnNet() Golpe {
-	return New(golpes.HTReturnNet, golpes.TAEncerrarPLO, nil)
+func NewRetornoNaRede() Golpe {
+	return NewGolpe(golpes.HTReturnNet, golpes.TAEncerrarPLO, nil)
 }
 
-func NewReturnIn() Golpe {
-	return New(golpes.HTReturnIn, golpes.TAProsseguir, nil)
+func NewRetornoDentro() Golpe {
+	return NewGolpe(golpes.HTReturnIn, golpes.TAProsseguir, nil)
 }
 
-func NewReturnOut() Golpe {
-	return New(golpes.HTReturnOut, golpes.TAEncerrarPLO, nil)
+func NewRetornoFora() Golpe {
+	return NewGolpe(golpes.HTReturnOut, golpes.TAEncerrarPLO, nil)
 }
 
-func NewDoubleFault() Golpe {
-	return New(golpes.HTDoubleFault, golpes.TAEncerrarPLO, nil)
+func NewDuplaFalta() Golpe {
+	return NewGolpe(golpes.HTDoubleFault, golpes.TAEncerrarPLO, nil)
 }
 
-func NewHitNet() Golpe {
-	return New(golpes.HTNet, golpes.TAEncerrarPLO, nil)
+func NewGolpeuNaRede() Golpe {
+	return NewGolpe(golpes.HTNet, golpes.TAEncerrarPLO, nil)
 }
 
-func NewHitBackIn() Golpe {
-	return New(golpes.HTIn, golpes.TAProsseguir, nil)
+func NewDevolveuDentro() Golpe {
+	return NewGolpe(golpes.HTIn, golpes.TAProsseguir, nil)
 }
 
 func NewWinner() Golpe {
 	// Aqui será preciso avaliar como atuar aqui.
 	// Se o winner é confirmado depois ou no momento do golpe.
 	// Provavelmente deverá ser depois. E daí, ficaria, devolveu na rede, fora, winner adversario.
-	return New(golpes.HTWinner, golpes.TAEncerrarPLC, nil)
+	return NewGolpe(golpes.HTWinner, golpes.TAEncerrarPLC, nil)
 }
 
-func NewHitOut() Golpe {
-	return New(golpes.HTOut, golpes.TAEncerrarPLO, nil)
+func NewGolpeuFora() Golpe {
+	return NewGolpe(golpes.HTOut, golpes.TAEncerrarPLO, nil)
 }
 
-func NewMiss() Golpe {
-	return New(golpes.HTOut, golpes.TAEncerrarPLO, nil)
+func NewNaoTocou() Golpe {
+	return NewGolpe(golpes.HTMiss, golpes.TAEncerrarPLO, nil)
 }
 
-func NewToast() Golpe {
-	return New(golpes.HTToast, golpes.TAEncerrarPLO, nil)
+func NewQueimou() Golpe {
+	return NewGolpe(golpes.HTToast, golpes.TAEncerrarPLO, nil)
 }
 
-func NewNetTouch() Golpe {
-	return New(golpes.HTNetTouch, golpes.TAEncerrarPLO, nil)
+func NewToqueNaRede() Golpe {
+	return NewGolpe(golpes.HTNetTouch, golpes.TAEncerrarPLO, nil)
 }

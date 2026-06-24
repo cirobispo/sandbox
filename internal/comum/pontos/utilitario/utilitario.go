@@ -21,9 +21,9 @@ func ExisteDuplaFalta(hits *[]golpes.Golpe) bool {
 		return false
 	}
 
-	count := 0
+	count := 1
 	result := false
-	for i := tamanho - 2; i > 0; i-- {
+	for i := tamanho - 2; i >= 0; i-- {
 		hit := (*hits)[i]
 		if FoiFalta(hit) {
 			count++

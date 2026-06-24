@@ -1,6 +1,8 @@
 package ponto
 
 import (
+	"errors"
+
 	"github.com/cirobispo/sandbox/internal/comum/pontos"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
@@ -8,49 +10,59 @@ import (
 )
 
 type Ponto struct {
-	ladoDaBola               *turno.Turno
-	golpes                   *[]golpes.Golpe
-	duplasFaltas             int
-	ladoDoPonto              pontos.LadoDoPonto
-	terminado                bool
-	eventosAoPontuarNoPlacar *[]pontos.AoPontuar
+	ladoDaBola              *turno.Turno
+	golpes                  *[]golpes.Golpe
+	ladoDoPonto             pontos.LadoDoPonto
+	terminado               bool
+	eventosAoAdicionarGolpe *[]pontos.AoAdicionarGolpe
 }
 
 func New(sideControl *turno.Turno) Ponto {
 	hit := make([]golpes.Golpe, 0, 3)
-	events := make([]pontos.AoPontuar, 0)
+	events := make([]pontos.AoAdicionarGolpe, 0)
 	return Ponto{
-		terminado:                false,
-		ladoDoPonto:              pontos.LPNulo,
-		ladoDaBola:               sideControl,
-		duplasFaltas:             0,
-		golpes:                   &hit,
-		eventosAoPontuarNoPlacar: &events,
+		terminado:               false,
+		ladoDoPonto:             pontos.LPNulo,
+		ladoDaBola:              sideControl,
+		golpes:                  &hit,
+		eventosAoAdicionarGolpe: &events,
 	}
 }
 
-func (p *Ponto) AdicionarEventoAoPontuar(ponteiroFnc pontos.AoPontuar) {
-	*p.eventosAoPontuarNoPlacar = append(*p.eventosAoPontuarNoPlacar, ponteiroFnc)
+func (p *Ponto) AdicionarEventoAoAdicionarGolpe(ponteiroFnc pontos.AoAdicionarGolpe) {
+	*p.eventosAoAdicionarGolpe = append(*p.eventosAoAdicionarGolpe, ponteiroFnc)
 }
 
-func (p *Ponto) AdicionarGolpe(g golpes.Golpe) {
+func (p *Ponto) AdicionarGolpe(g golpes.Golpe) error {
 	if p.terminado {
-		return
+		return errors.New("Não é possivel adicionar outro golpe com o ponto encerrado.")
 	}
 
 	*p.golpes = append(*p.golpes, g)
 	acao := g.Acao(*p.golpes)
+	if acao == golpes.TANulo {
+		return nil
+	}
+
 	p.terminado = (acao == golpes.TAEncerrarPLC) || (acao == golpes.TAEncerrarPLO)
 	if !p.terminado {
 		p.ladoDaBola.Execute()
-		return
+		p.executeEventosAoAdicionarGolpe()
+		return nil
 	}
 
-	if acao == golpes.TAEncerrarPLC {
-		p.ladoDoPonto = pontos.LPCorrente
+	p.ladoDoPonto = pontos.LPCorrente
+	if acao == golpes.TAEncerrarPLO {
+		p.ladoDoPonto = pontos.LPOposto
 	}
 
-	p.ladoDoPonto = pontos.LPOposto
+	if p.ladoDaBola.LadoCorrente() != p.ladoDaBola.LadoInicial() {
+		p.ladoDoPonto = p.ladoDoPonto.Inverso()
+	}
+
+	p.executeEventosAoAdicionarGolpe()
+
+	return nil
 }
 
 func (p Ponto) Golpes() []golpes.Golpe {
@@ -82,20 +94,21 @@ func (p Ponto) Clonar() Ponto {
 	*result.golpes = make([]golpes.Golpe, len(*p.golpes))
 	copy(*result.golpes, *p.golpes)
 
-	*result.eventosAoPontuarNoPlacar = make([]pontos.AoPontuar, len(*p.eventosAoPontuarNoPlacar))
-	copy(*result.eventosAoPontuarNoPlacar, *p.eventosAoPontuarNoPlacar)
+	*result.eventosAoAdicionarGolpe = make([]pontos.AoAdicionarGolpe, len(*p.eventosAoAdicionarGolpe))
+	copy(*result.eventosAoAdicionarGolpe, *p.eventosAoAdicionarGolpe)
+	result.ladoDoPonto = p.ladoDoPonto
 	result.terminado = p.terminado
 
 	return result
 }
 
-func (p Ponto) executeEventosAoPontuar() {
-	if len(*p.eventosAoPontuarNoPlacar) > 0 {
+func (p Ponto) executeEventosAoAdicionarGolpe() {
+	if len(*p.eventosAoAdicionarGolpe) > 0 {
 		golpe := (*p.golpes)[p.Tamanho()-1]
 		tipo, terminado := golpe.Tipo(), p.terminado
 
-		for i := range *p.eventosAoPontuarNoPlacar {
-			event := (*p.eventosAoPontuarNoPlacar)[i]
+		for i := range *p.eventosAoAdicionarGolpe {
+			event := (*p.eventosAoAdicionarGolpe)[i]
 			event(tipo, terminado)
 		}
 	}
