@@ -35,25 +35,25 @@ func (t *Turno) AdicionarDepoisDeMudarTurno(callback turnos.AoMudarTurno) {
 func (t *Turno) Execute() {
 	t.executeAoMudarTurno(t.eventosAntesDeMudarTurno)
 
-	ladoCorrente, _ := ObterDados[turnos.LadoDoTurno](t, "Turn_currentSide")
+	ladoCorrente, _ := ObterDados[turnos.LadoDoTurno](t, "Turno_LadoCorrente")
 
 	if ladoCorrente > turnos.LTA {
 		ladoCorrente = -1
 	}
 
 	ladoCorrente++
-	AtualizarDados(t, "Turn_currentSide", ladoCorrente)
+	AtualizarDados(t, "Turno_LadoCorrente", ladoCorrente)
 
 	t.executeAoMudarTurno(t.eventosDepoisDeMudarTurno)
 }
 
 func (t Turno) LadoInicial() turnos.LadoDoTurno {
-	result, _ := ObterDados[turnos.LadoDoTurno](&t, "Turn_startSide")
+	result, _ := ObterDados[turnos.LadoDoTurno](&t, "Turno_LadoInicial")
 	return result
 }
 
 func (t Turno) LadoCorrente() turnos.LadoDoTurno {
-	result, _ := ObterDados[turnos.LadoDoTurno](&t, "Turn_currentSide")
+	result, _ := ObterDados[turnos.LadoDoTurno](&t, "Turno_LadoCorrente")
 	return result
 }
 
@@ -83,10 +83,12 @@ func (t Turno) Clonar(ladoInicial turnos.LadoDoTurno) *Turno {
 }
 
 func (t Turno) executeAoMudarTurno(list []turnos.AoMudarTurno) {
-	currentSide, _ := ObterDados[turnos.LadoDoTurno](&t, "Turn_currentSide")
-	for i := range list {
-		event := list[i]
-		event(currentSide)
+	if len(list) > 0 {
+		currentSide, _ := ObterDados[turnos.LadoDoTurno](&t, "Turno_LadoCorrente")
+		for i := range list {
+			event := list[i]
+			event(currentSide)
+		}
 	}
 }
 
@@ -94,8 +96,8 @@ func DefinindoLado(start turnos.LadoDoTurno) func(t *Turno) {
 	return func(t *Turno) {
 		startSide := NewMapData(start, func() any { return start })
 		currentSide := NewMapData(start, func() any { return start })
-		AdicionarDados(t, "Turn_startSide", startSide)
-		AdicionarDados(t, "Turn_currentSide", currentSide)
+		AdicionarDados(t, "Turno_LadoInicial", startSide)
+		AdicionarDados(t, "Turno_LadoCorrente", currentSide)
 	}
 }
 

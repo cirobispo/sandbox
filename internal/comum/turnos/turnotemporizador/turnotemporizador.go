@@ -14,14 +14,14 @@ type TurnoTemporizador interface {
 
 func ComOutroTurno(t *turno.Turno) func(t *turno.Turno) {
 	return func(t *turno.Turno) {
-		turno.AdicionarDados(t, "timedTurning_start", turno.NewMapData(time.Now(), func() any { return time.Now() }))
-		turno.AdicionarDados(t, "timedTurning_duration", turno.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
+		turno.AdicionarDados(t, "Temporizador_Inicio", turno.NewMapData(time.Now(), func() any { return time.Now() }))
+		turno.AdicionarDados(t, "Temporizador_Duracao", turno.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
 
 		t.AdicionarDepoisDeMudarTurno(func(st turnos.LadoDoTurno) {
-			start, _ := turno.ObterDados[time.Time](t, "timedTurning_start")
+			start, _ := turno.ObterDados[time.Time](t, "Temporizador_Inicio")
 			duration := time.Since(start)
 
-			turno.AtualizarDados(t, "timedTurning_duration", duration)
+			turno.AtualizarDados(t, "Temporizador_Duracao", duration)
 		})
 	}
 }

@@ -12,18 +12,17 @@ type TurnoContador interface {
 
 func ComOutroTurno(t *turno.Turno) func(t *turno.Turno) {
 	return func(t *turno.Turno) {
-		turno.AdicionarDados(t, "CountedTurning_count", turno.NewMapData(0, func() any { return 0 }))
+		turno.AdicionarDados(t, "Contador_Valor", turno.NewMapData(0, func() any { return 0 }))
 
 		t.AdicionarDepoisDeMudarTurno(func(st turnos.LadoDoTurno) {
-			value, _ := turno.ObterDados[int](t, "CountedTurning_count")
+			value, _ := turno.ObterDados[int](t, "Contador_Valor")
 			value++
-			turno.AtualizarDados(t, "CountedTurning_count", value)
+			turno.AtualizarDados(t, "Contador_Valor", value)
 		})
 	}
 }
 
 func Contar(t *turno.Turno) int {
-	result, _ := turno.ObterDados[int](t, "CountedTurning_count")
+	result, _ := turno.ObterDados[int](t, "Contador_Valor")
 	return result
-
 }

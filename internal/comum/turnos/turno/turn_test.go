@@ -20,6 +20,13 @@ func inverse(s turnos.LadoDoTurno) turnos.LadoDoTurno {
 
 func runTest(test testItem, t *testing.T) {
 	obj := New(DefinindoLado(test.startSide))
+	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+		t.Logf("Lado antes: %v", ldt)
+	})
+	obj.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+		t.Logf("Lado depois: %v", ldt)
+	})
+
 	endSide := test.startSide
 	if test.turns%2 != 0 {
 		endSide = inverse(endSide)
@@ -36,5 +43,5 @@ func runTest(test testItem, t *testing.T) {
 }
 
 func Test10Crancks(t *testing.T) {
-	runTest(testItem{10, turnos.LTB}, t)
+	runTest(testItem{10, turnos.LTA}, t)
 }

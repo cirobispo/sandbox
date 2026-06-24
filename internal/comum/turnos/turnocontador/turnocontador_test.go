@@ -14,6 +14,12 @@ type testItem struct {
 
 func runTest(test testItem, t *testing.T) {
 	obj := turno.New(ComOutroTurno(turno.New(turno.DefinindoLado(test.startSide))))
+	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+		t.Logf("Lado antes: %v", ldt)
+	})
+	obj.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+		t.Logf("Lado depois: %v", ldt)
+	})
 
 	for a := test.turns; a > 0; a-- {
 		obj.Execute()
