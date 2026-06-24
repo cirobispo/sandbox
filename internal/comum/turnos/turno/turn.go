@@ -101,11 +101,16 @@ func DefinindoLado(start turnos.LadoDoTurno) func(t *Turno) {
 	}
 }
 
-func New(param func(t *Turno)) *Turno {
+func New(param ParamOption) *Turno {
 	result := &Turno{
 		dados:                     make(map[string]mapData),
 		eventosAntesDeMudarTurno:  make([]turnos.AoMudarTurno, 0),
 		eventosDepoisDeMudarTurno: make([]turnos.AoMudarTurno, 0),
+	}
+
+	if _, achou := ObterDados[int](result, "Turno_LadoInicial"); !achou {
+		fn := DefinindoLado(result.LadoInicial())
+		fn(result)
 	}
 
 	if param != nil {
