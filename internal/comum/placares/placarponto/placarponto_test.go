@@ -3,6 +3,7 @@ package placarponto
 import (
 	"testing"
 
+	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
@@ -27,8 +28,14 @@ func Test_PontoRecebedor(t *testing.T) {
 	AvaliarResultado(t, NovoPlacarPonto(t, ServicoEWinner(t, ladoInicial)))
 }
 func ConfiguraTurno(t *testing.T, tu *turno.Turno) {
-	tu.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
-		t.Log("Lado da bola antes do golpe: ", ldt)
+	tu.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+		t.Log("Lado corrente da bola: ", ldt)
+	})
+}
+
+func alertarGolpe(t *testing.T, ponto *ponto.Ponto) {
+	ponto.AdicionarEventoAoAdicionarGolpe(func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool) {
+		t.Log("Golpe:", tipoDoGolpe, ", Encerrado:", terminado)
 	})
 }
 
@@ -37,6 +44,7 @@ func Ace(t *testing.T, lado turnos.LadoDoTurno) *ponto.Ponto {
 	tu := turno.New(turno.DefinindoLado(lado))
 	ConfiguraTurno(t, tu)
 	p := ponto.New(tu)
+	alertarGolpe(t, &p)
 	p.AdicionarGolpe(golpe.NewAce())
 
 	return &p
@@ -47,8 +55,10 @@ func ServicoPlus1(t *testing.T, lado turnos.LadoDoTurno) *ponto.Ponto {
 	tu := turno.New(turno.DefinindoLado(lado))
 	ConfiguraTurno(t, tu)
 	p := ponto.New(tu)
-	p.AdicionarGolpe(golpe.NewServeIn())
-	p.AdicionarGolpe(golpe.NewReturnIn())
+	alertarGolpe(t, &p)
+
+	p.AdicionarGolpe(golpe.NewServicoDentro())
+	p.AdicionarGolpe(golpe.NewRetornoDentro())
 	p.AdicionarGolpe(golpe.NewWinner())
 
 	return &p
@@ -59,7 +69,9 @@ func ServicoEWinner(t *testing.T, lado turnos.LadoDoTurno) *ponto.Ponto {
 	tu := turno.New(turno.DefinindoLado(lado))
 	ConfiguraTurno(t, tu)
 	p := ponto.New(tu)
-	p.AdicionarGolpe(golpe.NewServeIn())
+	alertarGolpe(t, &p)
+
+	p.AdicionarGolpe(golpe.NewServicoDentro())
 	p.AdicionarGolpe(golpe.NewWinner())
 
 	return &p

@@ -7,11 +7,19 @@ import (
 )
 
 type Ponto struct {
-	ponto ponto.Ponto
+	ponto            ponto.Ponto
+	placarA, placarB int
 }
 
 func New(ponto *ponto.Ponto) Ponto {
-	return Ponto{ponto: ponto.Clonar()}
+	result := Ponto{ponto: ponto.Clonar(), placarA: 0, placarB: 0}
+
+	result.placarA, result.placarB = 1, 0
+	if ponto.LadoDoPonto() == pontos.LPOposto {
+		result.placarA, result.placarB = 0, 1
+	}
+
+	return result
 }
 
 func (p Ponto) Lado() placares.LadoDoPlacar {
@@ -28,10 +36,7 @@ func (p Ponto) Terminado() bool {
 
 func (p Ponto) Resultado() (int, int) {
 	if p.ponto.Terminado() {
-		if p.ponto.LadoDoPonto() == pontos.LPCorrente {
-			return 1, 0
-		}
-		return 0, 1
+		return p.placarA, p.placarB
 	}
 
 	return 0, 0
