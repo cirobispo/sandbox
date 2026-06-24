@@ -35,9 +35,5 @@ func (p Ponto) Terminado() bool {
 }
 
 func (p Ponto) Resultado() (int, int) {
-	if p.ponto.Terminado() {
-		return p.placarA, p.placarB
-	}
-
-	return 0, 0
+	return p.placarA, p.placarB
 }
