@@ -3,8 +3,8 @@ package placarponto
 import (
 	"testing"
 
-	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
-	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/golpes"
+	"github.com/cirobispo/sandbox/internal/comum/golpes/golpe"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"

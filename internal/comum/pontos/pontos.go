@@ -1,6 +1,8 @@
 package pontos
 
-import "github.com/cirobispo/sandbox/internal/comum/pontos/golpes"
+import (
+	"github.com/cirobispo/sandbox/internal/comum/golpes"
+)
 
 type AoAdicionarGolpe func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool)
 

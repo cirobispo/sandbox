@@ -1,10 +1,6 @@
 package golpes
 
 type TipoDoGolpe int
-type LadoDoGolpe int
-type Encerramento int
-type LadoEncerramento int
-
 type TipoAcao int
 
 const (
@@ -28,14 +24,6 @@ const (
 )
 
 const (
-	HTDNone         LadoDoGolpe = 0
-	HTDChangeSide   LadoDoGolpe = 1
-	HTDSameSide     LadoDoGolpe = 2
-	HTDOppositeSide LadoDoGolpe = 3
-	HTDConditional  LadoDoGolpe = 4
-)
-
-const (
 	TANulo        TipoAcao = 0
 	TAProsseguir  TipoAcao = 1
 	TAEncerrarPLC TipoAcao = 2
@@ -43,26 +31,9 @@ const (
 	TACondicional TipoAcao = 4
 )
 
-type Golpes interface {
+type TipoAcaoGolpe interface {
 	Tipo() TipoDoGolpe
-	GeraEncerramento() Encerramento
-	AcionaTurno() bool
-}
-
-type Golpe interface {
-	Tipo() TipoDoGolpe
-	Acao(golpe []Golpe) TipoAcao
-}
-
-func (l LadoDoGolpe) Inverso() LadoDoGolpe {
-	switch l {
-	case HTDSameSide:
-		return HTDOppositeSide
-	case HTDOppositeSide:
-		return HTDSameSide
-	default:
-		return l
-	}
+	Acao() TipoAcao
 }
 
 func (t TipoDoGolpe) String() string {
@@ -103,22 +74,5 @@ func (t TipoDoGolpe) String() string {
 		return "Não tocou"
 	default:
 		return "Other"
-	}
-}
-
-func (l LadoDoGolpe) String() string {
-	switch l {
-	case HTDNone:
-		return "None"
-	case HTDChangeSide:
-		return "Change Side"
-	case HTDSameSide:
-		return "Same side"
-	case HTDOppositeSide:
-		return "Opposite side"
-	case HTDConditional:
-		return "Conditional"
-	default:
-		return "other"
 	}
 }
