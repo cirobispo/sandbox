@@ -51,7 +51,7 @@ func (p *Ponto) AdicionarGolpe(g golpes.TipoAcaoGolpe) error {
 
 	p.golpes = append(p.golpes, g)
 	acao := g.Acao()
-	if acao == golpes.TACondicional && golpes.ExisteDuplaFalta(p.golpes) {
+	if acao == golpes.TACondicional && existeDuplaFalta(p.golpes) {
 		acao = golpes.TAEncerrarPLO
 	}
 	p.terminado = (acao == golpes.TAEncerrarPLC) || (acao == golpes.TAEncerrarPLO)
@@ -118,4 +118,25 @@ func (p Ponto) executeEventosAoAdicionarGolpe() {
 			event(tipo, terminado)
 		}
 	}
+}
+
+func existeDuplaFalta(gs []golpes.TipoAcaoGolpe) bool {
+	FoiFalta := func(hit golpes.TipoAcaoGolpe) bool {
+		return hit.Tipo() == golpes.HTFootFault || hit.Tipo() == golpes.HTServeNet || hit.Tipo() == golpes.HTServeOut
+	}
+
+	tamanho := len(gs)
+	if tamanho < 2 || !FoiFalta(gs[tamanho-1]) {
+		return false
+	}
+
+	count := 1
+	result := false
+	for i := tamanho - 2; i >= 0; i-- {
+		g := gs[i]
+		if FoiFalta(g) {
+			count++
+		}
+	}
+	return result
 }

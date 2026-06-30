@@ -14,6 +14,11 @@ const (
 	LPNulo     LadoDoPonto = 0
 )
 
+type IPonto interface {
+	Terminado() bool
+	LadoDoPonto() LadoDoPonto
+}
+
 func (s LadoDoPonto) String() string {
 	switch s {
 	case LPCorrente:

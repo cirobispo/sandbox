@@ -13,7 +13,8 @@ import (
 )
 
 type Item struct {
-	ponto       *Ponto
+	// ponto       *Ponto
+	ponto       pontos.IPonto
 	ladoDoPonto pontos.LadoDoPonto
 }
 
