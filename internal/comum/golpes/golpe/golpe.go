@@ -2,7 +2,7 @@ package golpe
 
 import "github.com/cirobispo/sandbox/internal/comum/golpes"
 
-type VerificarAcaoCondicional func(listaDeGolpes []golpes.TipoAcaoGolpe) golpes.TipoAcao
+type VerificarAcaoCondicional func(listaDeGolpes []golpes.Golpeando) golpes.TipoAcao
 
 type Golpe struct {
 	tipoGolpe golpes.TipoDoGolpe

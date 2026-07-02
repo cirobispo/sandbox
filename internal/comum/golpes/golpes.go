@@ -31,7 +31,7 @@ const (
 	TACondicional TipoAcao = 4
 )
 
-type TipoAcaoGolpe interface {
+type Golpeando interface {
 	Tipo() TipoDoGolpe
 	Acao() TipoAcao
 }
