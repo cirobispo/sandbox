@@ -74,16 +74,16 @@ func (s *Set) AdicionarAoMudarPlacar(event AoMudarPlacar) {
 }
 
 func (s Set) verificarEstado(placar placares.EstadoEParametroPlacar) error {
-	if s.Terminado() { // am I acepting more points?
-		return errors.New("Score completed already.")
+	if s.Terminado() {
+		return errors.New("Set já terminado")
 	}
 
 	if placar.Tipo() != placares.TPJogo {
-		return errors.New("This is not a Game Score.")
+		return errors.New("Esse placar não é placar de jogo.")
 	}
 
-	if !placar.Terminado() { // am I acepting more points?
-		return errors.New("Game is not completed.")
+	if !placar.Terminado() {
+		return errors.New("Esse jogo não foi terminado.")
 	}
 
 	return nil
