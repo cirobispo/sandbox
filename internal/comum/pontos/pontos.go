@@ -14,7 +14,7 @@ const (
 	LPNulo     LadoDoPonto = 0
 )
 
-type IPonto interface {
+type Pontuando interface {
 	Terminado() bool
 	LadoDoPonto() LadoDoPonto
 }

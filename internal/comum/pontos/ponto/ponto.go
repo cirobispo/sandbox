@@ -11,28 +11,15 @@ import (
 
 type Ponto struct {
 	ladoDaBola              *turno.Turno
-	golpes                  []golpes.TipoAcaoGolpe
+	golpes                  []golpes.Golpeando
 	ladoDoPonto             pontos.LadoDoPonto
-	terminado               bool
 	eventosAoAdicionarGolpe *[]pontos.AoAdicionarGolpe
 }
 
-type Pontuacao interface {
-	Golpes() []golpes.TipoAcaoGolpe
-	Tamanho() int
-	Terminado() bool
-}
-
-type PontuacaoLados interface {
-	LadoDaBola() turnos.LadoDoTurno
-	LadoDoPonto() pontos.LadoDoPonto
-}
-
 func New(sideControl *turno.Turno) Ponto {
-	hit := make([]golpes.TipoAcaoGolpe, 0, 3)
+	hit := make([]golpes.Golpeando, 0, 3)
 	events := make([]pontos.AoAdicionarGolpe, 0)
 	return Ponto{
-		terminado:               false,
 		ladoDoPonto:             pontos.LPNulo,
 		ladoDaBola:              sideControl,
 		golpes:                  hit,
@@ -44,8 +31,8 @@ func (p *Ponto) AdicionarEventoAoAdicionarGolpe(ponteiroFnc pontos.AoAdicionarGo
 	*p.eventosAoAdicionarGolpe = append(*p.eventosAoAdicionarGolpe, ponteiroFnc)
 }
 
-func (p *Ponto) AdicionarGolpe(g golpes.TipoAcaoGolpe) error {
-	if p.terminado {
+func (p *Ponto) AdicionarGolpe(g golpes.Golpeando) error {
+	if p.ladoDoPonto != pontos.LPNulo {
 		return errors.New("Não é possivel adicionar outro golpe com o ponto encerrado.")
 	}
 
@@ -54,9 +41,10 @@ func (p *Ponto) AdicionarGolpe(g golpes.TipoAcaoGolpe) error {
 	if acao == golpes.TACondicional && existeDuplaFalta(p.golpes) {
 		acao = golpes.TAEncerrarPLO
 	}
-	p.terminado = (acao == golpes.TAEncerrarPLC) || (acao == golpes.TAEncerrarPLO)
 
-	if p.terminado {
+	terminado := (acao == golpes.TAEncerrarPLC) || (acao == golpes.TAEncerrarPLO)
+
+	if terminado {
 		p.ladoDoPonto = pontos.LPCorrente
 		if acao == golpes.TAEncerrarPLO {
 			p.ladoDoPonto = pontos.LPOposto
@@ -71,8 +59,8 @@ func (p *Ponto) AdicionarGolpe(g golpes.TipoAcaoGolpe) error {
 	return nil
 }
 
-func (p Ponto) Golpes() []golpes.TipoAcaoGolpe {
-	result := make([]golpes.TipoAcaoGolpe, len(p.golpes))
+func (p Ponto) Golpes() []golpes.Golpeando {
+	result := make([]golpes.Golpeando, len(p.golpes))
 	copy(result, p.golpes)
 
 	return result
@@ -92,18 +80,17 @@ func (p Ponto) LadoDoPonto() pontos.LadoDoPonto {
 }
 
 func (p Ponto) Terminado() bool {
-	return p.terminado
+	return p.ladoDoPonto != pontos.LPNulo
 }
 
 func (p Ponto) Clonar() Ponto {
 	result := New(p.ladoDaBola.Clonar(p.ladoDaBola.LadoInicial()))
-	result.golpes = make([]golpes.TipoAcaoGolpe, len(p.golpes))
+	result.golpes = make([]golpes.Golpeando, len(p.golpes))
 	copy(result.golpes, p.golpes)
 
 	*result.eventosAoAdicionarGolpe = make([]pontos.AoAdicionarGolpe, len(*p.eventosAoAdicionarGolpe))
 	copy(*result.eventosAoAdicionarGolpe, *p.eventosAoAdicionarGolpe)
 	result.ladoDoPonto = p.ladoDoPonto
-	result.terminado = p.terminado
 
 	return result
 }
@@ -111,7 +98,7 @@ func (p Ponto) Clonar() Ponto {
 func (p Ponto) executeEventosAoAdicionarGolpe() {
 	if len(*p.eventosAoAdicionarGolpe) > 0 {
 		golpe := p.golpes[p.Tamanho()-1]
-		tipo, terminado := golpe.Tipo(), p.terminado
+		tipo, terminado := golpe.Tipo(), (p.ladoDoPonto != pontos.LPNulo)
 
 		for i := range *p.eventosAoAdicionarGolpe {
 			event := (*p.eventosAoAdicionarGolpe)[i]
@@ -120,8 +107,8 @@ func (p Ponto) executeEventosAoAdicionarGolpe() {
 	}
 }
 
-func existeDuplaFalta(gs []golpes.TipoAcaoGolpe) bool {
-	FoiFalta := func(hit golpes.TipoAcaoGolpe) bool {
+func existeDuplaFalta(gs []golpes.Golpeando) bool {
+	FoiFalta := func(hit golpes.Golpeando) bool {
 		return hit.Tipo() == golpes.HTFootFault || hit.Tipo() == golpes.HTServeNet || hit.Tipo() == golpes.HTServeOut
 	}
 
@@ -131,12 +118,11 @@ func existeDuplaFalta(gs []golpes.TipoAcaoGolpe) bool {
 	}
 
 	count := 1
-	result := false
 	for i := tamanho - 2; i >= 0; i-- {
 		g := gs[i]
 		if FoiFalta(g) {
 			count++
 		}
 	}
-	return result
+	return (count == 2)
 }

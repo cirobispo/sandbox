@@ -13,8 +13,7 @@ import (
 )
 
 type Item struct {
-	// ponto       *Ponto
-	ponto       pontos.IPonto
+	ponto       pontos.Pontuando
 	ladoDoPonto pontos.LadoDoPonto
 }
 
@@ -58,12 +57,12 @@ func mostrarPontos(tt *testing.T, ponto *Ponto) {
 
 func novoPonto(tt *testing.T, side turnos.LadoDoTurno) *Ponto {
 	ctt := turno.New(turnocontador.ComOutroTurno(turno.New((turnotemporizador.ComOutroTurno(turno.New(turno.DefinindoLado(side)))))))
-	ctt.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
-		tt.Log("Lado antes: ", ldt)
-	})
-	ctt.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
-		tt.Log("Lado depois: ", ldt)
-	})
+	// ctt.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	// 	tt.Log("Lado antes: ", ldt)
+	// })
+	// ctt.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	// 	tt.Log("Lado depois: ", ldt)
+	// })
 	result := New(ctt)
 	result.AdicionarEventoAoAdicionarGolpe(func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool) {
 		if terminado {
