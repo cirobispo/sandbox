@@ -58,15 +58,15 @@ func (j Jogo) executarEventosAoMudarPlacar(scoreA, scoreB int) {
 
 func (j Jogo) verificarEstado(placar placares.EstadoEParametroPlacar) error {
 	if j.Terminado() { // am I acepting more points?
-		return errors.New("Game completed already.")
+		return errors.New("Jogo já terminado.")
 	}
 
 	if placar.Tipo() != placares.TPPonto {
-		return errors.New("This is not a score for a point.")
+		return errors.New("Este placar não é de ponto.")
 	}
 
 	if !placar.Terminado() {
-		return errors.New("Point is not completed.")
+		return errors.New("Este ponto não foi encerrado.")
 	}
 
 	return nil
