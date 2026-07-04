@@ -15,11 +15,19 @@ type Turning interface {
 
 type AoMudarTurno func(LadoDoTurno)
 
-func (s LadoDoTurno) String() string {
+func (l LadoDoTurno) String() string {
 	result := "Lado A"
-	if s == LTB {
+	if l == LTB {
 		result = "Lado B"
 	}
 
+	return result
+}
+
+func (l LadoDoTurno) Inverso() LadoDoTurno {
+	result := LTB
+	if l == LTB {
+		result = LTA
+	}
 	return result
 }
