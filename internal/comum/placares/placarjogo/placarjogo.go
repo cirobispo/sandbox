@@ -8,11 +8,13 @@ import (
 )
 
 type AoMudarPlacar func(placarA, placarB int, terminado bool)
+type TestaEncerramento func(valores ...int) bool
 
 type Jogo struct {
-	ladoInicio       turnos.LadoDoTurno
-	pontoDecisivo    bool
-	placarA, placarB int
+	ladoInicio        turnos.LadoDoTurno
+	pontoDecisivo     bool
+	placarA, placarB  int
+	testaEncerramento TestaEncerramento
 
 	eventosAoMudarPlacar []AoMudarPlacar
 }
@@ -25,6 +27,21 @@ func New(startSide turnos.LadoDoTurno, decidingPoint bool) Jogo {
 		placarB:              0,
 		eventosAoMudarPlacar: make([]AoMudarPlacar, 0),
 	}
+}
+
+func terminado(valores ...int) bool {
+	sA, sB, pontoDecisivo := valores[0], valores[1], valores[2] == 1
+	diff := 2
+	if pontoDecisivo {
+		diff--
+	}
+
+	AWins := sA >= 4 && (sA-sB) >= diff
+	BWins := sB >= 4 && (sB-sA) >= diff
+
+	result := AWins || BWins
+
+	return result
 }
 
 func (j *Jogo) placares() (*int, *int) {
@@ -44,10 +61,6 @@ func (j *Jogo) placarInvertido(side *int) *int {
 	return sA
 }
 
-func (j *Jogo) AdicionaAoMudarPlacar(event AoMudarPlacar) {
-	j.eventosAoMudarPlacar = append(j.eventosAoMudarPlacar, event)
-}
-
 func (j Jogo) executarEventosAoMudarPlacar(scoreA, scoreB int) {
 	done := j.Terminado()
 	for i := range j.eventosAoMudarPlacar {
@@ -57,7 +70,7 @@ func (j Jogo) executarEventosAoMudarPlacar(scoreA, scoreB int) {
 }
 
 func (j Jogo) verificarEstado(placar placares.EstadoEParametroPlacar) error {
-	if j.Terminado() { // am I acepting more points?
+	if j.Terminado() {
 		return errors.New("Jogo já terminado.")
 	}
 
@@ -97,6 +110,14 @@ func (j *Jogo) AdicionaPlacar(placar placares.EstadoEParametroPlacar) error {
 	return nil
 }
 
+func (j *Jogo) AdicionaAoMudarPlacar(event AoMudarPlacar) {
+	j.eventosAoMudarPlacar = append(j.eventosAoMudarPlacar, event)
+}
+
+func (j *Jogo) DefinirTestaEncerramento(teste TestaEncerramento) {
+	j.testaEncerramento = teste
+}
+
 func (j Jogo) Resultado() (int, int) {
 	return j.placarA, j.placarB
 }
@@ -110,16 +131,17 @@ func (j Jogo) Tipo() placares.TipoDoPlacar {
 }
 
 func (j Jogo) Terminado() bool {
-	sA, sB := j.Resultado()
-	diff := 2
-	if j.pontoDecisivo {
-		diff--
+	placarA, placaB := j.placarA, j.placarB
+	pontoDecisivo := func(v bool) int {
+		if v {
+			return 1
+		}
+		return 0
+	}(j.pontoDecisivo)
+
+	if j.testaEncerramento != nil {
+		return j.testaEncerramento(placarA, placaB, pontoDecisivo)
 	}
 
-	AWins := sA >= 4 && (sA-sB) >= diff
-	BWins := sB >= 4 && (sB-sA) >= diff
-
-	result := AWins || BWins
-
-	return result
+	return terminado(placarA, placaB, pontoDecisivo)
 }
