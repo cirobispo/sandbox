@@ -1,60 +1,102 @@
 package placarjogo
 
-// func runTest(blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
-// 	score := New(turnos.LTA, false)
-// 	breakPoint := 0
+import (
+	"crypto/rand"
+	"math/big"
+	"testing"
 
-// 	score.AdicionaAoMudarPlacar(func(scoreA, scoreB int, done bool) {
-// 		var description = []string{"love", "15", "30", "40", "ad", "game"}
-// 		a, b := placares.TraduzirPlacar(description, scoreA, scoreB)
-// 		if done {
-// 			t.Logf("Game FINAL status: ( %s x %s )\n", a, b)
-// 			return
-// 		}
+	"github.com/cirobispo/sandbox/internal/comum/placares"
+	"github.com/cirobispo/sandbox/internal/comum/turnos"
+)
 
-// 		t.Logf("Game status: ( %s x %s )\n", a, b)
-// 	})
+type placar struct {
+	placarA, placarB int
+}
 
-// 	score.AdicionaAoMudarPlacar(func(scoreA, scoreB int, done bool) {
-// 		if !done && (scoreB >= 3 && scoreA < scoreB) {
-// 			breakPoint++
-// 			t.Logf("Break point: ( #%v )\n", breakPoint)
-// 		}
-// 	})
+func (p placar) Terminado() bool {
+	return true
+}
 
-// 	t.Log("Game status: ( 0 x 0 )")
-// 	for i := range blocks {
-// 		block := blocks[i]
-// 		point := ponto.New(turno.New(turno.DefinindoLado(turnos.LTA)))
-// 		for j := range block.Items {
-// 			hit := block.Items[j].Value
-// 			point.AdicionarGolpe(hit)
-// 		}
+func (p placar) Resultado() (int, int) {
+	return p.placarA, p.placarB
+}
 
-// 		scoreToAdd := placarponto.New(&point)
-// 		score.AdicionaPlacar(scoreToAdd)
-// 	}
+func (p placar) Lado() placares.LadoDoPlacar {
+	if p.placarB > p.placarA {
+		return placares.LPOposto
+	}
 
-// 	a, b := score.Resultado()
-// 	if a != SideA || b != SideB {
-// 		t.Errorf("\n\nScore should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
-// 	}
-// }
+	return placares.LPServico
+}
 
-// func TestToSideA(t *testing.T) {
-// 	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(), ponto.WinnerOSPoint(),
-// 		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.DoubleFault(), ponto.AcePoint(), ponto.AcePoint(), ponto.AcePoint(),
-// 		ponto.LongRallieOSPoint(3, ponto.NetOppositeSide(true)),
-// 	}
+func (p placar) Tipo() placares.TipoDoPlacar {
+	return placares.TPPonto
+}
 
-// 	runTest(blocks, 5, 3, t)
-// }
+func executarTest(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, Jogo) {
+	jogo := New(ladoInicial, pontoDecisivo)
+	for i, _ := range results {
+		jogo.AdicionaPlacar(results[i])
+	}
 
-// func TestToSideB(t *testing.T) {
-// 	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(), ponto.WinnerOSPoint(),
-// 		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.DoubleFault(), ponto.AcePoint(), ponto.DoubleFault(), ponto.DoubleFault(),
-// 		ponto.LongRallieOSPoint(3, ponto.NetOppositeSide(true)),
-// 	}
+	if !jogo.Terminado() {
+		t.Log("Jogo não foi encerrado!")
+	}
 
-// 	runTest(blocks, 3, 5, t)
-// }
+	pA, pB := jogo.Resultado()
+	return (pA == PlacarA && pB == PlacarB), jogo
+}
+
+func checaPlacar(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, placares []placar, placarA int, placarB int, t *testing.T) {
+	ok, tb := executarTest(ladoInicial, pontoDecisivo, placares, placarA, placarB, t)
+	pA, pB := tb.Resultado()
+	if !ok {
+		t.Errorf("Saldo do placar não é o esperado. Resultado (%v, %v) ", pA, pB)
+	}
+	t.Logf("Saldo do placar (%v, %v) ", pA, pB)
+}
+
+func valorAleatorio(maximo int) int {
+	var max big.Int = *big.NewInt(int64(maximo))
+	valor, err := rand.Int(rand.Reader, &max)
+	if err != nil {
+		return 0
+	}
+	return int(valor.Int64()) + 1
+}
+
+func populaSlice(tam int, ladoDoTurno turnos.LadoDoTurno) []placar {
+	placares := make([]placar, 0, 10)
+
+	placarA, placarB := tam, 0
+	if ladoDoTurno == turnos.LTB {
+		placarA, placarB = 0, tam
+	}
+
+	for range tam {
+		placares = append(placares, placar{placarA: placarA, placarB: placarB})
+	}
+
+	return placares
+}
+
+func TestChegarCOMConfirmacao(t *testing.T) {
+	ladoDoTurno := turnos.LTA
+	if valorAleatorio(2) == 1 {
+		ladoDoTurno = turnos.LTB
+	}
+
+	pontosParaJogo := 4
+	if valorAleatorio(2) == 1 {
+		pontosParaJogo = 5
+	}
+
+	placares := make([]placar, 0, 8)
+	placares = append(placares, populaSlice(3, ladoDoTurno.Inverso())...)
+	placares = append(placares, populaSlice(pontosParaJogo, ladoDoTurno)...)
+
+	pA, pB := pontosParaJogo, 3
+
+	t.Logf("Lado inicial: %v, Ponto decisivo: %v", ladoDoTurno, (pontosParaJogo == 4))
+	checaPlacar(ladoDoTurno, (pontosParaJogo == 4), placares, pA, pB, t)
+}
