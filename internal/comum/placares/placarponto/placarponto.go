@@ -3,16 +3,15 @@ package placarponto
 import (
 	"github.com/cirobispo/sandbox/internal/comum/placares"
 	"github.com/cirobispo/sandbox/internal/comum/pontos"
-	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 )
 
 type Ponto struct {
-	ponto            ponto.Ponto
+	ponto            pontos.Pontuando
 	placarA, placarB int
 }
 
-func New(ponto *ponto.Ponto) Ponto {
-	result := Ponto{ponto: ponto.Clonar(), placarA: 0, placarB: 0}
+func New(ponto pontos.Pontuando) Ponto {
+	result := Ponto{ponto: ponto, placarA: 0, placarB: 0}
 
 	result.placarA, result.placarB = 1, 0
 	if ponto.LadoDoPonto() == pontos.LPOposto {

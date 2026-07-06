@@ -36,7 +36,7 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 func executarTest(param ParamOption, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, TieBreak) {
 	tieBreak := New(param)
 	for i, _ := range results {
-		tieBreak.AdicionaPlacar(results[i])
+		tieBreak.AdicionarPlacar(results[i])
 	}
 
 	if !tieBreak.Terminado() {

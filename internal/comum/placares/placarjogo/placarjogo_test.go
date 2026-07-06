@@ -36,7 +36,7 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 func executarTest(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, Jogo) {
 	jogo := New(ladoInicial, pontoDecisivo)
 	for i, _ := range results {
-		jogo.AdicionaPlacar(results[i])
+		jogo.AdicionarPlacar(results[i])
 	}
 
 	if !jogo.Terminado() {

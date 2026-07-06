@@ -41,7 +41,7 @@ type EstadoEParametroPlacar interface {
 }
 
 type AdicionadorDePlacar interface {
-	AdicionaPlacar(epp EstadoEParametroPlacar) error
+	AdicionarPlacar(epp EstadoEParametroPlacar) error
 }
 
 type EstadoResultadoEParametroPlacar interface {

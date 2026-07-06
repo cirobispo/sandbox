@@ -85,7 +85,7 @@ func (j Jogo) verificarEstado(placar placares.EstadoEParametroPlacar) error {
 	return nil
 }
 
-func (j *Jogo) AdicionaPlacar(placar placares.EstadoEParametroPlacar) error {
+func (j *Jogo) AdicionarPlacar(placar placares.EstadoEParametroPlacar) error {
 	if err := j.verificarEstado(placar); err != nil {
 		return err
 	}
