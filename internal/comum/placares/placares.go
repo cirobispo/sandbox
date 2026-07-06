@@ -40,10 +40,21 @@ type EstadoEParametroPlacar interface {
 	ParametroDoPlacar
 }
 
+type AdicionadorDePlacar interface {
+	AdicionaPlacar(epp EstadoEParametroPlacar) error
+}
+
 type EstadoResultadoEParametroPlacar interface {
 	EstadoDoPlacar
 	ResultadoDoPlacar
 	ParametroDoPlacar
+}
+
+type EstadoResultadoParametroEAdicionadorPlacar interface {
+	EstadoDoPlacar
+	ResultadoDoPlacar
+	ParametroDoPlacar
+	AdicionadorDePlacar
 }
 
 func Lado(erp EstadoEResultadoPlacar) LadoDoPlacar {

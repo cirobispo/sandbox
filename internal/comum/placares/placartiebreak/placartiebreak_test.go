@@ -72,9 +72,9 @@ func gerarParamAleatorio(seteOuDez *int) (ParamOption, turnos.LadoDoTurno) {
 	}
 
 	*seteOuDez = 7
-	param := ChegarEm7Confirmado(ladoDoTurno, pontoDecisivo)
+	param := ChegarEm7(ladoDoTurno, pontoDecisivo)
 	if valorAleatorio(2) == 1 {
-		param = ChegarEm10Confirmado(ladoDoTurno, pontoDecisivo)
+		param = ChegarEm10(ladoDoTurno, pontoDecisivo)
 		*seteOuDez = 10
 	}
 
@@ -105,7 +105,7 @@ func TestChegarEm7(t *testing.T) {
 		pA, pB = 0, 7
 	}
 
-	checaPlacar(ChegarEm7Confirmado(turnos.LTA, false), placares, pA, pB, t)
+	checaPlacar(ChegarEm7(turnos.LTA, false), placares, pA, pB, t)
 }
 
 func TestChegarEm10(t *testing.T) {
@@ -117,7 +117,7 @@ func TestChegarEm10(t *testing.T) {
 		pA, pB = 0, 10
 	}
 
-	checaPlacar(ChegarEm10Confirmado(turnos.LTA, false), placares, pA, pB, t)
+	checaPlacar(ChegarEm10(turnos.LTA, false), placares, pA, pB, t)
 }
 
 func TestChegarEm7ou10(t *testing.T) {

@@ -11,7 +11,7 @@ type AoMudarSacador func(lado turnos.LadoDoTurno)
 type ParamOption func() TieBreak
 
 type TieBreak struct {
-	placarjogo.Jogo
+	*placarjogo.Jogo
 }
 
 func terminado7(valores ...int) bool {
@@ -44,7 +44,7 @@ func terminado10(valores ...int) bool {
 	return result
 }
 
-func ChegarEm7Confirmado(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
+func ChegarEm7(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
 	return func() TieBreak {
 		result := TieBreak{Jogo: placarjogo.New(ladoInicial, pontoDecisivo)}
 		result.Jogo.DefinirTestaEncerramento(terminado7)
@@ -52,7 +52,7 @@ func ChegarEm7Confirmado(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) Par
 	}
 }
 
-func ChegarEm10Confirmado(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
+func ChegarEm10(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
 	return func() TieBreak {
 		result := TieBreak{Jogo: placarjogo.New(ladoInicial, pontoDecisivo)}
 		result.Jogo.DefinirTestaEncerramento(terminado10)
