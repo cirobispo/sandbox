@@ -19,8 +19,8 @@ type Jogo struct {
 	eventosAoMudarPlacar []AoMudarPlacar
 }
 
-func New(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) Jogo {
-	return Jogo{
+func New(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) *Jogo {
+	return &Jogo{
 		ladoInicio:           ladoInicial,
 		pontoDecisivo:        pontoDecisivo,
 		placarA:              0,

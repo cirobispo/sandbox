@@ -44,7 +44,7 @@ func executarTest(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, results []
 	}
 
 	pA, pB := jogo.Resultado()
-	return (pA == PlacarA && pB == PlacarB), jogo
+	return (pA == PlacarA && pB == PlacarB), *jogo
 }
 
 func checaPlacar(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, placares []placar, placarA int, placarB int, t *testing.T) {
