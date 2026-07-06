@@ -98,13 +98,21 @@ func (s *Set) AdicionarAoMudarLadoJogador(event jogos.OnPlayerChangeSide) {
 	s.EventosAoMudarLadoJogador = append(s.EventosAoMudarLadoJogador, event)
 }
 
-func (s *Set) AdicionarJogo(j jogo.Gaming) error {
+func (s Set) verificarEstado(j jogo.Gaming) error {
 	if s.placar.Terminado() {
 		return errors.New("O set está encerrado.")
 	}
 
 	if !j.Score().Terminado() {
 		return errors.New("O jogo está em andamento.")
+	}
+
+	return nil
+}
+
+func (s *Set) AdicionarJogo(j jogo.Gaming) error {
+	if err := s.verificarEstado(j); err != nil {
+		return err
 	}
 
 	s.jogos = append(s.jogos, j)
@@ -121,7 +129,10 @@ func (s *Set) AdicionarJogo(j jogo.Gaming) error {
 
 func (s Set) NovoJogo() *jogo.Jogo {
 	newTurn := s.quemServe.Clonar(s.quemServe.LadoCorrente())
-	result := jogo.New(newTurn, s.pontoDecisivo)
+	result := jogo.New(jogo.Regular(newTurn, s.pontoDecisivo))
+	if s.placar.IsTieBreak() {
+		result = jogo.New(jogo.TieBreak(newTurn, s.pontoDecisivo))
+	}
 	return result
 }
 

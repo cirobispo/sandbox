@@ -7,6 +7,7 @@ import (
 	"github.com/cirobispo/sandbox/internal/comum/placares"
 	"github.com/cirobispo/sandbox/internal/comum/placares/placarjogo"
 	"github.com/cirobispo/sandbox/internal/comum/placares/placarponto"
+	"github.com/cirobispo/sandbox/internal/comum/placares/placartiebreak"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
@@ -18,22 +19,51 @@ type Gaming interface {
 	Points() []ponto.Ponto
 }
 
+type ParamOption func(jogo *Jogo)
+
 type Jogo struct {
 	turno                   *turno.Turno
 	pontoDecisivo           bool
-	placar                  placarjogo.Jogo
+	placar                  placares.EstadoResultadoParametroEAdicionadorPlacar
 	pontos                  []ponto.Ponto
 	eventosAoAdicionarPonto []jogos.AoAdicionarPonto
 }
 
-func New(turn *turno.Turno, decidingPoint bool) *Jogo {
-	side := turn.LadoInicial()
-	return &Jogo{
-		turno:                   turn,
-		pontoDecisivo:           decidingPoint,
-		placar:                  placarjogo.New(side, decidingPoint),
+func Regular(turno *turno.Turno, pontoDecisivo bool) ParamOption {
+	ladoInicial := turno.LadoInicial()
+	return func(jogo *Jogo) {
+		jogo.turno = turno
+		jogo.pontoDecisivo = pontoDecisivo
+		jogo.placar = placarjogo.New(ladoInicial, pontoDecisivo)
+	}
+}
+
+func TieBreak(turno *turno.Turno, pontoDecisivo bool) ParamOption {
+	ladoInicial := turno.LadoInicial()
+	return func(jogo *Jogo) {
+		jogo.turno = turno
+		jogo.pontoDecisivo = pontoDecisivo
+		jogo.placar = placartiebreak.New(placartiebreak.ChegarEm7(ladoInicial, pontoDecisivo))
+	}
+}
+
+func SuperTieBreak(turno *turno.Turno, pontoDecisivo bool) ParamOption {
+	ladoInicial := turno.LadoInicial()
+	return func(jogo *Jogo) {
+		jogo.turno = turno
+		jogo.pontoDecisivo = pontoDecisivo
+		jogo.placar = placartiebreak.New(placartiebreak.ChegarEm10(ladoInicial, pontoDecisivo))
+	}
+}
+
+func New(param ParamOption) *Jogo {
+	result := &Jogo{
 		eventosAoAdicionarPonto: make([]jogos.AoAdicionarPonto, 0),
 	}
+
+	param(result)
+
+	return result
 }
 
 func (j Jogo) executeEventosAoAdicionarPonto() {
@@ -48,8 +78,8 @@ func (j Jogo) executeEventosAoAdicionarPonto() {
 	}
 }
 
-func (j *Jogo) AdicionarEventoAoAdicionarPonto(event jogos.AoAdicionarPonto) {
-	j.eventosAoAdicionarPonto = append(j.eventosAoAdicionarPonto, event)
+func (j *Jogo) AdicionarEventoAoAdicionarPonto(evento jogos.AoAdicionarPonto) {
+	j.eventosAoAdicionarPonto = append(j.eventosAoAdicionarPonto, evento)
 }
 
 func (j *Jogo) AdicionarPonto(p ponto.Ponto) error {
