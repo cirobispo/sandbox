@@ -67,7 +67,7 @@ func NewDuplaFalta() Golpe {
 	return NewGolpe(golpes.HTDoubleFault, golpes.TAEncerrarPLO)
 }
 
-func NewGolpeuNaRede() Golpe {
+func NewDevolveuNaRede() Golpe {
 	return NewGolpe(golpes.HTNet, golpes.TAEncerrarPLO)
 }
 
@@ -82,7 +82,7 @@ func NewWinner() Golpe {
 	return NewGolpe(golpes.HTWinner, golpes.TAEncerrarPLC)
 }
 
-func NewGolpeuFora() Golpe {
+func NewDevolveuFora() Golpe {
 	return NewGolpe(golpes.HTOut, golpes.TAEncerrarPLO)
 }
 
