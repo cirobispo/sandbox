@@ -80,7 +80,7 @@ func populaSlice(tam int, ladoDoTurno turnos.LadoDoTurno) []placar {
 	return placares
 }
 
-func TestChegarCOMConfirmacao(t *testing.T) {
+func TestChegarCOMeSEMConfirmacao(t *testing.T) {
 	ladoDoTurno := turnos.LTA
 	if valorAleatorio(2) == 1 {
 		ladoDoTurno = turnos.LTB

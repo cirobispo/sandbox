@@ -69,6 +69,16 @@ func Lado(erp EstadoEResultadoPlacar) LadoDoPlacar {
 	return LPServico
 }
 
+func (l LadoDoPlacar) Inverso() LadoDoPlacar {
+	if l != LPNulo {
+		if l == LPServico {
+			return LPOposto
+		}
+		return LPServico
+	}
+	return LPNulo
+}
+
 func TraduzirPlacar(valores []string, placarA, placarB int) (string, string) {
 	if len(valores) != 6 {
 		panic("Descrição dos pontos incorreta (0, 15, 30, 40, vantagem e jogo)")

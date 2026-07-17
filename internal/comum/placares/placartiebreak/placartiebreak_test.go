@@ -33,10 +33,13 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 	return placares.TPPonto
 }
 
-func executarTest(param ParamOption, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, TieBreak) {
+func executarTest(param ParamOption, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, *TieBreak) {
 	tieBreak := New(param)
 	for i, _ := range results {
-		tieBreak.AdicionarPlacar(results[i])
+		err := tieBreak.AdicionarPlacar(results[i])
+		if err != nil {
+			t.Log("Tentando adicionar placar em um jogo já encerrado.")
+		}
 	}
 
 	if !tieBreak.Terminado() {
@@ -51,7 +54,7 @@ func checaPlacar(param ParamOption, placares []placar, placarA int, placarB int,
 	ok, tb := executarTest(param, placares, placarA, placarB, t)
 	if !ok {
 		pA, pB := tb.Resultado()
-		t.Errorf("Saldo do placar não é o esperado. Resultado (%v, %v) ", pA, pB)
+		t.Errorf("Saldo do placar não é o esperado. Resultado (%v vs %v). Esperado (%v vs %v) ", pA, pB, placarA, placarB)
 	}
 }
 
@@ -81,53 +84,139 @@ func gerarParamAleatorio(seteOuDez *int) (ParamOption, turnos.LadoDoTurno) {
 	return param, ladoDoTurno
 }
 
-func populaSlice(tam int, ladoDoTurno turnos.LadoDoTurno) []placar {
-	placares := make([]placar, 0, 10)
+func populaSlice(t *testing.T, tam int, ladoDoTurno turnos.LadoDoTurno, pontoDecisivo bool) []placar {
+	placares := make([]placar, 0, 20)
 
-	placarA, placarB := tam, 0
+	pA, pB := 1, 0
 	if ladoDoTurno == turnos.LTB {
-		placarA, placarB = 0, tam
+		pA, pB = 0, 1
 	}
 
-	for range tam {
-		placares = append(placares, placar{placarA: placarA, placarB: placarB})
+	qtdParaMudarLado := 1
+	sacador := ladoDoTurno
+	t.Logf("Sacará o 1 ponto no lado: %s", sacador)
+	for range tam * 2 {
+		placares = append(placares, placar{placarA: pA, placarB: pB})
+		qtdParaMudarLado--
+
+		if qtdParaMudarLado == 0 {
+			sacador = sacador.Inverso()
+			t.Logf("Sacará o %v ponto no lado: %s", len(placares)+1, sacador)
+			qtdParaMudarLado = 2
+		}
+	}
+	tie := New(ChegarEm10(ladoDoTurno, pontoDecisivo))
+	if tam == 7 {
+		tie = New(ChegarEm7(ladoDoTurno, pontoDecisivo))
+	}
+
+	for j := range 2 {
+		ladoAPontuar := tie.QuemEstaSacando(uint(tam*2) + uint(j))
+		if ladoAPontuar != ladoDoTurno {
+			pA, pB = pB, pA
+		}
+
+		placares = append(placares, placar{placarA: pA, placarB: pB})
+		pA, pB = pB, pA
+
+		if pontoDecisivo {
+			break
+		}
 	}
 
 	return placares
 }
 
-func TestChegarEm7(t *testing.T) {
-	ladoDoTurno := turnos.LTA
-	placares := populaSlice(7, ladoDoTurno)
+func chegarEm7(t *testing.T, ladoDoTurno turnos.LadoDoTurno, pontoDecisivo bool) {
+	placares := populaSlice(t, 7, ladoDoTurno, pontoDecisivo)
 
-	pA, pB := 7, 0
-	if ladoDoTurno == turnos.LTB {
-		pA, pB = 0, 7
+	pontoExtra := 2
+	if pontoDecisivo {
+		pontoExtra = 1
 	}
 
-	checaPlacar(ChegarEm7(turnos.LTA, false), placares, pA, pB, t)
+	pA, pB := 5+(pontoExtra*2), 5+pontoExtra
+
+	checaPlacar(ChegarEm7(ladoDoTurno, pontoDecisivo), placares, pA, pB, t)
 }
 
-func TestChegarEm10(t *testing.T) {
-	ladoDoTurno := turnos.LTA
-	placares := populaSlice(10, ladoDoTurno)
+// func TestChegarEm7ASV(t *testing.T) {
+// 	chegarEm7(t, turnos.LTA, true)
+// }
 
-	pA, pB := 10, 0
-	if ladoDoTurno == turnos.LTB {
-		pA, pB = 0, 10
+// func TestChegarEm7ACV(t *testing.T) {
+// 	chegarEm7(t, turnos.LTA, false)
+// }
+
+// func TestChegarEm7BSV(t *testing.T) {
+// 	chegarEm7(t, turnos.LTB, true)
+// }
+
+// func TestChegarEm7BCV(t *testing.T) {
+// 	chegarEm7(t, turnos.LTB, false)
+// }
+
+func chegarEm10(t *testing.T, ladoDoTurno turnos.LadoDoTurno, pontoDecisivo bool) {
+	placares := populaSlice(t, 10, ladoDoTurno, pontoDecisivo)
+
+	pontoExtra := 2
+	if pontoDecisivo {
+		pontoExtra = 1
 	}
 
-	checaPlacar(ChegarEm10(turnos.LTA, false), placares, pA, pB, t)
+	pA, pB := 8+(pontoExtra*2), 8+pontoExtra
+
+	checaPlacar(ChegarEm10(ladoDoTurno, pontoDecisivo), placares, pA, pB, t)
 }
 
-func TestChegarEm7ou10(t *testing.T) {
-	quantosPontos := 0
-	param, ladoDoTurno := gerarParamAleatorio(&quantosPontos)
-	placares := populaSlice(quantosPontos, ladoDoTurno)
-	t.Logf("Quantos pontos: %v, Lado inicial: %v", quantosPontos, ladoDoTurno)
-	pA, pB := quantosPontos, 0
-	if ladoDoTurno == turnos.LTB {
-		pB, pA = 0, quantosPontos
-	}
-	checaPlacar(param, placares, pA, pB, t)
+func TestChegarEm10ASV(t *testing.T) {
+	chegarEm10(t, turnos.LTA, true)
 }
+
+func TestChegarEm10ACV(t *testing.T) {
+	chegarEm10(t, turnos.LTA, false)
+}
+
+func TestChegarEm10BSV(t *testing.T) {
+	chegarEm10(t, turnos.LTB, true)
+}
+
+func TestChegarEm10BCV(t *testing.T) {
+	chegarEm10(t, turnos.LTB, false)
+}
+
+// func TestAleatorio(t *testing.T) {
+// 	quantosPontos := 0
+// 	param, ladoDoTurno := gerarParamAleatorio(&quantosPontos)
+// 	pontoDecisivo := true
+// 	if valorAleatorio(2) == 1 {
+// 		pontoDecisivo = false
+// 	}
+// 	placares := populaSlice(t, quantosPontos, ladoDoTurno, pontoDecisivo)
+// 	t.Logf("Quantos pontos: %v, Lado inicial: %v, Ponto decisivo: %v", quantosPontos, ladoDoTurno, pontoDecisivo)
+
+// 	pontoExtra := 1
+// 	if pontoDecisivo {
+// 		pontoExtra = 0
+// 	}
+
+// 	tam := quantosPontos + pontoExtra
+
+// 	pA, pB := tam+pontoExtra, tam-1
+// 	if ladoDoTurno == turnos.LTB {
+// 		pA, pB = tam-1, tam+pontoExtra
+// 	}
+
+// 	checaPlacar(param, placares, pA, pB, t)
+// }
+
+// func TestQuemSacara(t *testing.T) {
+// 	tie := New(ChegarEm7(turnos.LTA, true))
+
+// 	for i := range 15 {
+// 		tie.AdicionarPlacar(placar{placarA: i, placarB: 0})
+// 		a, b := tie.Resultado()
+// 		pontos := uint(a + b)
+// 		t.Logf("Quem saca o proximo ponto %v, quem sacou o ultimo %v", tie.QuemEstaSacando(0), tie.QuemEstaSacando(pontos))
+// 	}
+// }

@@ -3,8 +3,8 @@ package placarponto
 import (
 	"testing"
 
-	"github.com/cirobispo/sandbox/internal/comum/golpes"
 	"github.com/cirobispo/sandbox/internal/comum/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/pontos"
 	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
@@ -14,29 +14,30 @@ var ladoInicial turnos.LadoDoTurno
 
 func Test_PontoRecebedor(t *testing.T) {
 	ladoInicial = turnos.LTA
-	AvaliarResultado(t, NovoPlacarPonto(t, Ace(t, ladoInicial)))
+	AvaliarPlacarPonto(t, Ace(t, ladoInicial), pontos.LPCorrente)
 
-	AvaliarResultado(t, NovoPlacarPonto(t, ServicoPlus1(t, ladoInicial)))
+	AvaliarPlacarPonto(t, ServicoPlus1(t, ladoInicial), pontos.LPCorrente)
 
-	AvaliarResultado(t, NovoPlacarPonto(t, ServicoEWinner(t, ladoInicial)))
+	AvaliarPlacarPonto(t, ServicoEWinner(t, ladoInicial), pontos.LPCorrente)
 
 	ladoInicial = turnos.LTB
-	AvaliarResultado(t, NovoPlacarPonto(t, Ace(t, ladoInicial)))
+	AvaliarPlacarPonto(t, Ace(t, ladoInicial), pontos.LPCorrente)
 
-	AvaliarResultado(t, NovoPlacarPonto(t, ServicoPlus1(t, ladoInicial)))
+	AvaliarPlacarPonto(t, ServicoPlus1(t, ladoInicial), pontos.LPCorrente)
 
-	AvaliarResultado(t, NovoPlacarPonto(t, ServicoEWinner(t, ladoInicial)))
+	AvaliarPlacarPonto(t, ServicoEWinner(t, ladoInicial), pontos.LPCorrente)
 }
+
 func ConfiguraTurno(t *testing.T, tu *turno.Turno) {
-	tu.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
-		t.Log("Lado corrente da bola: ", ldt)
-	})
+	// tu.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	// 	t.Log("Lado corrente da bola: ", ldt)
+	// })
 }
 
 func alertarGolpe(t *testing.T, ponto *ponto.Ponto) {
-	ponto.AdicionarEventoAoAdicionarGolpe(func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool) {
-		t.Log("Golpe:", tipoDoGolpe, ", Encerrado:", terminado)
-	})
+	// ponto.AdicionarEventoAoAdicionarGolpe(func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool) {
+	// 	t.Log("Golpe:", tipoDoGolpe, ", Encerrado:", terminado)
+	// })
 }
 
 func Ace(t *testing.T, lado turnos.LadoDoTurno) *ponto.Ponto {
@@ -77,14 +78,14 @@ func ServicoEWinner(t *testing.T, lado turnos.LadoDoTurno) *ponto.Ponto {
 	return &p
 }
 
-func NovoPlacarPonto(t *testing.T, ponto *ponto.Ponto) Ponto {
-	t.Log("Lado inicial da bola:", ladoInicial, ", Lado do ponto:", ponto.LadoDoPonto(), ", Lado da bola:", ponto.LadoDaBola())
+func AvaliarPlacarPonto(t *testing.T, p *ponto.Ponto, ladoDoPonto pontos.LadoDoPonto) PlacarPonto {
+	t.Logf("Lado inicial da bola: %v , Lado do ponto: %v, Lado esperado: %v", ladoInicial, p.LadoDoPonto(), ladoDoPonto) //, ", Lado da bola:", p.LadoDaBola())
 
-	placar := New(ponto)
+	placar := New(p, ladoInicial, 3)
 	pA, pB := placar.Resultado()
 	t.Log("Resultado: ", pA, pB)
+	if p.LadoDoPonto() != ladoDoPonto {
+		t.Errorf("Resultado não é o esperado. Resultado %v, esperado: %v ", p.LadoDoPonto(), ladoDoPonto)
+	}
 	return placar
-}
-
-func AvaliarResultado(t *testing.T, placar Ponto) {
 }
