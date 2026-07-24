@@ -21,6 +21,7 @@ type Setting interface {
 
 type Partida struct {
 	custom                bool
+	ladoInicial           turnos.LadoDoTurno
 	tamanhoPartida        int
 	tamanhoSet            int
 	pontoDecisivo         bool
@@ -30,18 +31,20 @@ type Partida struct {
 	eventosAoAdicionarSet []jogos.AoAdicionarSet
 }
 
-func PartidaPadrao() ParamOption {
-	return func(score *Partida) bool {
-		score.tamanhoPartida = 6
-		score.tamanhoSet = 12
-		score.pontoDecisivo = false
-		score.tieBreak = true
+func PartidaPadrao(ladoInicial turnos.LadoDoTurno) ParamOption {
+	return func(p *Partida) bool {
+		p.ladoInicial = ladoInicial
+		p.tamanhoPartida = 6
+		p.tamanhoSet = 12
+		p.pontoDecisivo = false
+		p.tieBreak = true
 		return false
 	}
 }
 
-func PartidaCustomizada(tamanhoPartida, tamanhoSet int, pontoDecisivo, tieBreak bool) ParamOption {
+func PartidaCustomizada(ladoInicial turnos.LadoDoTurno, tamanhoPartida, tamanhoSet int, pontoDecisivo, tieBreak bool) ParamOption {
 	return func(m *Partida) bool {
+		m.ladoInicial = ladoInicial
 		m.tamanhoPartida = tamanhoPartida
 		m.tamanhoSet = tamanhoSet
 		m.pontoDecisivo = pontoDecisivo

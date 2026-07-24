@@ -30,8 +30,8 @@ func (s score) Tipo() placares.TipoDoPlacar {
 	return placares.TPSet
 }
 
-func runTest(score *Partida, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
-	score.AdicionarEventoAoPontuarNaPartida(func(scoreA, scoreB int, done bool) {
+func runTest(partida *Partida, results []placares.EstadoResultadoEParametroPlacar, SideA, SideB int, t *testing.T) {
+	partida.AdicionarEventoAoPontuarNaPartida(func(scoreA, scoreB int, done bool) {
 		if done {
 			t.Logf("Score (%d x %d)\n", scoreA, scoreB)
 		}
@@ -40,10 +40,10 @@ func runTest(score *Partida, results []placares.EstadoResultadoEParametroPlacar,
 	t.Logf("Testing a result for a Set with %d games. Expected result (%d x %d)\n", len(results), SideA, SideB)
 	for j := range results {
 		item := results[j]
-		score.AdicionarPlacar(item)
+		partida.AdicionarPlacar(item)
 	}
 
-	sA, sB := score.Resultado()
+	sA, sB := partida.Resultado()
 	if sA != SideA || sB != SideB {
 		var description = []string{"love", "15", "30", "40", "ad", "game"}
 		for j := range results {

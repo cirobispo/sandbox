@@ -66,7 +66,7 @@ func newScore(servingSide turnos.LadoDoTurno, scoreA, scoreB int) score {
 
 func runTest(blocks []testItem, SideA, SideB int, t *testing.T) {
 	myTurn := turno.New(turno.DefinindoLado(turnos.LTA))
-	myMatch := New(PartidaPadrao())
+	myMatch := New(PartidaPadrao(turnos.LTA))
 
 	sideToServe := myTurn.LadoCorrente()
 	myMatch.AdicionarEventoAoAdicionarSet(func(scoreA, scoreB int, done bool) {
