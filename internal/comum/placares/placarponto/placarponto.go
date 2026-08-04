@@ -15,7 +15,7 @@ type PlacarPonto struct {
 	placarA, placarB int
 }
 
-func New(ponto *ponto.Ponto, ladoInicial, qualSacador turnos.LadoDoTurno) PlacarPonto {
+func New(ponto *ponto.Ponto, ladoInicial, qualSacador turnos.Lado) PlacarPonto {
 	result := PlacarPonto{ponto: ponto, placarA: 0, placarB: 0}
 
 	fmt.Printf("Quem está sacando: %v ", qualSacador)
@@ -23,14 +23,14 @@ func New(ponto *ponto.Ponto, ladoInicial, qualSacador turnos.LadoDoTurno) Placar
 	if ponto.LadoDoPonto() == pontos.LPCorrente {
 		result.placarA, result.placarB = 1, 0
 		result.ladoDoPlacar = placares.LPServico
-		if qualSacador == turnos.LTB {
+		if qualSacador == turnos.LadoB {
 			result.placarA, result.placarB = 0, 1
 			result.ladoDoPlacar = placares.LPOposto
 		}
 	} else {
 		result.placarA, result.placarB = 0, 1
 		result.ladoDoPlacar = placares.LPOposto
-		if qualSacador == turnos.LTA {
+		if qualSacador == turnos.LadoA {
 			result.placarA, result.placarB = 1, 0
 			result.ladoDoPlacar = placares.LPServico
 		}

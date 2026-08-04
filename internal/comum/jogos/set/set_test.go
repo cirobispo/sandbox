@@ -10,12 +10,12 @@ import (
 )
 
 type set struct {
-	ladoDoServico turnos.LadoDoTurno
+	ladoDoServico turnos.Lado
 	placar        placares.EstadoResultadoEParametroPlacar
 	pontos        []ponto.Ponto
 }
 
-func (s set) ServingSide() turnos.LadoDoTurno {
+func (s set) ServingSide() turnos.Lado {
 	return s.ladoDoServico
 }
 
@@ -28,7 +28,7 @@ func (s set) Points() []ponto.Ponto {
 }
 
 type placar struct {
-	ladoDoServico    turnos.LadoDoTurno
+	ladoDoServico    turnos.Lado
 	pontoDecisivo    bool
 	placarA, placarB int
 }
@@ -64,18 +64,18 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 	return placares.TPJogo
 }
 
-func (s *set) ajustaLadoServico(lado turnos.LadoDoTurno) {
+func (s *set) ajustaLadoServico(lado turnos.Lado) {
 	a, b := s.placar.Resultado()
 	s.ladoDoServico = lado
 	s.placar = novoPlacar(lado, a, b)
 }
 
 func novoSet(placarA, placarB int) set {
-	result := set{placar: novoPlacar(turnos.LTA, placarA, placarB), pontos: make([]ponto.Ponto, 0)}
+	result := set{placar: novoPlacar(turnos.LadoA, placarA, placarB), pontos: make([]ponto.Ponto, 0)}
 	return result
 }
 
-func novoPlacar(servingSide turnos.LadoDoTurno, scoreA, scoreB int) placar {
+func novoPlacar(servingSide turnos.Lado, scoreA, scoreB int) placar {
 	return placar{
 		ladoDoServico: servingSide,
 		placarA:       scoreA,
@@ -84,7 +84,7 @@ func novoPlacar(servingSide turnos.LadoDoTurno, scoreA, scoreB int) placar {
 }
 
 func runTest(blocks []set, SideA, SideB int, t *testing.T) {
-	myTurn := turno.New(turno.DefinindoLado(turnos.LTA))
+	myTurn := turno.New(turno.DefinindoLado(turnos.LadoA))
 	mySet := New(SetPadrao(myTurn))
 
 	sideToServe := myTurn.LadoCorrente()

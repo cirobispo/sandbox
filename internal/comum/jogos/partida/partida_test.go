@@ -18,7 +18,7 @@ func (t testItem) Score() placares.EstadoEResultadoPlacar {
 }
 
 type score struct {
-	sideToBegin    turnos.LadoDoTurno
+	sideToBegin    turnos.Lado
 	bestOf         int
 	scoreA, scoreB int
 }
@@ -52,11 +52,11 @@ func (m score) Tipo() placares.TipoDoPlacar {
 }
 
 func newItem(scoreA, scoreB int) testItem {
-	result := testItem{score: newScore(turnos.LTA, scoreA, scoreB), sets: make([]placares.EstadoResultadoEParametroPlacar, 0)}
+	result := testItem{score: newScore(turnos.LadoA, scoreA, scoreB), sets: make([]placares.EstadoResultadoEParametroPlacar, 0)}
 	return result
 }
 
-func newScore(servingSide turnos.LadoDoTurno, scoreA, scoreB int) score {
+func newScore(servingSide turnos.Lado, scoreA, scoreB int) score {
 	return score{
 		sideToBegin: servingSide,
 		scoreA:      scoreA,
@@ -65,8 +65,8 @@ func newScore(servingSide turnos.LadoDoTurno, scoreA, scoreB int) score {
 }
 
 func runTest(blocks []testItem, SideA, SideB int, t *testing.T) {
-	myTurn := turno.New(turno.DefinindoLado(turnos.LTA))
-	myMatch := New(PartidaPadrao(turnos.LTA))
+	myTurn := turno.New(turno.DefinindoLado(turnos.LadoA))
+	myMatch := New(PartidaPadrao(turnos.LadoA))
 
 	sideToServe := myTurn.LadoCorrente()
 	myMatch.AdicionarEventoAoAdicionarSet(func(scoreA, scoreB int, done bool) {

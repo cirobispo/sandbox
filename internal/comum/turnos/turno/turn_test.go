@@ -8,22 +8,22 @@ import (
 
 type testItem struct {
 	turns     int
-	startSide turnos.LadoDoTurno
+	startSide turnos.Lado
 }
 
-func inverse(s turnos.LadoDoTurno) turnos.LadoDoTurno {
-	if s == turnos.LTA {
-		return turnos.LTB
+func inverse(s turnos.Lado) turnos.Lado {
+	if s == turnos.LadoA {
+		return turnos.LadoB
 	}
-	return turnos.LTA
+	return turnos.LadoA
 }
 
 func runTest(test testItem, t *testing.T) {
 	obj := New(DefinindoLado(test.startSide))
-	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.Lado) {
 		t.Logf("Lado antes: %v", ldt)
 	})
-	obj.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	obj.AdicionarDepoisDeMudarTurno(func(ldt turnos.Lado) {
 		t.Logf("Lado depois: %v", ldt)
 	})
 
@@ -43,5 +43,5 @@ func runTest(test testItem, t *testing.T) {
 }
 
 func Test10Crancks(t *testing.T) {
-	runTest(testItem{10, turnos.LTA}, t)
+	runTest(testItem{10, turnos.LadoA}, t)
 }

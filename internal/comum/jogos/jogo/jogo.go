@@ -14,7 +14,7 @@ import (
 )
 
 type Gaming interface {
-	ServingSide() turnos.LadoDoTurno
+	ServingSide() turnos.Lado
 	Score() placares.EstadoResultadoEParametroPlacar
 	Points() []ponto.Ponto
 }
@@ -22,45 +22,57 @@ type Gaming interface {
 type ParamOption func(jogo *Jogo)
 
 type Jogo struct {
-	turno                   *turno.Turno
+	ladoInicial             turnos.Lado
+	qualSacador             *turno.Turno
 	pontoDecisivo           bool
 	placar                  placares.EstadoResultadoParametroEAdicionadorPlacar
 	pontos                  []ponto.Ponto
 	eventosAoAdicionarPonto []jogos.AoAdicionarPonto
 }
 
-func Regular(turno *turno.Turno, pontoDecisivo bool) ParamOption {
-	ladoInicial := turno.LadoInicial()
+func Regular(ladoInicial turnos.Lado, pontoDecisivo bool) ParamOption {
 	return func(jogo *Jogo) {
-		jogo.turno = turno
+		jogo.ladoInicial = ladoInicial
+		jogo.qualSacador = turno.New(turno.DefinindoLado(ladoInicial))
 		jogo.pontoDecisivo = pontoDecisivo
 		jogo.placar = placarjogo.New(ladoInicial, pontoDecisivo)
 	}
 }
 
-func TieBreak(turno *turno.Turno, pontoDecisivo bool) ParamOption {
-	ladoInicial := turno.LadoInicial()
+func TieBreak(ladoInicial turnos.Lado, pontoDecisivo bool) ParamOption {
 	return func(jogo *Jogo) {
-		jogo.turno = turno
+		jogo.ladoInicial = ladoInicial
+		jogo.qualSacador = turno.New(turno.DefinindoLado(ladoInicial))
 		jogo.pontoDecisivo = pontoDecisivo
-		jogo.placar = placartiebreak.New(placartiebreak.ChegarEm7(ladoInicial, pontoDecisivo))
+		placarTieBreak := placartiebreak.New(placartiebreak.ChegarEm7(ladoInicial, pontoDecisivo))
+		placarTieBreak.AdicionaAoMudarPlacar(func(placarA, placarB int, terminado bool) {
+			total := placarA + placarB
+			if total%2 == 1 {
+				jogo.qualSacador.Execute()
+			}
+		})
+		jogo.placar = placarTieBreak
 	}
 }
 
-func SuperTieBreak(turno *turno.Turno, pontoDecisivo bool) ParamOption {
-	ladoInicial := turno.LadoInicial()
+func SuperTieBreak(ladoInicial turnos.Lado, pontoDecisivo bool) ParamOption {
 	return func(jogo *Jogo) {
-		jogo.turno = turno
+		jogo.ladoInicial = ladoInicial
+		jogo.qualSacador = turno.New(turno.DefinindoLado(ladoInicial))
 		jogo.pontoDecisivo = pontoDecisivo
-		jogo.placar = placartiebreak.New(placartiebreak.ChegarEm10(ladoInicial, pontoDecisivo))
+		placarJogo := placartiebreak.New(placartiebreak.ChegarEm10(ladoInicial, pontoDecisivo))
+		placarJogo.AdicionaAoMudarPlacar(func(placarA, placarB int, terminado bool) {
+			total := placarA + placarB
+			if total%2 == 1 {
+				jogo.qualSacador.Execute()
+			}
+		})
+		jogo.placar = placarJogo
 	}
 }
 
 func New(param ParamOption) *Jogo {
-	result := &Jogo{
-		eventosAoAdicionarPonto: make([]jogos.AoAdicionarPonto, 0),
-	}
-
+	result := &Jogo{eventosAoAdicionarPonto: make([]jogos.AoAdicionarPonto, 0)}
 	param(result)
 
 	return result
@@ -82,23 +94,32 @@ func (j *Jogo) AdicionarEventoAoAdicionarPonto(evento jogos.AoAdicionarPonto) {
 	j.eventosAoAdicionarPonto = append(j.eventosAoAdicionarPonto, evento)
 }
 
-func (j *Jogo) AdicionarPonto(p ponto.Ponto) error {
+func (j Jogo) verificarEstado(p *ponto.Ponto) error {
 	if !p.Terminado() {
 		return errors.New("O ponto ainda está em andamento.")
 	}
 
-	j.pontos = append(j.pontos, p.Clonar())
-	placar := placarponto.New(&p)
+	if j.placar.Terminado() {
+		return errors.New("O jogo já foi encerrado.")
+	}
 
-	j.placar.AdicionaPlacar(placar)
-	j.turno.Execute()
+	return nil
+}
+
+func (j *Jogo) AdicionarPonto(p *ponto.Ponto) error {
+	if err := j.verificarEstado(p); err != nil {
+		return err
+	}
+
+	j.pontos = append(j.pontos, p.Clonar())
+	j.placar.AdicionarPlacar(placarponto.New(p, j.ladoInicial, j.qualSacador.LadoCorrente()))
 
 	j.executeEventosAoAdicionarPonto()
 	return nil
 }
 
-func (j Jogo) LadoDoServico() turnos.LadoDoTurno {
-	return j.turno.LadoInicial()
+func (j Jogo) LadoDoServico() turnos.Lado {
+	return j.ladoInicial
 }
 
 func (j Jogo) Placar() placares.EstadoEResultadoPlacar {
@@ -110,4 +131,8 @@ func (j Jogo) Pontos() []ponto.Ponto {
 	copy(result, j.pontos)
 
 	return result
+}
+
+func (j Jogo) QualSacador() turnos.Lado {
+	return j.qualSacador.LadoCorrente()
 }

@@ -1,5 +1,7 @@
 package placares
 
+import "github.com/cirobispo/sandbox/internal/comum/turnos"
+
 type LadoDoPlacar int
 
 const (
@@ -92,4 +94,19 @@ func TraduzirPlacar(valores []string, placarA, placarB int) (string, string) {
 	}
 
 	return getText(placarA, placarB), getText(placarB, placarA)
+}
+
+func QualLadoSacar(ladoInicial turnos.Lado, pontoAtual uint, TieBreak bool) turnos.Lado {
+	trocasDeSacador := (pontoAtual + 1)
+
+	result := ladoInicial
+	if TieBreak && ((trocasDeSacador-(trocasDeSacador%2))/2)%2 == 1 {
+		result = ladoInicial.Inverso()
+	}
+
+	if !TieBreak && trocasDeSacador%2 == 0 {
+		result = ladoInicial.Inverso()
+	}
+
+	return result
 }

@@ -64,7 +64,7 @@ func New(param ParamOption) *Set {
 		result.placar = placarset.New(callback)
 	}
 
-	result.ladoServico.AdicionarDepoisDeMudarTurno(func(ts turnos.LadoDoTurno) {
+	result.ladoServico.AdicionarDepoisDeMudarTurno(func(ts turnos.Lado) {
 		result.executarAoMudarLadoJogador()
 	})
 
@@ -128,10 +128,9 @@ func (s *Set) AdicionarJogo(j jogo.Gaming) error {
 }
 
 func (s Set) NovoJogo() *jogo.Jogo {
-	newTurn := s.quemServe.Clonar(s.quemServe.LadoCorrente())
-	result := jogo.New(jogo.Regular(newTurn, s.pontoDecisivo))
+	result := jogo.New(jogo.Regular(s.quemServe.LadoCorrente(), s.pontoDecisivo))
 	if s.placar.IsTieBreak() {
-		result = jogo.New(jogo.TieBreak(newTurn, s.pontoDecisivo))
+		result = jogo.New(jogo.TieBreak(s.quemServe.LadoCorrente(), s.pontoDecisivo))
 	}
 	return result
 }

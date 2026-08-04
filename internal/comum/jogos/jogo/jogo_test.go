@@ -1,63 +1,158 @@
 package jogo
 
-// func runTest(personToServe turnos.LadoDoTurno, blocks []ponto.TestBlock, SideA, SideB int, t *testing.T) {
-// 	g := New(turno.New(turno.DefinindoLado(personToServe)), false)
-// 	g.AdicionarEventoAoAdicionarPonto(func(scoreA, scoreB int, done bool) {
-// 		var description = []string{"love", "15", "30", "40", "ad", "game"}
-// 		tA, tB := placares.TraduzirPlacar(description, scoreA, scoreB)
-// 		if done {
-// 			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
-// 			t.Log()
-// 			return
-// 		}
+import (
+	"testing"
 
-// 		t.Logf("Game status: ( %v x %v )\n", tA, tB)
-// 		t.Log()
-// 	})
+	"github.com/cirobispo/sandbox/internal/comum/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/pontos/ponto"
+	"github.com/cirobispo/sandbox/internal/comum/turnos"
+	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
+)
 
-// 	for i := range blocks {
-// 		block := blocks[i]
-// 		tn := turno.New(turno.DefinindoLado(turnos.LTA))
-// 		p := ponto.New(tn)
+func ace(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewAce())
 
-// 		for j := range block.Items {
-// 			item := block.Items[j]
-// 			t.Logf("%s hits %s, ", tn.LadoCorrente().String(), item.Value.Tipo())
-// 			p.AdicionarGolpe(item.Value)
-// 		}
+	return result
+}
 
-// 		g.AdicionarPonto(p)
-// 	}
+func winnerDoSacador(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewServicoDentro())
+	result.AdicionarGolpe(golpe.NewRetornoDentro())
+	result.AdicionarGolpe(golpe.NewWinner())
 
-// 	a, b := g.Placar().Resultado()
+	return result
+}
 
-// 	if a != SideA || b != SideB {
-// 		t.Errorf("\n\nGame should be (%d x %d) not (%d x %d)\n", SideA, SideB, a, b)
-// 	}
-// }
+func winnerDoRecebedor(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewServicoDentro())
+	result.AdicionarGolpe(golpe.NewWinner())
+
+	return result
+}
+
+func naoTocouDoSacador(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewServicoDentro())
+	result.AdicionarGolpe(golpe.NewRetornoDentro())
+	result.AdicionarGolpe(golpe.NewNaoTocou())
+
+	return result
+}
+
+func naoTocouDoRecebedor(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewServicoDentro())
+	result.AdicionarGolpe(golpe.NewRetornoDentro())
+	result.AdicionarGolpe(golpe.NewDevolveuDentro())
+	result.AdicionarGolpe(golpe.NewNaoTocou())
+
+	return result
+}
+
+func foraDoSacador(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewServicoDentro())
+	result.AdicionarGolpe(golpe.NewRetornoDentro())
+	result.AdicionarGolpe(golpe.NewDevolveuFora())
+
+	return result
+}
+
+func foraDoRecebedor(ladoInicial turnos.Lado) ponto.Ponto {
+	result := ponto.New(turno.New(turno.DefinindoLado(ladoInicial)))
+	result.AdicionarGolpe(golpe.NewServicoDentro())
+	result.AdicionarGolpe(golpe.NewRetornoDentro())
+	result.AdicionarGolpe(golpe.NewDevolveuDentro())
+	result.AdicionarGolpe(golpe.NewDevolveuFora())
+
+	return result
+}
+
+func runTest(qualSacador turnos.Lado, j *Jogo, pontos []ponto.Ponto, A, B int, t *testing.T) {
+	j.AdicionarEventoAoAdicionarPonto(func(placarA, placarB int, terminado bool) {
+		//var descricao = []string{"love", "15", "30", "40", "ad", "game"}
+		//tA, tB := placares.TraduzirPlacar(descricao, placarA, placarB)
+		tA, tB := placarA, placarB
+		if terminado {
+			t.Logf("Game FINAL status: ( %v x %v )\n", tA, tB)
+			t.Log()
+			return
+		}
+
+		t.Logf("Game status: ( %v x %v )\n", tA, tB)
+		t.Log()
+	})
+
+	for i, _ := range pontos {
+		ponto := pontos[i]
+		j.AdicionarPonto(&ponto)
+	}
+
+	if rA, rB := j.Placar().Resultado(); !j.Placar().Terminado() || (rA != A || rB != B) {
+		t.Errorf("Resultado não esperado. Sacador: %v. Jogo encerrado: %v, resultado (%v x %v), aguardado (%v x %v)", qualSacador, j.Placar().Terminado(), rA, rB, A, B)
+	}
+}
 
 // func TestTurnA_Game40(t *testing.T) {
-// 	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
-// 		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
-// 		// point.DoubleFault(),
-// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-// 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
-// 		ponto.AcePoint(),
+// 	ladoInicial := turnos.LTA
+// 	pontos := []ponto.Ponto{
+// 		ace(ladoInicial),                 //1x0
+// 		winnerDoRecebedor(ladoInicial),   //1x1
+// 		winnerDoSacador(ladoInicial),     //2x1
+// 		naoTocouDoRecebedor(ladoInicial), //3x1
+// 		naoTocouDoSacador(ladoInicial),   //3x2
+// 		foraDoSacador(ladoInicial),       //3x3
+// 		naoTocouDoRecebedor(ladoInicial), //4x3
+// 		foraDoRecebedor(ladoInicial),     //5x3
 // 	}
 
-// 	runTest(turnos.LTA, blocks, 5, 3, t)
+// 	j := New(Regular(ladoInicial, false))
+
+// 	runTest(ladoInicial, j, pontos, 5, 3, t)
 // }
 
-// func TestTurnB_40Game(t *testing.T) {
-// 	blocks := []ponto.TestBlock{ponto.AcePoint(), ponto.AcePoint(), ponto.WinnerSSPoint(),
-// 		ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(), ponto.WinnerOSPoint(),
-// 		// point.DoubleFault(),
-// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-// 		ponto.LongRallieOSPoint(2, ponto.NetOppositeSide(true)),
-// 		// point.LongRallieOSPoint(2, point.NetSameSide(true)),
-// 		ponto.AcePoint(),
-// 	}
+func TestTieBreak(t *testing.T) {
+	ladoInicial := turnos.LadoA
+	pontos := []ponto.Ponto{
+		ace(ladoInicial),                 //1x0
+		winnerDoRecebedor(ladoInicial),   //1x1
+		winnerDoSacador(ladoInicial),     //2x1
+		naoTocouDoRecebedor(ladoInicial), //3x1
+		naoTocouDoSacador(ladoInicial),   //3x2
+		foraDoSacador(ladoInicial),       //3x3
+		naoTocouDoRecebedor(ladoInicial), //4x3
+		foraDoRecebedor(ladoInicial),     //5x3
+		ace(ladoInicial),                 //6x3
+		ace(ladoInicial),                 //7x3
+	}
 
-// 	runTest(turnos.LTB, blocks, 3, 5, t)
-// }
+	j := New(TieBreak(ladoInicial, false))
+
+	runTest(ladoInicial, j, pontos, 7, 3, t)
+}
+
+func TestSuperTieBreak(t *testing.T) {
+	ladoInicial := turnos.LadoA
+	pontos := []ponto.Ponto{
+		ace(ladoInicial),                 //1x0
+		winnerDoRecebedor(ladoInicial),   //1x1
+		winnerDoSacador(ladoInicial),     //2x1
+		naoTocouDoRecebedor(ladoInicial), //3x1
+		naoTocouDoSacador(ladoInicial),   //3x2
+		foraDoSacador(ladoInicial),       //3x3
+		naoTocouDoRecebedor(ladoInicial), //4x3
+		foraDoRecebedor(ladoInicial),     //5x3
+		ace(ladoInicial),                 //6x3
+		ace(ladoInicial),                 //7x3
+		winnerDoSacador(ladoInicial),     //8x3
+		ace(ladoInicial),                 //9x3
+		ace(ladoInicial),                 //10x3
+	}
+
+	j := New(SuperTieBreak(ladoInicial, false))
+
+	runTest(ladoInicial, j, pontos, 10, 3, t)
+}

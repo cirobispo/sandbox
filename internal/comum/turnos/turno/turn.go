@@ -35,9 +35,9 @@ func (t *Turno) AdicionarDepoisDeMudarTurno(callback turnos.AoMudarTurno) {
 func (t *Turno) Execute() {
 	t.executeAoMudarTurno(t.eventosAntesDeMudarTurno)
 
-	ladoCorrente, _ := ObterDados[turnos.LadoDoTurno](t, "Turno_LadoCorrente")
+	ladoCorrente, _ := ObterDados[turnos.Lado](t, "Turno_LadoCorrente")
 
-	if ladoCorrente > turnos.LTA {
+	if ladoCorrente > turnos.LadoA {
 		ladoCorrente = -1
 	}
 
@@ -47,17 +47,17 @@ func (t *Turno) Execute() {
 	t.executeAoMudarTurno(t.eventosDepoisDeMudarTurno)
 }
 
-func (t Turno) LadoInicial() turnos.LadoDoTurno {
-	result, _ := ObterDados[turnos.LadoDoTurno](&t, "Turno_LadoInicial")
+func (t Turno) LadoInicial() turnos.Lado {
+	result, _ := ObterDados[turnos.Lado](&t, "Turno_LadoInicial")
 	return result
 }
 
-func (t Turno) LadoCorrente() turnos.LadoDoTurno {
-	result, _ := ObterDados[turnos.LadoDoTurno](&t, "Turno_LadoCorrente")
+func (t Turno) LadoCorrente() turnos.Lado {
+	result, _ := ObterDados[turnos.Lado](&t, "Turno_LadoCorrente")
 	return result
 }
 
-func (t Turno) Clonar(ladoInicial turnos.LadoDoTurno) *Turno {
+func (t Turno) Clonar(ladoInicial turnos.Lado) *Turno {
 	result := New(DefinindoLado(ladoInicial))
 
 	result.eventosAntesDeMudarTurno = make([]turnos.AoMudarTurno, len(t.eventosAntesDeMudarTurno))
@@ -84,7 +84,7 @@ func (t Turno) Clonar(ladoInicial turnos.LadoDoTurno) *Turno {
 
 func (t Turno) executeAoMudarTurno(list []turnos.AoMudarTurno) {
 	if len(list) > 0 {
-		currentSide, _ := ObterDados[turnos.LadoDoTurno](&t, "Turno_LadoCorrente")
+		currentSide, _ := ObterDados[turnos.Lado](&t, "Turno_LadoCorrente")
 		for i := range list {
 			event := list[i]
 			event(currentSide)
@@ -92,7 +92,7 @@ func (t Turno) executeAoMudarTurno(list []turnos.AoMudarTurno) {
 	}
 }
 
-func DefinindoLado(start turnos.LadoDoTurno) func(t *Turno) {
+func DefinindoLado(start turnos.Lado) func(t *Turno) {
 	return func(t *Turno) {
 		startSide := NewMapData(start, func() any { return start })
 		currentSide := NewMapData(start, func() any { return start })

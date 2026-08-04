@@ -10,14 +10,14 @@ import (
 type AoMudarPlacar func(placarA, placarB int, terminado bool)
 
 type Jogo struct {
-	ladoInicial      turnos.LadoDoTurno
+	ladoInicial      turnos.Lado
 	pontoDecisivo    bool
 	placarA, placarB int
 
 	eventosAoMudarPlacar []AoMudarPlacar
 }
 
-func New(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) *Jogo {
+func New(ladoInicial turnos.Lado, pontoDecisivo bool) *Jogo {
 	return &Jogo{
 		ladoInicial:          ladoInicial,
 		pontoDecisivo:        pontoDecisivo,
@@ -29,7 +29,7 @@ func New(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) *Jogo {
 
 func (j *Jogo) placares() (*int, *int) {
 	sA, sB := &j.placarA, &j.placarB
-	if j.ladoInicial == turnos.LTB {
+	if j.ladoInicial == turnos.LadoB {
 		sA, sB = &j.placarB, &j.placarA
 	}
 

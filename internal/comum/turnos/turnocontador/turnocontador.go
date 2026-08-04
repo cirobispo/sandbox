@@ -14,7 +14,7 @@ func ComOutroTurno(t *turno.Turno) func(t *turno.Turno) {
 	return func(t *turno.Turno) {
 		turno.AdicionarDados(t, "Contador_Valor", turno.NewMapData(0, func() any { return 0 }))
 
-		t.AdicionarDepoisDeMudarTurno(func(st turnos.LadoDoTurno) {
+		t.AdicionarDepoisDeMudarTurno(func(st turnos.Lado) {
 			value, _ := turno.ObterDados[int](t, "Contador_Valor")
 			value++
 			turno.AtualizarDados(t, "Contador_Valor", value)

@@ -32,12 +32,12 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 }
 
 func runTest(custom bool, results []placares.EstadoResultadoEParametroPlacar, PlacarA, PlacarB int, t *testing.T) {
-	score := New(SetPadrao(turnos.LTA))
+	score := New(SetPadrao(turnos.LadoA))
 	if custom {
 		if PlacarB > PlacarA {
-			score = New(TamanhoVantagemETieBreak(turnos.LTA, PlacarB, true, true))
+			score = New(TamanhoVantagemETieBreak(turnos.LadoA, PlacarB, true, true))
 		} else {
-			score = New(TamanhoVantagemETieBreak(turnos.LTA, PlacarA, true, true))
+			score = New(TamanhoVantagemETieBreak(turnos.LadoA, PlacarA, true, true))
 		}
 	}
 

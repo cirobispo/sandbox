@@ -10,7 +10,7 @@ import (
 
 type testItem struct {
 	turns     int
-	startSide turnos.LadoDoTurno
+	startSide turnos.Lado
 }
 
 func runTest(test testItem, t *testing.T) {
@@ -27,9 +27,9 @@ func runTest(test testItem, t *testing.T) {
 }
 
 func Test10CrancksSideA(t *testing.T) {
-	runTest(testItem{100, turnos.LTA}, t)
+	runTest(testItem{100, turnos.LadoA}, t)
 }
 
 func Test10CrancksSideB(t *testing.T) {
-	runTest(testItem{100, turnos.LTB}, t)
+	runTest(testItem{100, turnos.LadoB}, t)
 }

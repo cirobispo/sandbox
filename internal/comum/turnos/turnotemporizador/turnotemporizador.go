@@ -17,7 +17,7 @@ func ComOutroTurno(t *turno.Turno) func(t *turno.Turno) {
 		turno.AdicionarDados(t, "Temporizador_Inicio", turno.NewMapData(time.Now(), func() any { return time.Now() }))
 		turno.AdicionarDados(t, "Temporizador_Duracao", turno.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))
 
-		t.AdicionarDepoisDeMudarTurno(func(st turnos.LadoDoTurno) {
+		t.AdicionarDepoisDeMudarTurno(func(st turnos.Lado) {
 			start, _ := turno.ObterDados[time.Time](t, "Temporizador_Inicio")
 			duration := time.Since(start)
 

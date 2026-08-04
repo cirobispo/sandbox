@@ -21,7 +21,7 @@ type Setting interface {
 
 type Partida struct {
 	custom                bool
-	ladoInicial           turnos.LadoDoTurno
+	ladoInicial           turnos.Lado
 	tamanhoPartida        int
 	tamanhoSet            int
 	pontoDecisivo         bool
@@ -31,7 +31,7 @@ type Partida struct {
 	eventosAoAdicionarSet []jogos.AoAdicionarSet
 }
 
-func PartidaPadrao(ladoInicial turnos.LadoDoTurno) ParamOption {
+func PartidaPadrao(ladoInicial turnos.Lado) ParamOption {
 	return func(p *Partida) bool {
 		p.ladoInicial = ladoInicial
 		p.tamanhoPartida = 6
@@ -42,7 +42,7 @@ func PartidaPadrao(ladoInicial turnos.LadoDoTurno) ParamOption {
 	}
 }
 
-func PartidaCustomizada(ladoInicial turnos.LadoDoTurno, tamanhoPartida, tamanhoSet int, pontoDecisivo, tieBreak bool) ParamOption {
+func PartidaCustomizada(ladoInicial turnos.Lado, tamanhoPartida, tamanhoSet int, pontoDecisivo, tieBreak bool) ParamOption {
 	return func(m *Partida) bool {
 		m.ladoInicial = ladoInicial
 		m.tamanhoPartida = tamanhoPartida
@@ -64,7 +64,7 @@ func New(param ParamOption) *Partida {
 
 		callback := placarpartida.MelhorDeTres()
 		if result.custom {
-			callback = placarpartida.TamanhoELado(turnos.LTA, result.tamanhoPartida)
+			callback = placarpartida.TamanhoELado(turnos.LadoA, result.tamanhoPartida)
 		}
 		result.placar = placarpartida.New(callback)
 	}

@@ -1,33 +1,33 @@
 package turnos
 
-type LadoDoTurno int
+type Lado int
 
 const (
-	LTA LadoDoTurno = 0
-	LTB LadoDoTurno = 1
+	LadoA Lado = 0
+	LadoB Lado = 1
 )
 
 type Turning interface {
 	Execute()
-	LadoInicial() LadoDoTurno
-	LadoCorrente() LadoDoTurno
+	LadoInicial() Lado
+	LadoCorrente() Lado
 }
 
-type AoMudarTurno func(LadoDoTurno)
+type AoMudarTurno func(Lado)
 
-func (l LadoDoTurno) String() string {
-	result := "Lado A"
-	if l == LTB {
-		result = "Lado B"
+func (l Lado) String() string {
+	result := "A"
+	if l == LadoB {
+		result = "B"
 	}
 
 	return result
 }
 
-func (l LadoDoTurno) Inverso() LadoDoTurno {
-	result := LTB
-	if l == LTB {
-		result = LTA
+func (l Lado) Inverso() Lado {
+	result := LadoB
+	if l == LadoB {
+		result = LadoA
 	}
 	return result
 }

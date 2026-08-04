@@ -33,7 +33,7 @@ func (p placar) Tipo() placares.TipoDoPlacar {
 	return placares.TPPonto
 }
 
-func executarTest(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, Jogo) {
+func executarTest(ladoInicial turnos.Lado, pontoDecisivo bool, results []placar, PlacarA, PlacarB int, t *testing.T) (bool, Jogo) {
 	jogo := New(ladoInicial, pontoDecisivo)
 	for i, _ := range results {
 		jogo.AdicionarPlacar(results[i])
@@ -47,7 +47,7 @@ func executarTest(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, results []
 	return (pA == PlacarA && pB == PlacarB), *jogo
 }
 
-func checaPlacar(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool, placares []placar, placarA int, placarB int, t *testing.T) {
+func checaPlacar(ladoInicial turnos.Lado, pontoDecisivo bool, placares []placar, placarA int, placarB int, t *testing.T) {
 	ok, tb := executarTest(ladoInicial, pontoDecisivo, placares, placarA, placarB, t)
 	pA, pB := tb.Resultado()
 	if !ok {
@@ -65,11 +65,11 @@ func valorAleatorio(maximo int) int {
 	return int(valor.Int64()) + 1
 }
 
-func populaSlice(tam int, ladoDoTurno turnos.LadoDoTurno) []placar {
+func populaSlice(tam int, ladoDoTurno turnos.Lado) []placar {
 	placares := make([]placar, 0, 10)
 
 	placarA, placarB := tam, 0
-	if ladoDoTurno == turnos.LTB {
+	if ladoDoTurno == turnos.LadoB {
 		placarA, placarB = 0, tam
 	}
 
@@ -81,9 +81,9 @@ func populaSlice(tam int, ladoDoTurno turnos.LadoDoTurno) []placar {
 }
 
 func TestChegarCOMeSEMConfirmacao(t *testing.T) {
-	ladoDoTurno := turnos.LTA
+	ladoDoTurno := turnos.LadoA
 	if valorAleatorio(2) == 1 {
-		ladoDoTurno = turnos.LTB
+		ladoDoTurno = turnos.LadoB
 	}
 
 	pontosParaJogo := 4

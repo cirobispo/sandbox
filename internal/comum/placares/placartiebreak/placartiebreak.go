@@ -8,13 +8,13 @@ import (
 )
 
 type AoMudarPlacar func(placarA, placarB int, terminado bool)
-type AoMudarSacador func(lado turnos.LadoDoTurno)
+type AoMudarSacador func(lado turnos.Lado)
 type TestaEncerramento func(valores ...int) bool
 
 type ParamOption func(t *TieBreak)
 
 type TieBreak struct {
-	ladoInicial       turnos.LadoDoTurno
+	ladoInicial       turnos.Lado
 	pontoDecisivo     bool
 	placarA, placarB  int
 	testaEncerramento TestaEncerramento
@@ -52,7 +52,7 @@ func testaEncerrarEm10(valores ...int) bool {
 	return result
 }
 
-func ChegarEm7(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
+func ChegarEm7(ladoInicial turnos.Lado, pontoDecisivo bool) ParamOption {
 	return func(t *TieBreak) {
 		t.ladoInicial = ladoInicial
 		t.pontoDecisivo = pontoDecisivo
@@ -60,7 +60,7 @@ func ChegarEm7(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
 	}
 }
 
-func ChegarEm10(ladoInicial turnos.LadoDoTurno, pontoDecisivo bool) ParamOption {
+func ChegarEm10(ladoInicial turnos.Lado, pontoDecisivo bool) ParamOption {
 	return func(t *TieBreak) {
 		t.ladoInicial = ladoInicial
 		t.pontoDecisivo = pontoDecisivo
@@ -79,13 +79,13 @@ func New(param ParamOption) *TieBreak {
 	return result
 }
 
-func (j TieBreak) QuemEstaSacando(qualPonto uint) turnos.LadoDoTurno {
-	trocasDeSacador := uint(((j.placarA+j.placarB)%2 + (j.placarA+j.placarB)/2))
-	if qualPonto != 0 {
-		trocasDeSacador = qualPonto - 1
+func (j TieBreak) QuemEstaSacando(qualPonto uint) turnos.Lado {
+	trocasDeSacador := uint(j.placarA+j.placarB) + 1
+	if qualPonto > 0 {
+		trocasDeSacador = (qualPonto + 1)
 	}
 
-	if trocasDeSacador%2 == 1 {
+	if ((trocasDeSacador-(trocasDeSacador%2))/2)%2 == 1 {
 		return j.ladoInicial.Inverso()
 	}
 	return j.ladoInicial
@@ -93,7 +93,7 @@ func (j TieBreak) QuemEstaSacando(qualPonto uint) turnos.LadoDoTurno {
 
 func (j *TieBreak) placares() (*int, *int) {
 	sA, sB := &j.placarA, &j.placarB
-	if j.ladoInicial == turnos.LTB {
+	if j.ladoInicial == turnos.LadoB {
 		sA, sB = &j.placarB, &j.placarA
 	}
 
@@ -143,13 +143,13 @@ func (j *TieBreak) AdicionarPlacar(placarPonto placares.EstadoEParametroPlacar) 
 	sA, sB := j.placares()
 	// Padronizando que o lado A sempre fica com o sacador.
 	// Então quando o inicio for o lado B, o sA será sB e vice-versa.
-	if j.QuemEstaSacando(0) == turnos.LTB {
+	if sacador := j.QuemEstaSacando(0); sacador == turnos.LadoB {
 		sA, sB = sB, sA
 	}
 
 	adicionarEm := sA
 	if who := placarPonto.Lado(); who == placares.LPOposto {
-		adicionarEm = sB
+		adicionarEm = j.placarInvertido(adicionarEm)
 	}
 
 	*adicionarEm += 1

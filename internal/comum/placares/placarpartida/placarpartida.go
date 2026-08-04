@@ -11,7 +11,7 @@ type AoPontuarNaPartida func(placarA, placarB int, terminado bool)
 type ParamOption func(p *Partida)
 
 type Partida struct {
-	ladoInicial      turnos.LadoDoTurno
+	ladoInicial      turnos.Lado
 	melhorDe         int
 	placarA, placarB int
 
@@ -19,14 +19,14 @@ type Partida struct {
 }
 
 func MelhorDeTres() ParamOption {
-	return TamanhoELado(turnos.LTA, 3)
+	return TamanhoELado(turnos.LadoA, 3)
 }
 
 func MelhorDeCinco() ParamOption {
-	return TamanhoELado(turnos.LTA, 5)
+	return TamanhoELado(turnos.LadoA, 5)
 }
 
-func TamanhoELado(ladoIncial turnos.LadoDoTurno, melhorDe int) ParamOption {
+func TamanhoELado(ladoIncial turnos.Lado, melhorDe int) ParamOption {
 	return func(score *Partida) {
 		score.ladoInicial = ladoIncial
 		score.melhorDe = melhorDe
@@ -57,7 +57,7 @@ func (p Partida) executeEventosAoPontuarNaPartida(placarA, placarB int) {
 
 func (p *Partida) placares() (*int, *int) {
 	sA, sB := &p.placarA, &p.placarB
-	if p.ladoInicial == turnos.LTB {
+	if p.ladoInicial == turnos.LadoB {
 		sA, sB = &p.placarB, &p.placarA
 	}
 

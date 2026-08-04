@@ -9,15 +9,15 @@ import (
 
 type testItem struct {
 	turns     int
-	startSide turnos.LadoDoTurno
+	startSide turnos.Lado
 }
 
 func runTest(test testItem, t *testing.T) {
 	obj := turno.New(ComOutroTurno(turno.New(turno.DefinindoLado(test.startSide))))
-	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.Lado) {
 		t.Logf("Lado antes: %v", ldt)
 	})
-	obj.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
+	obj.AdicionarDepoisDeMudarTurno(func(ldt turnos.Lado) {
 		t.Logf("Lado depois: %v", ldt)
 	})
 
@@ -31,9 +31,9 @@ func runTest(test testItem, t *testing.T) {
 }
 
 func Test10CrancksSideA(t *testing.T) {
-	runTest(testItem{10, turnos.LTA}, t)
+	runTest(testItem{10, turnos.LadoA}, t)
 }
 
 func Test10CrancksSideB(t *testing.T) {
-	runTest(testItem{10, turnos.LTB}, t)
+	runTest(testItem{10, turnos.LadoB}, t)
 }

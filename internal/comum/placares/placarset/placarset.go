@@ -11,7 +11,7 @@ type AoMudarPlacar func(placarA, placarB int, tieBreak, terminado bool)
 type ParamOption func(s *Set)
 
 type Set struct {
-	ladoInicio           turnos.LadoDoTurno
+	ladoInicio           turnos.Lado
 	maiorEmpate          int
 	jogosConfirmaVitoria int
 	placarA, placarB     int
@@ -19,7 +19,7 @@ type Set struct {
 	eventosAoMudarPlacar []AoMudarPlacar
 }
 
-func SetPadrao(ladoInicio turnos.LadoDoTurno) ParamOption {
+func SetPadrao(ladoInicio turnos.Lado) ParamOption {
 	return func(score *Set) {
 		score.ladoInicio = ladoInicio
 		score.maiorEmpate = 6
@@ -27,7 +27,7 @@ func SetPadrao(ladoInicio turnos.LadoDoTurno) ParamOption {
 	}
 }
 
-func TamanhoVantagemETieBreak(ladoInicio turnos.LadoDoTurno, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
+func TamanhoVantagemETieBreak(ladoInicio turnos.Lado, tamanho int, jogoDecisivo, tieBreakNoMaiorEmpate bool) ParamOption {
 	return func(placar *Set) {
 		placar.ladoInicio = ladoInicio
 		placar.maiorEmpate = tamanho
@@ -62,7 +62,7 @@ func (s Set) executarAoMudarPlacar(placarA, placarB int) {
 
 func (s *Set) placares() (*int, *int) {
 	sA, sB := &s.placarA, &s.placarB
-	if s.ladoInicio == turnos.LTB {
+	if s.ladoInicio == turnos.LadoB {
 		sA, sB = &s.placarB, &s.placarA
 	}
 
