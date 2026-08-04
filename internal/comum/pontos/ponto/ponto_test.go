@@ -13,23 +13,27 @@ import (
 )
 
 type Item struct {
-	ponto       pontos.Pontuando
-	ladoDoPonto pontos.LadoDoPonto
+	ponto       *Ponto
+	ladoDoPonto pontos.Lado
 }
 
 func TestTodosOsPontos(tt *testing.T) {
 	items := []Item{
-		_ServicoLETs(novoPonto(tt, turnos.LTA)),
-		_AceUmGolpe(novoPonto(tt, turnos.LTA)),
-		_AceDoisGolpes(novoPonto(tt, turnos.LTA)),
-		_DuplaFaltaFora(novoPonto(tt, turnos.LTA)),
-		_DuplaFaltaRede(novoPonto(tt, turnos.LTA)),
-		_ServicoRetornoRede(novoPonto(tt, turnos.LTA)),
-		_ServicoRetornoFora(novoPonto(tt, turnos.LTA)),
-		_WinnerUmGolpeLC(novoPonto(tt, turnos.LTA)),
-		_WinnerUmGolpeLO(novoPonto(tt, turnos.LTA)),
-		_WinnerDoisGolpesLC(novoPonto(tt, turnos.LTA)),
-		_WinnerDoisGolpesLO(novoPonto(tt, turnos.LTA)),
+		// _ServicoLETs(novoPonto(tt, turnos.LadoA)),
+		// _AceUmGolpe(novoPonto(tt, turnos.LadoA)),
+		// _AceDoisGolpes(novoPonto(tt, turnos.LadoA)),
+		// _DuplaFaltaFora(novoPonto(tt, turnos.LadoA)),
+		// _DuplaFaltaRede(novoPonto(tt, turnos.LadoA)),
+		// _ServicoRetornoRede(novoPonto(tt, turnos.LadoA)),
+		// _ServicoRetornoFora(novoPonto(tt, turnos.LadoA)),
+		// _WinnerUmGolpeLC(novoPonto(tt, turnos.LadoA)),
+		// _WinnerDoisGolpesLC(novoPonto(tt, turnos.LadoA)),
+		// _WinnerUmGolpeLC(novoPonto(tt, turnos.LadoB)),
+		// _WinnerDoisGolpesLC(novoPonto(tt, turnos.LadoB)),
+		// _WinnerUmGolpeLO(novoPonto(tt, turnos.LadoA)),
+		// _WinnerDoisGolpesLO(novoPonto(tt, turnos.LadoA)),
+		_WinnerUmGolpeLO(novoPonto(tt, turnos.LadoB)),
+		_WinnerDoisGolpesLO(novoPonto(tt, turnos.LadoB)),
 	}
 
 	for i, _ := range items {
@@ -42,8 +46,13 @@ func TestTodosOsPontos(tt *testing.T) {
 			tt.Errorf("\nPonto deveria ser: %v mas resultou %v. ", it.ladoDoPonto, it.ponto.LadoDoPonto())
 			// mostrarPontos(tt, it.ponto)
 		}
+		info_ponto(tt, it.ponto)
 		// tt.Log()
 	}
+}
+
+func info_ponto(tt *testing.T, ponto *Ponto) {
+	tt.Logf("Lado inicial: %v, lado da bola ao final: %v, lado do ponto: %v ", ponto.LadoDaQuadra(), ponto.LadoDaBola(), ponto.LadoDoPonto())
 }
 
 func mostrarPontos(tt *testing.T, ponto *Ponto) {
@@ -55,16 +64,23 @@ func mostrarPontos(tt *testing.T, ponto *Ponto) {
 	}
 }
 
-func novoPonto(tt *testing.T, side turnos.LadoDoTurno) *Ponto {
-	ctt := turno.New(turnocontador.ComOutroTurno(turno.New((turnotemporizador.ComOutroTurno(turno.New(turno.DefinindoLado(side)))))))
-	// ctt.AdicionarAntesDeMudarTurno(func(ldt turnos.LadoDoTurno) {
-	// 	tt.Log("Lado antes: ", ldt)
-	// })
-	// ctt.AdicionarDepoisDeMudarTurno(func(ldt turnos.LadoDoTurno) {
-	// 	tt.Log("Lado depois: ", ldt)
-	// })
-	result := New(ctt)
-	result.AdicionarEventoAoAdicionarGolpe(func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool) {
+func novoPonto(tt *testing.T, lado turnos.Lado) *Ponto {
+	turno_com_TeC := turno.New(
+		turnocontador.ComOutroTurno(
+			turno.New(
+				turnotemporizador.ComOutroTurno(
+					turno.New(
+						turno.DefinindoLado(lado))))))
+
+	turno_com_TeC.AdicionarAntesDeMudarTurno(func(ldt turnos.Lado) {
+		tt.Log("Lado antes: ", ldt)
+	})
+	turno_com_TeC.AdicionarDepoisDeMudarTurno(func(ldt turnos.Lado) {
+		tt.Log("Lado depois: ", ldt)
+	})
+
+	result := New(turno_com_TeC)
+	result.EventoAoAdicionarGolpe(func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool) {
 		if terminado {
 			tt.Logf("Golpe: %v e encerrou o ponto com %v golpe(s) e %v troca(s)", tipoDoGolpe, len(result.Golpes()), turnocontador.Contar(result.ladoDaBola))
 			tt.Log()

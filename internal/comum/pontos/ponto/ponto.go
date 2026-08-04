@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/cirobispo/sandbox/internal/comum/golpes"
+	"github.com/cirobispo/sandbox/internal/comum/golpes/golpe"
 	"github.com/cirobispo/sandbox/internal/comum/pontos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 	"github.com/cirobispo/sandbox/internal/comum/turnos/turno"
@@ -11,23 +12,25 @@ import (
 
 type Ponto struct {
 	ladoDaBola              *turno.Turno
-	golpes                  []golpes.Golpeando
-	ladoDoPonto             pontos.LadoDoPonto
+	ladoInicialDaQuadra     turnos.Lado
+	golpes                  []golpe.Golpe
+	ladoDoPonto             pontos.Lado
 	eventosAoAdicionarGolpe *[]pontos.AoAdicionarGolpe
 }
 
-func New(sideControl *turno.Turno) Ponto {
-	hit := make([]golpes.Golpeando, 0, 3)
+func New(turno *turno.Turno) Ponto {
+	hit := make([]golpe.Golpe, 0, 3)
 	events := make([]pontos.AoAdicionarGolpe, 0)
 	return Ponto{
 		ladoDoPonto:             pontos.LPNulo,
-		ladoDaBola:              sideControl,
+		ladoDaBola:              turno,
+		ladoInicialDaQuadra:     turno.LadoInicial(),
 		golpes:                  hit,
 		eventosAoAdicionarGolpe: &events,
 	}
 }
 
-func (p *Ponto) AdicionarEventoAoAdicionarGolpe(ponteiroFnc pontos.AoAdicionarGolpe) {
+func (p *Ponto) EventoAoAdicionarGolpe(ponteiroFnc pontos.AoAdicionarGolpe) {
 	*p.eventosAoAdicionarGolpe = append(*p.eventosAoAdicionarGolpe, ponteiroFnc)
 }
 
@@ -36,7 +39,7 @@ func (p *Ponto) AdicionarGolpe(g golpes.Golpeando) error {
 		return errors.New("Não é possivel adicionar outro golpe com o ponto encerrado.")
 	}
 
-	p.golpes = append(p.golpes, g)
+	p.golpes = append(p.golpes, golpe.NewGolpe(g.Tipo(), g.Acao()))
 	acao := g.Acao()
 	if acao == golpes.TACondicional && existeDuplaFalta(p.golpes) {
 		acao = golpes.TAEncerrarPLO
@@ -51,7 +54,7 @@ func (p *Ponto) AdicionarGolpe(g golpes.Golpeando) error {
 		}
 	}
 
-	if (acao == golpes.TAProsseguir) || (acao == golpes.TAEncerrarPLC) {
+	if acao == golpes.TAProsseguir { //|| (acao == golpes.TAEncerrarPLC) {
 		p.ladoDaBola.Execute()
 	}
 	p.executeEventosAoAdicionarGolpe()
@@ -59,8 +62,8 @@ func (p *Ponto) AdicionarGolpe(g golpes.Golpeando) error {
 	return nil
 }
 
-func (p Ponto) Golpes() []golpes.Golpeando {
-	result := make([]golpes.Golpeando, len(p.golpes))
+func (p Ponto) Golpes() []golpe.Golpe {
+	result := make([]golpe.Golpe, len(p.golpes))
 	copy(result, p.golpes)
 
 	return result
@@ -71,11 +74,15 @@ func (p Ponto) Tamanho() int {
 	return result
 }
 
-func (p Ponto) LadoDaBola() turnos.LadoDoTurno {
+func (p Ponto) LadoDaQuadra() turnos.Lado {
+	return p.ladoInicialDaQuadra
+}
+
+func (p Ponto) LadoDaBola() turnos.Lado {
 	return p.ladoDaBola.LadoCorrente()
 }
 
-func (p Ponto) LadoDoPonto() pontos.LadoDoPonto {
+func (p Ponto) LadoDoPonto() pontos.Lado {
 	return p.ladoDoPonto
 }
 
@@ -85,7 +92,7 @@ func (p Ponto) Terminado() bool {
 
 func (p Ponto) Clonar() Ponto {
 	result := New(p.ladoDaBola.Clonar(p.ladoDaBola.LadoInicial()))
-	result.golpes = make([]golpes.Golpeando, len(p.golpes))
+	result.golpes = make([]golpe.Golpe, len(p.golpes))
 	copy(result.golpes, p.golpes)
 
 	*result.eventosAoAdicionarGolpe = make([]pontos.AoAdicionarGolpe, len(*p.eventosAoAdicionarGolpe))
@@ -107,7 +114,7 @@ func (p Ponto) executeEventosAoAdicionarGolpe() {
 	}
 }
 
-func existeDuplaFalta(gs []golpes.Golpeando) bool {
+func existeDuplaFalta(gs []golpe.Golpe) bool {
 	FoiFalta := func(hit golpes.Golpeando) bool {
 		return hit.Tipo() == golpes.HTFootFault || hit.Tipo() == golpes.HTServeNet || hit.Tipo() == golpes.HTServeOut
 	}

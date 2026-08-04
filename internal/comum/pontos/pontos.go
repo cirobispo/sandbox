@@ -6,20 +6,20 @@ import (
 
 type AoAdicionarGolpe func(tipoDoGolpe golpes.TipoDoGolpe, terminado bool)
 
-type LadoDoPonto int
+type Lado int
 
 const (
-	LPCorrente LadoDoPonto = 1
-	LPOposto   LadoDoPonto = 2
-	LPNulo     LadoDoPonto = 0
+	LPCorrente Lado = 1
+	LPOposto   Lado = 2
+	LPNulo     Lado = 0
 )
 
 type Pontuando interface {
 	Terminado() bool
-	LadoDoPonto() LadoDoPonto
+	LadoDoPonto() Lado
 }
 
-func (s LadoDoPonto) String() string {
+func (s Lado) String() string {
 	switch s {
 	case LPCorrente:
 		return "Lado corrente"
@@ -30,7 +30,7 @@ func (s LadoDoPonto) String() string {
 	}
 }
 
-func (s LadoDoPonto) Inverso() LadoDoPonto {
+func (s Lado) Inverso() Lado {
 	switch s {
 	case LPCorrente:
 		return LPOposto
