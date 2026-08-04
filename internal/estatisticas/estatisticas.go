@@ -12,7 +12,12 @@ func contarNoSet(set partida.Setting, f predicate) int {
 	jogos := set.Games()
 	for j := range jogos {
 		ponto := jogos[j].Pontos()[j]
-		total += contar(ponto.Golpes(), f)
+		golpes := make([]golpes.Golpeando, len(ponto.Golpes()))
+		for i := range ponto.Golpes() {
+			golpes = append(golpes, ponto.Golpes()[i])
+		}
+
+		total += contar(golpes, f)
 	}
 
 	return total
