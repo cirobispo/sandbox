@@ -17,6 +17,7 @@ func NewMapData[V any](value V, callBack func() any) mapData {
 
 type ParamConstructorOption func(t *Turno)
 type ParamDecoratorOption func(t *Turno)
+type ParamAcaoAoExecutar func(t *Turno)
 
 type Turno struct {
 	dados map[string]mapData
@@ -55,7 +56,7 @@ func (t *Turno) Decorator(decorators ...ParamDecoratorOption) *Turno {
 	return t
 }
 
-func (t *Turno) Execute() {
+func (t *Turno) Execute(params ...ParamAcaoAoExecutar) {
 	t.executeAoMudarTurno(t.eventosAntesDeMudarTurno)
 
 	ladoCorrente, _ := ObterDados[turnos.Lado](t, "Turno_LadoCorrente")
@@ -66,6 +67,10 @@ func (t *Turno) Execute() {
 
 	ladoCorrente++
 	AtualizarDados(t, "Turno_LadoCorrente", ladoCorrente)
+
+	for i := range params {
+		params[i](t)
+	}
 
 	t.executeAoMudarTurno(t.eventosDepoisDeMudarTurno)
 }
