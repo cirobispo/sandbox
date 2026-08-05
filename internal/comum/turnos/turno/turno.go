@@ -15,7 +15,8 @@ func NewMapData[V any](value V, callBack func() any) mapData {
 	return mapData{valor: value, funcaoReset: callBack}
 }
 
-type ParamOption func(t *Turno)
+type ParamConstructorOption func(t *Turno)
+type ParamDecoratorOption func(t *Turno)
 
 type Turno struct {
 	dados map[string]mapData
@@ -24,12 +25,34 @@ type Turno struct {
 	eventosDepoisDeMudarTurno []turnos.AoMudarTurno
 }
 
-func (t *Turno) AdicionarAntesDeMudarTurno(callback turnos.AoMudarTurno) {
-	t.eventosAntesDeMudarTurno = append(t.eventosAntesDeMudarTurno, callback)
+func DefinindoLado(ladoInicial turnos.Lado) func(t *Turno) {
+	return func(t *Turno) {
+		startSide := NewMapData(ladoInicial, func() any { return ladoInicial })
+		currentSide := NewMapData(ladoInicial, func() any { return ladoInicial })
+		AdicionarDados(t, "Turno_LadoInicial", startSide)
+		AdicionarDados(t, "Turno_LadoCorrente", currentSide)
+	}
 }
 
-func (t *Turno) AdicionarDepoisDeMudarTurno(callback turnos.AoMudarTurno) {
-	t.eventosDepoisDeMudarTurno = append(t.eventosDepoisDeMudarTurno, callback)
+func New(param ParamConstructorOption) *Turno {
+	result := &Turno{
+		dados:                     make(map[string]mapData),
+		eventosAntesDeMudarTurno:  make([]turnos.AoMudarTurno, 0),
+		eventosDepoisDeMudarTurno: make([]turnos.AoMudarTurno, 0),
+	}
+
+	if param != nil {
+		param(result)
+	}
+	return result
+}
+
+func (t *Turno) Decorator(decorators ...ParamDecoratorOption) *Turno {
+	for i := range decorators {
+		decorators[i](t)
+	}
+
+	return t
 }
 
 func (t *Turno) Execute() {
@@ -92,31 +115,12 @@ func (t Turno) executeAoMudarTurno(list []turnos.AoMudarTurno) {
 	}
 }
 
-func DefinindoLado(start turnos.Lado) func(t *Turno) {
-	return func(t *Turno) {
-		startSide := NewMapData(start, func() any { return start })
-		currentSide := NewMapData(start, func() any { return start })
-		AdicionarDados(t, "Turno_LadoInicial", startSide)
-		AdicionarDados(t, "Turno_LadoCorrente", currentSide)
-	}
+func (t *Turno) AdicionarAntesDeMudarTurno(callback turnos.AoMudarTurno) {
+	t.eventosAntesDeMudarTurno = append(t.eventosAntesDeMudarTurno, callback)
 }
 
-func New(param ParamOption) *Turno {
-	result := &Turno{
-		dados:                     make(map[string]mapData),
-		eventosAntesDeMudarTurno:  make([]turnos.AoMudarTurno, 0),
-		eventosDepoisDeMudarTurno: make([]turnos.AoMudarTurno, 0),
-	}
-
-	if _, achou := ObterDados[int](result, "Turno_LadoInicial"); !achou {
-		fn := DefinindoLado(result.LadoInicial())
-		fn(result)
-	}
-
-	if param != nil {
-		param(result)
-	}
-	return result
+func (t *Turno) AdicionarDepoisDeMudarTurno(callback turnos.AoMudarTurno) {
+	t.eventosDepoisDeMudarTurno = append(t.eventosDepoisDeMudarTurno, callback)
 }
 
 func AdicionarDados(t *Turno, id string, valor mapData) (bool, error) {

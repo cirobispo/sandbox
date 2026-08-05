@@ -10,7 +10,7 @@ type TurnoContador interface {
 	Contar(t *turno.Turno) int
 }
 
-func ComOutroTurno(t *turno.Turno) func(t *turno.Turno) {
+func ComOutroTurno() turno.ParamDecoratorOption {
 	return func(t *turno.Turno) {
 		turno.AdicionarDados(t, "Contador_Valor", turno.NewMapData(0, func() any { return 0 }))
 
