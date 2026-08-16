@@ -48,9 +48,9 @@ func New(param ParamConstructorOption) *Turno {
 	return result
 }
 
-func (t *Turno) Decorator(decorators ...ParamDecoratorOption) *Turno {
-	for i := range decorators {
-		decorators[i](t)
+func (t *Turno) Decorar(decoradores ...ParamDecoratorOption) *Turno {
+	for i := range decoradores {
+		decoradores[i](t)
 	}
 
 	return t
@@ -68,8 +68,9 @@ func (t *Turno) Execute(params ...ParamAcaoAoExecutar) {
 	ladoCorrente++
 	AtualizarDados(t, "Turno_LadoCorrente", ladoCorrente)
 
+	clonado := t.Clonar(t.LadoInicial())
 	for i := range params {
-		params[i](t)
+		params[i](clonado)
 	}
 
 	t.executeAoMudarTurno(t.eventosDepoisDeMudarTurno)

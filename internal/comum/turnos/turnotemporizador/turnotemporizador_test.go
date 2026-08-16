@@ -14,7 +14,7 @@ type testItem struct {
 }
 
 func runTest(test testItem, t *testing.T) {
-	obj := turno.New(turno.DefinindoLado(test.startSide)).Decorator(ComOutroTurno())
+	obj := turno.New(turno.DefinindoLado(test.startSide)).Decorar(Decorador())
 	begin := time.Now()
 	for a := test.turns; a > 0; a-- {
 		obj.Execute()

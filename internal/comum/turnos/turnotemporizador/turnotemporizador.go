@@ -12,7 +12,7 @@ type TurnoTemporizador interface {
 	Duracao(t *turno.Turno) int
 }
 
-func ComOutroTurno() turno.ParamDecoratorOption {
+func Decorador() turno.ParamDecoratorOption {
 	return func(t *turno.Turno) {
 		turno.AdicionarDados(t, "Temporizador_Inicio", turno.NewMapData(time.Now(), func() any { return time.Now() }))
 		turno.AdicionarDados(t, "Temporizador_Duracao", turno.NewMapData(time.Since(time.Now()), func() any { return time.Since(time.Now()) }))

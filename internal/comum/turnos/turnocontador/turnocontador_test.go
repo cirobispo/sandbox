@@ -13,7 +13,7 @@ type testItem struct {
 }
 
 func runTest(test testItem, t *testing.T) {
-	obj := turno.New(turno.DefinindoLado(test.startSide)).Decorator(ComOutroTurno())
+	obj := turno.New(turno.DefinindoLado(test.startSide)).Decorar(Decorador())
 	obj.AdicionarAntesDeMudarTurno(func(ldt turnos.Lado) {
 		t.Logf("Lado antes: %v", ldt)
 	})
