@@ -31,75 +31,75 @@ func NewGolpe(t golpes.Acao, acao golpes.Reacao, executaTurno bool) Golpe {
 }
 
 func NewFootFault() Golpe {
-	result := NewGolpe(golpes.HTFootFault, golpes.TACondicional, false)
+	result := NewGolpe(golpes.APeNaQuadra, golpes.RPCondicionado, false)
 	return result
 }
 
 func NewAce() Golpe {
-	return NewGolpe(golpes.HTAce, golpes.TAEncerrarPLC, false)
+	return NewGolpe(golpes.AAce, golpes.REPLadoCorrente, false)
 }
 
 func NewServicoFora() Golpe {
-	result := NewGolpe(golpes.HTServeOut, golpes.TACondicional, false)
+	result := NewGolpe(golpes.AServicoFora, golpes.RPCondicionado, false)
 	return result
 }
 
 func NewServicoDentro() Golpe {
-	return NewGolpe(golpes.HTServeIn, golpes.TAProsseguir, true)
+	return NewGolpe(golpes.AServicoDentro, golpes.RProsseguir, true)
 }
 
 func NewLET() Golpe {
-	return NewGolpe(golpes.HTServeLet, golpes.TANulo, false)
+	return NewGolpe(golpes.ALet, golpes.RNulo, false)
 }
 
 func NewServicoNaRede() Golpe {
-	result := NewGolpe(golpes.HTServeNet, golpes.TACondicional, false)
+	result := NewGolpe(golpes.AServicoNaRede, golpes.RPCondicionado, false)
 	return result
 }
 
 func NewRetornoNaRede() Golpe {
-	return NewGolpe(golpes.HTReturnNet, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.ARetornoNaRede, golpes.REPLadoOposto, false)
 }
 
 func NewRetornoDentro() Golpe {
-	return NewGolpe(golpes.HTReturnIn, golpes.TAProsseguir, true)
+	return NewGolpe(golpes.ARetornoDentro, golpes.RProsseguir, true)
 }
 
 func NewRetornoFora() Golpe {
-	return NewGolpe(golpes.HTReturnOut, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.ARetornoFora, golpes.REPLadoOposto, false)
 }
 
 func NewDuplaFalta() Golpe {
-	return NewGolpe(golpes.HTDoubleFault, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.ADuplaFalta, golpes.REPLadoOposto, false)
 }
 
 func NewDevolveuNaRede() Golpe {
-	return NewGolpe(golpes.HTNet, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.ADevolucaoNaRede, golpes.REPLadoOposto, false)
 }
 
 func NewDevolveuDentro() Golpe {
-	return NewGolpe(golpes.HTIn, golpes.TAProsseguir, false)
+	return NewGolpe(golpes.ADevolucaoDentro, golpes.RProsseguir, false)
 }
 
 func NewWinner() Golpe {
 	// Aqui será preciso avaliar como atuar aqui.
 	// Se o winner é confirmado depois ou no momento do golpe.
 	// Provavelmente deverá ser depois. E daí, ficaria, devolveu na rede, fora, winner adversario.
-	return NewGolpe(golpes.HTWinner, golpes.TAEncerrarPLC, false)
+	return NewGolpe(golpes.AWinner, golpes.REPLadoCorrente, false)
 }
 
 func NewDevolveuFora() Golpe {
-	return NewGolpe(golpes.HTOut, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.ADevolucaoFora, golpes.REPLadoOposto, false)
 }
 
 func NewNaoTocou() Golpe {
-	return NewGolpe(golpes.HTMiss, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.ANaoTocouNaBola, golpes.REPLadoOposto, false)
 }
 
 func NewQueimou() Golpe {
-	return NewGolpe(golpes.HTToast, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.AToqueNaBola, golpes.REPLadoOposto, false)
 }
 
 func NewToqueNaRede() Golpe {
-	return NewGolpe(golpes.HTNetTouch, golpes.TAEncerrarPLO, false)
+	return NewGolpe(golpes.AToqueNaRede, golpes.REPLadoOposto, false)
 }

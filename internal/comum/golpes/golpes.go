@@ -4,31 +4,34 @@ type Acao int
 type Reacao int
 
 const (
-	HTFootFault   Acao = 1
-	HTServeNet    Acao = 2
-	HTServeLet    Acao = 3
-	HTServeIn     Acao = 4
-	HTAce         Acao = 5
-	HTServeOut    Acao = 6
-	HTReturnOut   Acao = 7
-	HTReturnNet   Acao = 8
-	HTReturnIn    Acao = 9
-	HTDoubleFault Acao = 10
-	HTNet         Acao = 11
-	HTIn          Acao = 12
-	HTOut         Acao = 13
-	HTWinner      Acao = 14
-	HTToast       Acao = 15
-	HTNetTouch    Acao = 16
-	HTMiss        Acao = 17
+	AServico         Acao = 20
+	APeNaQuadra      Acao = 21
+	ALet             Acao = 22
+	AServicoNaRede   Acao = 23
+	AServicoDentro   Acao = 24
+	AServicoFora     Acao = 25
+	AAce             Acao = 26
+	ADuplaFalta      Acao = 27
+	ARetorno         Acao = 30
+	ARetornoNaRede   Acao = 31
+	ARetornoDentro   Acao = 32
+	ARetornoFora     Acao = 33
+	ADevolucao       Acao = 40
+	ADevolucaoNaRede Acao = 41
+	ADevolucaoDentro Acao = 42
+	ADevolucaoFora   Acao = 43
+	AWinner          Acao = 140
+	AToqueNaBola     Acao = 150
+	AToqueNaRede     Acao = 160
+	ANaoTocouNaBola  Acao = 170
 )
 
 const (
-	TANulo        Reacao = 0
-	TAProsseguir  Reacao = 1
-	TAEncerrarPLC Reacao = 2
-	TAEncerrarPLO Reacao = 3
-	TACondicional Reacao = 4
+	RNulo           Reacao = 0
+	RProsseguir     Reacao = 1
+	REPLadoCorrente Reacao = 2
+	REPLadoOposto   Reacao = 3
+	RPCondicionado  Reacao = 4
 )
 
 type Golpear interface {
@@ -39,39 +42,39 @@ type Golpear interface {
 
 func (t Acao) String() string {
 	switch t {
-	case HTFootFault:
+	case APeNaQuadra:
 		return "Foot fault"
-	case HTServeNet:
+	case AServicoNaRede:
 		return "Serviço na rede"
-	case HTServeLet:
+	case ALet:
 		return "Let"
-	case HTServeIn:
+	case AServicoDentro:
 		return "Serviço dentro"
-	case HTAce:
+	case AAce:
 		return "Ace!"
-	case HTServeOut:
+	case AServicoFora:
 		return "Serviço fora"
-	case HTReturnOut:
+	case ARetornoFora:
 		return "Retorno fora"
-	case HTReturnNet:
+	case ARetornoNaRede:
 		return "Retorno rede"
-	case HTReturnIn:
+	case ARetornoDentro:
 		return "Retorno dentro"
-	case HTDoubleFault:
+	case ADuplaFalta:
 		return "Dupla falta"
-	case HTNet:
+	case ADevolucaoNaRede:
 		return "Devolveu na rede"
-	case HTIn:
+	case ADevolucaoDentro:
 		return "Devolveu dentro"
-	case HTOut:
+	case ADevolucaoFora:
 		return "Devolveu foras"
-	case HTWinner:
+	case AWinner:
 		return "Winner!"
-	case HTToast:
+	case AToqueNaBola:
 		return "Bola no jogador"
-	case HTNetTouch:
+	case AToqueNaRede:
 		return "Tocou a rede"
-	case HTMiss:
+	case ANaoTocouNaBola:
 		return "Não tocou"
 	default:
 		return "Other"
