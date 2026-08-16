@@ -1,42 +1,43 @@
 package golpes
 
-type TipoDoGolpe int
-type TipoAcao int
+type Acao int
+type Reacao int
 
 const (
-	HTFootFault   TipoDoGolpe = 1
-	HTServeNet    TipoDoGolpe = 2
-	HTServeLet    TipoDoGolpe = 3
-	HTServeIn     TipoDoGolpe = 4
-	HTAce         TipoDoGolpe = 5
-	HTServeOut    TipoDoGolpe = 6
-	HTReturnOut   TipoDoGolpe = 7
-	HTReturnNet   TipoDoGolpe = 8
-	HTReturnIn    TipoDoGolpe = 9
-	HTDoubleFault TipoDoGolpe = 10
-	HTNet         TipoDoGolpe = 11
-	HTIn          TipoDoGolpe = 12
-	HTOut         TipoDoGolpe = 13
-	HTWinner      TipoDoGolpe = 14
-	HTToast       TipoDoGolpe = 15
-	HTNetTouch    TipoDoGolpe = 16
-	HTMiss        TipoDoGolpe = 17
+	HTFootFault   Acao = 1
+	HTServeNet    Acao = 2
+	HTServeLet    Acao = 3
+	HTServeIn     Acao = 4
+	HTAce         Acao = 5
+	HTServeOut    Acao = 6
+	HTReturnOut   Acao = 7
+	HTReturnNet   Acao = 8
+	HTReturnIn    Acao = 9
+	HTDoubleFault Acao = 10
+	HTNet         Acao = 11
+	HTIn          Acao = 12
+	HTOut         Acao = 13
+	HTWinner      Acao = 14
+	HTToast       Acao = 15
+	HTNetTouch    Acao = 16
+	HTMiss        Acao = 17
 )
 
 const (
-	TANulo        TipoAcao = 0
-	TAProsseguir  TipoAcao = 1
-	TAEncerrarPLC TipoAcao = 2
-	TAEncerrarPLO TipoAcao = 3
-	TACondicional TipoAcao = 4
+	TANulo        Reacao = 0
+	TAProsseguir  Reacao = 1
+	TAEncerrarPLC Reacao = 2
+	TAEncerrarPLO Reacao = 3
+	TACondicional Reacao = 4
 )
 
-type Golpeando interface {
-	Tipo() TipoDoGolpe
-	Acao() TipoAcao
+type Golpear interface {
+	Acao() Acao
+	Reacao() Reacao
+	ExecutaTurno() bool
 }
 
-func (t TipoDoGolpe) String() string {
+func (t Acao) String() string {
 	switch t {
 	case HTFootFault:
 		return "Foot fault"
