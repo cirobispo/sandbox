@@ -5,14 +5,14 @@ import (
 	"github.com/cirobispo/sandbox/internal/comum/jogos/partida"
 )
 
-type predicate func(golpes []golpes.Golpeando, indice int) bool
+type predicate func(golpes []golpes.Golpear, indice int) bool
 
 func contarNoSet(set partida.Setting, f predicate) int {
 	total := 0
 	jogos := set.Games()
 	for j := range jogos {
 		ponto := jogos[j].Pontos()[j]
-		golpes := make([]golpes.Golpeando, len(ponto.Golpes()))
+		golpes := make([]golpes.Golpear, len(ponto.Golpes()))
 		for i := range ponto.Golpes() {
 			golpes = append(golpes, ponto.Golpes()[i])
 		}
@@ -23,7 +23,7 @@ func contarNoSet(set partida.Setting, f predicate) int {
 	return total
 }
 
-func contar(golpes []golpes.Golpeando, f predicate) int {
+func contar(golpes []golpes.Golpear, f predicate) int {
 	tamanho := len(golpes)
 	total := 0
 
@@ -37,10 +37,10 @@ func contar(golpes []golpes.Golpeando, f predicate) int {
 }
 
 func ContarAces(set partida.Setting) int {
-	EhAce := func(golpes_ []golpes.Golpeando, indice int) bool {
+	EhAce := func(golpes_ []golpes.Golpear, indice int) bool {
 		g := golpes_[indice]
-		return g.Tipo() == golpes.HTAce ||
-			(g.Tipo() == golpes.HTMiss && indice > 0 && golpes_[indice-1].Tipo() == golpes.HTServeIn)
+		return g.Acao() == golpes.HTAce ||
+			(g.Acao() == golpes.HTMiss && indice > 0 && golpes_[indice-1].Acao() == golpes.HTServeIn)
 	}
 
 	total := contarNoSet(set, EhAce)
@@ -49,10 +49,10 @@ func ContarAces(set partida.Setting) int {
 }
 
 func ContarWinners(set partida.Setting) int {
-	EhWinner := func(golpes_ []golpes.Golpeando, indice int) bool {
+	EhWinner := func(golpes_ []golpes.Golpear, indice int) bool {
 		g := golpes_[indice]
-		return g.Tipo() == golpes.HTAce ||
-			(g.Tipo() == golpes.HTMiss && indice > 0)
+		return g.Acao() == golpes.HTAce ||
+			(g.Acao() == golpes.HTMiss && indice > 0)
 	}
 
 	return contarNoSet(set, EhWinner)

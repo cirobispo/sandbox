@@ -1,17 +1,17 @@
 package ponto
 
 import (
-	"github.com/cirobispo/sandbox/internal/comum/pontos/golpes/golpe"
+	"github.com/cirobispo/sandbox/internal/comum/golpes/golpe"
 )
 
 func PointStarting() *PointState {
 	result := NewPointState(nil).
 		AddState(NewPointState(golpe.NewAce())).
-		AddState(NewPointState(golpe.NewNetTouch())).
-		AddState(NewPointState(golpe.NewServeNet())).
-		AddState(NewPointState(golpe.NewServeLet())).
-		AddState(NewPointState(golpe.NewServeIn())).
-		AddState(NewPointState(golpe.NewServeOut()))
+		AddState(NewPointState(golpe.NewToqueNaRede())).
+		AddState(NewPointState(golpe.NewServicoNaRede())).
+		AddState(NewPointState(golpe.NewLET())).
+		AddState(NewPointState(golpe.NewServicoDentro())).
+		AddState(NewPointState(golpe.NewServicoFora()))
 
 	return result
 }
@@ -31,54 +31,54 @@ func AfterHitAce() *PointState {
 }
 
 func AfterServeIn() *PointState {
-	result := NewPointState(golpe.NewServeIn()).
-		AddState(NewPointState(golpe.NewReturnNet())).
-		AddState(NewPointState(golpe.NewReturnIn())).
-		AddState(NewPointState(golpe.NewReturnOut())).
-		AddState(NewPointState(golpe.NewToast()))
+	result := NewPointState(golpe.NewServicoDentro()).
+		AddState(NewPointState(golpe.NewRetornoNaRede())).
+		AddState(NewPointState(golpe.NewRetornoDentro())).
+		AddState(NewPointState(golpe.NewRetornoFora())).
+		AddState(NewPointState(golpe.NewQueimou()))
 
 	return result
 }
 
 func AfterServeOut() *PointState {
-	result := NewPointState(golpe.NewServeOut())
+	result := NewPointState(golpe.NewServicoFora())
 	addFromPointStarting(result)
 	return result
 }
 
 func AfterServeNet() *PointState {
-	result := NewPointState(golpe.NewServeNet())
+	result := NewPointState(golpe.NewServicoNaRede())
 	addFromPointStarting(result)
 
 	return result
 }
 
 func AfterServeLet() *PointState {
-	result := NewPointState(golpe.NewServeLet())
+	result := NewPointState(golpe.NewLET())
 	addFromPointStarting(result)
 
 	return result
 }
 
 func AfterReturnIn() *PointState {
-	result := NewPointState(golpe.NewReturnIn()).
-		AddState(NewPointState(golpe.NewHitNet())).
-		AddState(NewPointState(golpe.NewHitBackIn())).
-		AddState(NewPointState(golpe.NewHitOut())).
-		AddState(NewPointState(golpe.NewToast()))
+	result := NewPointState(golpe.NewRetornoDentro()).
+		AddState(NewPointState(golpe.NewDevolveuNaRede())).
+		AddState(NewPointState(golpe.NewDevolveuDentro())).
+		AddState(NewPointState(golpe.NewDevolveuFora())).
+		AddState(NewPointState(golpe.NewQueimou()))
 
 	return result
 }
 
 func AfterReturnOut() *PointState {
-	result := NewPointState(golpe.NewReturnOut())
+	result := NewPointState(golpe.NewRetornoFora())
 	addFromPointStarting(result)
 
 	return result
 }
 
 func AfterReturnNet() *PointState {
-	result := NewPointState(golpe.NewReturnNet())
+	result := NewPointState(golpe.NewRetornoNaRede())
 	addFromPointStarting(result)
 
 	return result
@@ -93,24 +93,24 @@ func addFromHitBackIn(stateToAdd *PointState) {
 }
 
 func AfterHitBackIn() *PointState {
-	result := NewPointState(golpe.NewHitBackIn()).
-		AddState(NewPointState(golpe.NewHitNet())).
-		AddState(NewPointState(golpe.NewHitBackIn())).
-		AddState(NewPointState(golpe.NewHitOut())).
-		AddState(NewPointState(golpe.NewToast()))
+	result := NewPointState(golpe.NewDevolveuDentro()).
+		AddState(NewPointState(golpe.NewDevolveuNaRede())).
+		AddState(NewPointState(golpe.NewDevolveuDentro())).
+		AddState(NewPointState(golpe.NewDevolveuFora())).
+		AddState(NewPointState(golpe.NewQueimou()))
 
 	return result
 }
 
 func AfterHitBackOut() *PointState {
-	result := NewPointState(golpe.NewHitOut())
+	result := NewPointState(golpe.NewDevolveuFora())
 	addFromPointStarting(result)
 
 	return result
 }
 
 func AfterHitBackNet() *PointState {
-	result := NewPointState(golpe.NewHitNet())
+	result := NewPointState(golpe.NewDevolveuNaRede())
 	addFromPointStarting(result)
 
 	return result

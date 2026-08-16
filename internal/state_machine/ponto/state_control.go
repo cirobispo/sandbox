@@ -31,7 +31,7 @@ func NewPointStateControl(point *ponto.Ponto) PointStateControl {
 
 func (c *PointStateControl) UpdateState(s *PointState) {
 	c.currentState = s
-	c.point.AdicionaGolpe(s.Hit())
+	// c.point.AdicionarGolpe(s.Hit())
 	s.Execute(c.point)
 
 	if c.point.Terminado() {
@@ -40,7 +40,7 @@ func (c *PointStateControl) UpdateState(s *PointState) {
 		items := c.point.Golpes()
 		for j := range items {
 			item := items[j]
-			fmt.Printf("%s\n", item.Tipo())
+			fmt.Printf("%s\n", item.Acao())
 		}
 	}
 }
@@ -55,13 +55,13 @@ func (c PointStateControl) BallInPlay() bool {
 
 func (c PointStateControl) FindState(state string) *PointState {
 	var result *PointState
-	for j := range c.states {
-		item := c.states[j]
-		if item.hit != nil && item.Hit().Tipo().String() == state {
-			result = item
-			break
-		}
-	}
+	// for j := range c.states {
+	// 	item := c.states[j]
+	// if item.hit != nil && item.Hit().Tipo().String() == state {
+	// 	result = item
+	// 	break
+	// }
+	// }
 
 	return result
 }

@@ -32,10 +32,10 @@ func (p Placar) Terminou() bool {
 func readCommand(s *ponto.PointState) int {
 	fmt.Printf("\t0 Sair")
 	subStates := s.SubStates()
-	for j := range subStates {
-		item := subStates[j]
-		fmt.Printf("\t%d %s", j+1, item.Hit().Tipo())
-	}
+	// for j := range subStates {
+	// item := subStates[j]
+	// fmt.Printf("\t%d %s", j+1, item.Hit().Tipo())
+	// }
 	size := len(subStates)
 	result := 0
 	if size > 0 {
