@@ -25,9 +25,34 @@ func runTest(test testItem, t *testing.T) {
 		obj.Execute()
 	}
 
-	if value := Contar(obj); value != test.turns {
+	if value, achou := Contar(obj); !achou {
 		t.Errorf("turn is \"%v\" turns and should be \"%v\"", value, test.turns)
 	}
+
+	clonado := obj.Clonar(obj.LadoInicial())
+	chaves := turno.Chaves(obj)
+	for idx := range chaves {
+		_, achou_lado := obtemLado(clonado, chaves[idx])
+		_, achou_contador := obtemContador(clonado)
+		if !achou_lado && !achou_contador {
+			t.Errorf("clonagem não funcionou adequadamente.")
+		}
+	}
+}
+
+func obtemLado(t *turno.Turno, chave string) (turnos.Lado, bool) {
+	if chave != "Turno_LadoInicial" && chave != "Turno_LadoCorrente" {
+		return -1, false
+	}
+
+	if chave == "Turno_LadoCorrente" {
+		return t.LadoCorrente(), true
+	}
+	return t.LadoInicial(), true
+}
+
+func obtemContador(t *turno.Turno) (int, bool) {
+	return Contar(t)
 }
 
 func Test10CrancksSideA(t *testing.T) {

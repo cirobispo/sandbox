@@ -38,7 +38,14 @@ func runTest(test testItem, t *testing.T) {
 	}
 
 	if obj.LadoCorrente() != endSide {
-		t.Errorf("turn is \"%s\" and should be \"%s\"", obj.LadoCorrente(), endSide)
+		t.Errorf("Lado do turno é \"%s\" e deveria ser \"%s\"", obj.LadoCorrente(), endSide)
+	}
+
+	clonado := obj.Clonar(obj.LadoInicial())
+	for k, v := range obj.dados {
+		if mapdata, achou := clonado.dados[k]; !achou || (achou && mapdata.valor != v.valor) {
+			t.Errorf("clonagem não funcionou adequadamente. mapData %v diferente", mapdata)
+		}
 	}
 }
 

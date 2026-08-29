@@ -6,15 +6,6 @@ import (
 	"github.com/cirobispo/sandbox/internal/comum/turnos"
 )
 
-type mapData struct {
-	valor       any
-	funcaoReset func() any
-}
-
-func NewMapData[V any](value V, callBack func() any) mapData {
-	return mapData{valor: value, funcaoReset: callBack}
-}
-
 type ParamConstructorOption func(t *Turno)
 type ParamDecoratorOption func(t *Turno)
 type ParamAcaoAoExecutar func(t *Turno)
@@ -127,35 +118,4 @@ func (t *Turno) AdicionarAntesDeMudarTurno(callback turnos.AoMudarTurno) {
 
 func (t *Turno) AdicionarDepoisDeMudarTurno(callback turnos.AoMudarTurno) {
 	t.eventosDepoisDeMudarTurno = append(t.eventosDepoisDeMudarTurno, callback)
-}
-
-func AdicionarDados(t *Turno, id string, valor mapData) (bool, error) {
-	_, achou := t.dados[id]
-	if !achou {
-		t.dados[id] = valor
-		return true, nil
-	}
-
-	return false, errors.New("id não encontrado.")
-}
-
-func AtualizarDados[V any](t *Turno, id string, valor V) (bool, error) {
-	dado, existe := t.dados[id]
-	if existe {
-		t.dados[id] = NewMapData(valor, dado.funcaoReset)
-		return true, nil
-	}
-
-	return false, errors.New("id não encontrado.")
-}
-
-func ObterDados[V any](t *Turno, id string) (V, bool) {
-	dado, existe := t.dados[id]
-
-	var result V
-	if existe {
-		result = dado.valor.(V)
-	}
-
-	return result, existe
 }

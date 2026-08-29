@@ -22,7 +22,7 @@ func Decorador() turno.ParamDecoratorOption {
 	}
 }
 
-func Contar(t *turno.Turno) int {
-	result, _ := turno.ObterDados[int](t, "Contador_Valor")
-	return result
+func Contar(t *turno.Turno) (int, bool) {
+	result, achou := turno.ObterDados[int](t, "Contador_Valor")
+	return result, achou
 }
